@@ -22,13 +22,7 @@ static bool updatingEverySecond;
 // try to randomize when watches call the weather API
 static uint8_t weatherRefreshMinute;
 
-void update_clock();
-void redrawScreen();
-void tick_handler(struct tm *tick_time, TimeUnits units_changed);
-void bluetoothStateChanged(bool newConnectionState);
-
-
-void update_clock() {
+static void update_clock(void) {
   time_t rawTime;
   struct tm* timeInfo;
 
@@ -39,8 +33,35 @@ void update_clock() {
   Sidebar_updateTime(timeInfo);
 }
 
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+
+  // every 30 minutes, request new weather data
+  if(!globalSettings.disableWeather) {
+    if(tick_time->tm_min == weatherRefreshMinute && tick_time->tm_sec == 0) {
+      messaging_requestNewWeatherData();
+    }
+  }
+
+  // every hour, if requested, vibrate
+  if(tick_time->tm_sec == 0) {
+    if(globalSettings.hourlyVibe == 1) { // hourly vibes only
+      if(tick_time->tm_min % 60 == 0) {
+        vibes_double_pulse();
+      }
+    } else if(globalSettings.hourlyVibe == 2) {  // hourly and half-hourly
+      if(tick_time->tm_min % 60 == 0) {
+        vibes_double_pulse();
+      } else if(tick_time->tm_min % 30 == 0) {
+        vibes_short_pulse();
+      }
+    }
+  }
+
+  update_clock();
+}
+
 /* forces everything on screen to be redrawn -- perfect for keeping track of settings! */
-void redrawScreen() {
+static void redrawScreen() {
 
   // check if the tick handler frequency should be changed
   if(globalSettings.updateScreenEverySecond != updatingEverySecond) {
@@ -84,34 +105,7 @@ static void main_window_unload(Window *window) {
   Sidebar_deinit();
 }
 
-void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
-
-  // every 30 minutes, request new weather data
-  if(!globalSettings.disableWeather) {
-    if(tick_time->tm_min == weatherRefreshMinute && tick_time->tm_sec == 0) {
-      messaging_requestNewWeatherData();
-    }
-  }
-
-  // every hour, if requested, vibrate
-  if(tick_time->tm_sec == 0) {
-    if(globalSettings.hourlyVibe == 1) { // hourly vibes only
-      if(tick_time->tm_min % 60 == 0) {
-        vibes_double_pulse();
-      }
-    } else if(globalSettings.hourlyVibe == 2) {  // hourly and half-hourly
-      if(tick_time->tm_min % 60 == 0) {
-        vibes_double_pulse();
-      } else if(tick_time->tm_min % 30 == 0) {
-        vibes_short_pulse();
-      }
-    }
-  }
-
-  update_clock();
-}
-
-void bluetoothStateChanged(bool newConnectionState) {
+static void bluetoothStateChanged(bool newConnectionState) {
   // if the phone was connected but isn't anymore and the user has opted in,
   // trigger a vibration
   if(isPhoneConnected && !newConnectionState && globalSettings.btVibe) {
@@ -134,7 +128,7 @@ void bluetoothStateChanged(bool newConnectionState) {
 }
 
 // force the sidebar to redraw any time the battery state changes
-void batteryStateChanged(BatteryChargeState charge_state) {
+static void batteryStateChanged(BatteryChargeState charge_state) {
   Sidebar_redraw();
 }
 
@@ -153,7 +147,7 @@ static void app_focus_changed(bool focused) {
   }
 }
 
-static void init() {
+static void init(void) {
   setlocale(LC_ALL, "");
 
   srand(time(NULL));
@@ -213,7 +207,7 @@ static void init() {
   });
 }
 
-static void deinit() {
+static void deinit(void) {
   // Destroy Window
   window_destroy(mainWindow);
 

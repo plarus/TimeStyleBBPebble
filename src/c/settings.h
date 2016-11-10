@@ -141,8 +141,8 @@ extern Settings globalSettings;
 // key for all the settings for versions 6 and higher
 #define SETTING_VERSION6_AND_HIGHER       100
 
-void Settings_init();
-void Settings_deinit();
-void Settings_loadFromStorage();
-void Settings_saveToStorage();
-void Settings_updateDynamicSettings();
+void Settings_init(void);
+void Settings_deinit(void);
+void Settings_loadFromStorage(void);
+void Settings_saveToStorage(void);
+void Settings_updateDynamicSettings(void);

@@ -13,85 +13,85 @@ bool SidebarWidgets_useCompactMode = false;
 int SidebarWidgets_xOffset;
 
 // sidebar icons
-GDrawCommandImage* dateImage;
-GDrawCommandImage* disconnectImage;
-GDrawCommandImage* batteryImage;
-GDrawCommandImage* batteryChargeImage;
+static GDrawCommandImage* dateImage;
+static GDrawCommandImage* disconnectImage;
+static GDrawCommandImage* batteryImage;
+static GDrawCommandImage* batteryChargeImage;
 
 // fonts
-GFont smSidebarFont;
-GFont mdSidebarFont;
-GFont lgSidebarFont;
-GFont currentSidebarFont;
-GFont batteryFont;
+static GFont smSidebarFont;
+static GFont mdSidebarFont;
+static GFont lgSidebarFont;
+static GFont currentSidebarFont;
+static GFont batteryFont;
 
 // the date, time and weather strings
-char currentDayName[8];
-char currentDayNum[5];
-char currentMonth[8];
-char currentWeekNum[5];
-char currentSecondsNum[5];
-char altClock[8];
-char currentBeats[5];
+static char currentDayName[8];
+static char currentDayNum[5];
+static char currentMonth[8];
+static char currentWeekNum[5];
+static char currentSecondsNum[5];
+static char altClock[8];
+static char currentBeats[5];
 
 // the widgets
-SidebarWidget batteryMeterWidget;
-int BatteryMeter_getHeight();
-void BatteryMeter_draw(GContext* ctx, int yPosition);
+static SidebarWidget batteryMeterWidget;
+static int BatteryMeter_getHeight(void);
+static void BatteryMeter_draw(GContext* ctx, int yPosition);
 
-SidebarWidget emptyWidget;
-int EmptyWidget_getHeight();
-void EmptyWidget_draw(GContext* ctx, int yPosition);
+static SidebarWidget emptyWidget;
+static int EmptyWidget_getHeight(void);
+static void EmptyWidget_draw(GContext* ctx, int yPosition);
 
-SidebarWidget dateWidget;
-int DateWidget_getHeight();
-void DateWidget_draw(GContext* ctx, int yPosition);
+static SidebarWidget dateWidget;
+static int DateWidget_getHeight(void);
+static void DateWidget_draw(GContext* ctx, int yPosition);
 
-SidebarWidget currentWeatherWidget;
-int CurrentWeather_getHeight();
-void CurrentWeather_draw(GContext* ctx, int yPosition);
+static SidebarWidget currentWeatherWidget;
+static int CurrentWeather_getHeight(void);
+static void CurrentWeather_draw(GContext* ctx, int yPosition);
 
-SidebarWidget weatherForecastWidget;
-int WeatherForecast_getHeight();
-void WeatherForecast_draw(GContext* ctx, int yPosition);
+static SidebarWidget weatherForecastWidget;
+static int WeatherForecast_getHeight(void);
+static void WeatherForecast_draw(GContext* ctx, int yPosition);
 
-SidebarWidget btDisconnectWidget;
-int BTDisconnect_getHeight();
-void BTDisconnect_draw(GContext* ctx, int yPosition);
+static SidebarWidget btDisconnectWidget;
+static int BTDisconnect_getHeight(void);
+static void BTDisconnect_draw(GContext* ctx, int yPosition);
 
-SidebarWidget weekNumberWidget;
-int WeekNumber_getHeight();
-void WeekNumber_draw(GContext* ctx, int yPosition);
+static SidebarWidget weekNumberWidget;
+static int WeekNumber_getHeight(void);
+static void WeekNumber_draw(GContext* ctx, int yPosition);
 
-SidebarWidget secondsWidget;
-int Seconds_getHeight();
-void Seconds_draw(GContext* ctx, int yPosition);
+static SidebarWidget secondsWidget;
+static int Seconds_getHeight(void);
+static void Seconds_draw(GContext* ctx, int yPosition);
 
-SidebarWidget altTimeWidget;
-int AltTime_getHeight();
-void AltTime_draw(GContext* ctx, int yPosition);
+static SidebarWidget altTimeWidget;
+static int AltTime_getHeight(void);
+static void AltTime_draw(GContext* ctx, int yPosition);
 
-SidebarWidget beatsWidget;
-int Beats_getHeight();
-void Beats_draw(GContext* ctx, int yPosition);
+static SidebarWidget beatsWidget;
+static int Beats_getHeight(void);
+static void Beats_draw(GContext* ctx, int yPosition);
 
 #ifdef PBL_HEALTH
-  GDrawCommandImage* sleepImage;
-  GDrawCommandImage* stepsImage;
-  GDrawCommandImage* heartImage;
+static GDrawCommandImage* sleepImage;
+static GDrawCommandImage* stepsImage;
+static GDrawCommandImage* heartImage;
 
-  SidebarWidget healthWidget;
-  int Health_getHeight();
-  void Health_draw(GContext* ctx, int yPosition);
-  void Sleep_draw(GContext* ctx, int yPosition);
-  void Steps_draw(GContext* ctx, int yPosition);
+static SidebarWidget healthWidget;
+static int Health_getHeight(void);
+static void Health_draw(GContext* ctx, int yPosition);
+static void Sleep_draw(GContext* ctx, int yPosition);
+static void Steps_draw(GContext* ctx, int yPosition);
 
-  SidebarWidget heartRateWidget;
-  int HeartRate_getHeight();
-  void HeartRate_draw(GContext* ctx, int yPosition);
+static SidebarWidget heartRateWidget;
+static int HeartRate_getHeight(void);
+static void HeartRate_draw(GContext* ctx, int yPosition);
 #endif
 
-void SidebarWidgets_init() {
+void SidebarWidgets_init(void) {
   // load fonts
   smSidebarFont = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
   mdSidebarFont = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
@@ -150,7 +150,7 @@ void SidebarWidgets_init() {
 
 }
 
-void SidebarWidgets_deinit() {
+void SidebarWidgets_deinit(void) {
   gdraw_command_image_destroy(dateImage);
   gdraw_command_image_destroy(disconnectImage);
   gdraw_command_image_destroy(batteryImage);
@@ -162,7 +162,7 @@ void SidebarWidgets_deinit() {
   #endif
 }
 
-void SidebarWidgets_updateFonts() {
+void SidebarWidgets_updateFonts(void) {
   if(globalSettings.useLargeFonts) {
     currentSidebarFont = lgSidebarFont;
     batteryFont = lgSidebarFont;
@@ -174,7 +174,7 @@ void SidebarWidgets_updateFonts() {
 
 // c can't do true modulus on negative numbers, apparently
 // from http://stackoverflow.com/questions/11720656/modulo-operation-with-negative-numbers
-int mod(int a, int b) {
+static int mod(int a, int b) {
     int r = a % b;
     return r < 0 ? r + b : r;
 }
@@ -275,17 +275,17 @@ SidebarWidget getSidebarWidgetByType(SidebarWidgetType type) {
 }
 
 /********** functions for the empty widget **********/
-int EmptyWidget_getHeight() {
+static int EmptyWidget_getHeight(void) {
   return 0;
 }
 
-void EmptyWidget_draw(GContext* ctx, int yPosition) {
+static void EmptyWidget_draw(GContext* ctx, int yPosition) {
   return;
 }
 
 /********** functions for the battery meter widget **********/
 
-int BatteryMeter_getHeight() {
+static int BatteryMeter_getHeight(void) {
   BatteryChargeState chargeState = battery_state_service_peek();
 
   if(chargeState.is_charging || !globalSettings.showBatteryPct) {
@@ -295,7 +295,7 @@ int BatteryMeter_getHeight() {
   }
 }
 
-void BatteryMeter_draw(GContext* ctx, int yPosition) {
+static void BatteryMeter_draw(GContext* ctx, int yPosition) {
 
   BatteryChargeState chargeState = battery_state_service_peek();
   uint8_t battery_percent = (chargeState.charge_percent > 0) ? chargeState.charge_percent : 5;
@@ -363,7 +363,7 @@ void BatteryMeter_draw(GContext* ctx, int yPosition) {
 
 /********** current date widget **********/
 
-int DateWidget_getHeight() {
+static int DateWidget_getHeight(void) {
   if(globalSettings.useLargeFonts) {
     return (SidebarWidgets_useCompactMode) ? 42 : 62;
   } else  {
@@ -371,7 +371,7 @@ int DateWidget_getHeight() {
   }
 }
 
-void DateWidget_draw(GContext* ctx, int yPosition) {
+static void DateWidget_draw(GContext* ctx, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   // compensate for extra space that appears on the top of the date widget
@@ -437,7 +437,7 @@ void DateWidget_draw(GContext* ctx, int yPosition) {
 
 /********** current weather widget **********/
 
-int CurrentWeather_getHeight() {
+static int CurrentWeather_getHeight(void) {
   if(globalSettings.useLargeFonts) {
     return 44;
   } else {
@@ -445,7 +445,7 @@ int CurrentWeather_getHeight() {
   }
 }
 
-void CurrentWeather_draw(GContext* ctx, int yPosition) {
+static void CurrentWeather_draw(GContext* ctx, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   if (Weather_currentWeatherIcon) {
@@ -500,11 +500,11 @@ void CurrentWeather_draw(GContext* ctx, int yPosition) {
 
 /***** Bluetooth Disconnection Widget *****/
 
-int BTDisconnect_getHeight() {
+static int BTDisconnect_getHeight(void) {
   return 22;
 }
 
-void BTDisconnect_draw(GContext* ctx, int yPosition) {
+static void BTDisconnect_draw(GContext* ctx, int yPosition) {
   if(disconnectImage) {
     gdraw_command_image_recolor(disconnectImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
 
@@ -515,11 +515,11 @@ void BTDisconnect_draw(GContext* ctx, int yPosition) {
 
 /***** Week Number Widget *****/
 
-int WeekNumber_getHeight() {
+static int WeekNumber_getHeight(void) {
   return (globalSettings.useLargeFonts) ? 29 : 26;
 }
 
-void WeekNumber_draw(GContext* ctx, int yPosition) {
+static void WeekNumber_draw(GContext* ctx, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   // note that it draws "above" the y position to correct for
@@ -553,11 +553,11 @@ void WeekNumber_draw(GContext* ctx, int yPosition) {
 
 /***** Seconds Widget *****/
 
-int Seconds_getHeight() {
+static int Seconds_getHeight(void) {
   return 14;
 }
 
-void Seconds_draw(GContext* ctx, int yPosition) {
+static void Seconds_draw(GContext* ctx, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   graphics_draw_text(ctx,
@@ -571,7 +571,7 @@ void Seconds_draw(GContext* ctx, int yPosition) {
 
 /***** Weather Forecast Widget *****/
 
-int WeatherForecast_getHeight() {
+static int WeatherForecast_getHeight(void) {
   if(globalSettings.useLargeFonts) {
     return 63;
   } else {
@@ -579,7 +579,7 @@ int WeatherForecast_getHeight() {
   }
 }
 
-void WeatherForecast_draw(GContext* ctx, int yPosition) {
+static void WeatherForecast_draw(GContext* ctx, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   if(Weather_forecastWeatherIcon) {
@@ -663,11 +663,11 @@ void WeatherForecast_draw(GContext* ctx, int yPosition) {
 
 /***** Alternate Time Zone Widget *****/
 
-int AltTime_getHeight() {
+static int AltTime_getHeight(void) {
   return (globalSettings.useLargeFonts) ? 29 : 26;
 }
 
-void AltTime_draw(GContext* ctx, int yPosition) {
+static void AltTime_draw(GContext* ctx, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   graphics_draw_text(ctx,
@@ -692,7 +692,7 @@ void AltTime_draw(GContext* ctx, int yPosition) {
 /***** Health Widget *****/
 
 #ifdef PBL_HEALTH
-int Health_getHeight() {
+static int Health_getHeight(void) {
   if(Health_isUserSleeping()) {
     return 44;
   } else {
@@ -700,7 +700,7 @@ int Health_getHeight() {
   }
 }
 
-void Health_draw(GContext* ctx, int yPosition) {
+static void Health_draw(GContext* ctx, int yPosition) {
   // check if we're showing the sleep data or step data
   if(Health_isUserSleeping()) {
     Sleep_draw(ctx, yPosition);
@@ -709,7 +709,7 @@ void Health_draw(GContext* ctx, int yPosition) {
   }
 }
 
-void Sleep_draw(GContext* ctx, int yPosition) {
+static void Sleep_draw(GContext* ctx, int yPosition) {
   if(sleepImage) {
     gdraw_command_image_recolor(sleepImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
     gdraw_command_image_draw(ctx, sleepImage, GPoint(3 + SidebarWidgets_xOffset, yPosition - 7));
@@ -750,7 +750,7 @@ void Sleep_draw(GContext* ctx, int yPosition) {
 
 }
 
-void Steps_draw(GContext* ctx, int yPosition) {
+static void Steps_draw(GContext* ctx, int yPosition) {
 
   if(stepsImage) {
     gdraw_command_image_recolor(stepsImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
@@ -819,7 +819,7 @@ void Steps_draw(GContext* ctx, int yPosition) {
                      NULL);
 }
 
-int HeartRate_getHeight() {
+static int HeartRate_getHeight(void) {
   if(globalSettings.useLargeFonts) {
     return 40;
   } else {
@@ -827,7 +827,7 @@ int HeartRate_getHeight() {
   }
 }
 
-void HeartRate_draw(GContext* ctx, int yPosition) {
+static void HeartRate_draw(GContext* ctx, int yPosition) {
   if(heartImage) {
     gdraw_command_image_recolor(heartImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
     gdraw_command_image_draw(ctx, heartImage, GPoint(3 + SidebarWidgets_xOffset, yPosition));
@@ -854,11 +854,11 @@ void HeartRate_draw(GContext* ctx, int yPosition) {
 
 /***** Beats (Swatch Internet Time) widget *****/
 
-int Beats_getHeight() {
+static int Beats_getHeight(void) {
   return (globalSettings.useLargeFonts) ? 29 : 26;
 }
 
-void Beats_draw(GContext* ctx, int yPosition) {
+static void Beats_draw(GContext* ctx, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   graphics_draw_text(ctx,

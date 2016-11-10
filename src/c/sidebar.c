@@ -12,94 +12,14 @@
 
 #define SIDEBAR_WIDTH 30
 
-GRect screen_rect;
-
-// "private" functions
-// layer update callbacks
-void updateRectSidebar(Layer *l, GContext* ctx);
+static GRect screen_rect;
+static Layer* sidebarLayer;
 
 #ifdef PBL_ROUND
-  void updateRoundSidebarLeft(Layer *l, GContext* ctx);
-  void updateRoundSidebarRight(Layer *l, GContext* ctx);
-
-  // shared drawing stuff between all layers
-  void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType widgetType, int widgetXOffset);
+  static Layer* sidebarLayer2;
 #endif
 
-Layer* sidebarLayer;
-
-#ifdef PBL_ROUND
-  Layer* sidebarLayer2;
-#endif
-
-void Sidebar_init(Window* window) {
-  // init the sidebar layer
-  screen_rect = layer_get_bounds(window_get_root_layer(window));
-  GRect bounds;
-
-  #ifdef PBL_ROUND
-    GRect bounds2;
-    bounds = GRect(0, 0, 40, screen_rect.size.h);
-    bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
-  #else
-    if(!globalSettings.sidebarOnLeft) {
-      bounds = GRect(screen_rect.size.w - SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, screen_rect.size.h);
-    } else {
-      bounds = GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h);
-    }
-  #endif
-
-  // init the widgets
-  SidebarWidgets_init();
-
-  sidebarLayer = layer_create(bounds);
-  layer_add_child(window_get_root_layer(window), sidebarLayer);
-
-  #ifdef PBL_ROUND
-    layer_set_update_proc(sidebarLayer, updateRoundSidebarLeft);
-  #else
-    layer_set_update_proc(sidebarLayer, updateRectSidebar);
-  #endif
-
-  #ifdef PBL_ROUND
-    sidebarLayer2 = layer_create(bounds2);
-    layer_add_child(window_get_root_layer(window), sidebarLayer2);
-    layer_set_update_proc(sidebarLayer2, updateRoundSidebarRight);
-  #endif
-}
-
-void Sidebar_deinit() {
-  layer_destroy(sidebarLayer);
-
-  SidebarWidgets_deinit();
-}
-
-void Sidebar_redraw() {
-  #ifndef PBL_ROUND
-    // reposition the sidebar if needed
-    if(!globalSettings.sidebarOnLeft) {
-      layer_set_frame(sidebarLayer, GRect(screen_rect.size.w - SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, screen_rect.size.h));
-    } else {
-      layer_set_frame(sidebarLayer, GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h));
-    }
-  #endif
-
-  // redraw the layer
-  layer_mark_dirty(sidebarLayer);
-
-  #ifdef PBL_ROUND
-    layer_mark_dirty(sidebarLayer2);
-  #endif
-}
-
-void Sidebar_updateTime(struct tm* timeInfo) {
-  SidebarWidgets_updateTime(timeInfo);
-
-  // redraw the sidebar in case it changed in any way
-  Sidebar_redraw();
-}
-
-bool isAutoBatteryShown() {
+static bool isAutoBatteryShown(void) {
   if(!globalSettings.disableAutobattery) {
     BatteryChargeState chargeState = battery_state_service_peek();
 
@@ -113,12 +33,10 @@ bool isAutoBatteryShown() {
   return false;
 }
 
-
 #ifdef PBL_ROUND
-
 // returns the best candidate widget for replacement by the auto battery
 // or the disconnection icon
-int getReplacableWidget() {
+static int getReplacableWidget(void) {
   if(globalSettings.widgets[0] == EMPTY) {
     return 0;
   } else if(globalSettings.widgets[2] == EMPTY) {
@@ -134,12 +52,10 @@ int getReplacableWidget() {
   // if we don't have any of those things, just replace the left widget
   return 0;
 }
-
 #else
-
 // returns the best candidate widget for replacement by the auto battery
 // or the disconnection icon
-int getReplacableWidget() {
+static int getReplacableWidget(void) {
   // if any widgets are empty, it's an obvious choice
   for(int i = 0; i < 3; i++) {
     if(globalSettings.widgets[i] == EMPTY) {
@@ -158,12 +74,30 @@ int getReplacableWidget() {
   // if we don't have any of those things, just replace the middle widget
   return 1;
 }
-
 #endif
 
 #ifdef PBL_ROUND
+static void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType widgetType, int widgetXOffset) {
+  SidebarWidgets_updateFonts();
 
-void updateRoundSidebarRight(Layer *l, GContext* ctx) {
+  graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
+
+  graphics_fill_radial(ctx,
+                       bgBounds,
+                       GOvalScaleModeFillCircle,
+                       100,
+                       DEG_TO_TRIGANGLE(0),
+                       TRIG_MAX_ANGLE);
+
+  SidebarWidgets_xOffset = widgetXOffset;
+  SidebarWidget widget = getSidebarWidgetByType(widgetType);
+
+  // calculate center position of the widget
+  int widgetPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
+  widget.draw(ctx, widgetPosition);
+}
+
+static void updateRoundSidebarRight(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
   GRect bgBounds = GRect(bounds.origin.x, bounds.size.h / -2, bounds.size.h * 2, bounds.size.h * 2);
 
@@ -183,7 +117,7 @@ void updateRoundSidebarRight(Layer *l, GContext* ctx) {
   drawRoundSidebar(ctx, bgBounds, displayWidget, 3);
 }
 
-void updateRoundSidebarLeft(Layer *l, GContext* ctx) {
+static void updateRoundSidebarLeft(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
   GRect bgBounds = GRect(bounds.origin.x - bounds.size.h * 2 + bounds.size.w, bounds.size.h / -2, bounds.size.h * 2, bounds.size.h * 2);
 
@@ -201,29 +135,8 @@ void updateRoundSidebarLeft(Layer *l, GContext* ctx) {
 
   drawRoundSidebar(ctx, bgBounds, displayWidget, 7);
 }
-
-void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType widgetType, int widgetXOffset) {
-  SidebarWidgets_updateFonts();
-
-  graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
-
-  graphics_fill_radial(ctx,
-                       bgBounds,
-                       GOvalScaleModeFillCircle,
-                       100,
-                       DEG_TO_TRIGANGLE(0),
-                       TRIG_MAX_ANGLE);
-
-  SidebarWidgets_xOffset = widgetXOffset;
-  SidebarWidget widget = getSidebarWidgetByType(widgetType);
-
-  // calculate center position of the widget
-  int widgetPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
-  widget.draw(ctx, widgetPosition);
-}
-#endif
-
-void updateRectSidebar(Layer *l, GContext* ctx) {
+#else
+static void updateRectSidebar(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_unobstructed_bounds(l);
 
   SidebarWidgets_updateFonts();
@@ -289,4 +202,72 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
     displayWidgets[1].draw(ctx, middleWidgetPos);
   }
   displayWidgets[2].draw(ctx, lowerWidgetPos);
+}
+#endif
+
+void Sidebar_init(Window* window) {
+  // init the sidebar layer
+  screen_rect = layer_get_bounds(window_get_root_layer(window));
+  GRect bounds;
+
+  #ifdef PBL_ROUND
+    GRect bounds2;
+    bounds = GRect(0, 0, 40, screen_rect.size.h);
+    bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
+  #else
+    if(!globalSettings.sidebarOnLeft) {
+      bounds = GRect(screen_rect.size.w - SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, screen_rect.size.h);
+    } else {
+      bounds = GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h);
+    }
+  #endif
+
+  // init the widgets
+  SidebarWidgets_init();
+
+  sidebarLayer = layer_create(bounds);
+  layer_add_child(window_get_root_layer(window), sidebarLayer);
+
+  #ifdef PBL_ROUND
+    layer_set_update_proc(sidebarLayer, updateRoundSidebarLeft);
+  #else
+    layer_set_update_proc(sidebarLayer, updateRectSidebar);
+  #endif
+
+  #ifdef PBL_ROUND
+    sidebarLayer2 = layer_create(bounds2);
+    layer_add_child(window_get_root_layer(window), sidebarLayer2);
+    layer_set_update_proc(sidebarLayer2, updateRoundSidebarRight);
+  #endif
+}
+
+void Sidebar_deinit(void) {
+  layer_destroy(sidebarLayer);
+
+  SidebarWidgets_deinit();
+}
+
+void Sidebar_redraw(void) {
+  #ifndef PBL_ROUND
+    // reposition the sidebar if needed
+    if(!globalSettings.sidebarOnLeft) {
+      layer_set_frame(sidebarLayer, GRect(screen_rect.size.w - SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, screen_rect.size.h));
+    } else {
+      layer_set_frame(sidebarLayer, GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h));
+    }
+  #endif
+
+  // redraw the layer
+  layer_mark_dirty(sidebarLayer);
+
+  #ifdef PBL_ROUND
+    layer_mark_dirty(sidebarLayer2);
+  #endif
+}
+
+void Sidebar_updateTime(struct tm* timeInfo) {
+  SidebarWidgets_updateTime(timeInfo);
+
+  // redraw the sidebar in case it changed in any way
+  Sidebar_redraw();
 }

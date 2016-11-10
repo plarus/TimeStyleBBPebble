@@ -7,7 +7,7 @@ WeatherForecastInfo Weather_weatherForecast;
 GDrawCommandImage* Weather_currentWeatherIcon;
 GDrawCommandImage* Weather_forecastWeatherIcon;
 
-uint32_t getConditionIcon(WeatherCondition conditionCode) {
+static uint32_t getConditionIcon(WeatherCondition conditionCode) {
   uint32_t iconToLoad;
 
   switch(conditionCode) {
@@ -72,7 +72,7 @@ void Weather_setForecastCondition(int conditionCode) {
   Weather_weatherForecast.forecastIconResourceID = forecastWeatherIcon;
 }
 
-void Weather_init() {
+void Weather_init(void) {
   // if possible, load weather data from persistent storage
   if (persist_exists(WEATHERINFO_PERSIST_KEY)) {
     // printf("current key exists!");
@@ -109,13 +109,13 @@ void Weather_init() {
   }
 }
 
-void Weather_saveData() {
+void Weather_saveData(void) {
   // printf("saving data!");
   persist_write_data(WEATHERINFO_PERSIST_KEY, &Weather_weatherInfo, sizeof(WeatherInfo));
   persist_write_data(WEATHERFORECAST_PERSIST_KEY, &Weather_weatherForecast, sizeof(WeatherForecastInfo));
 }
 
-void Weather_deinit() {
+void Weather_deinit(void) {
   // save weather data to persistent storage
   Weather_saveData();
 

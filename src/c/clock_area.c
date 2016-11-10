@@ -7,23 +7,23 @@
 
 #define ROUND_VERTICAL_PADDING 15
 
-char time_hours[3];
-char time_minutes[3];
+static char time_hours[3];
+static char time_minutes[3];
 
-Layer* clock_area_layer;
-FFont* hours_font;
-FFont* minutes_font;
+static Layer* clock_area_layer;
+static FFont* hours_font;
+static FFont* minutes_font;
 
 // just allocate all the fonts at startup because i don't feel like
 // dealing with allocating and deallocating things
-FFont* avenir;
-FFont* avenir_bold;
-FFont* leco;
+static FFont* avenir;
+static FFont* avenir_bold;
+static FFont* leco;
 
-GRect screen_rect;
+static GRect screen_rect;
 
 // "private" functions
-void update_fonts() {
+static void update_fonts(void) {
   switch(globalSettings.clockFontId) {
     case FONT_SETTING_DEFAULT:
         hours_font = avenir;
@@ -48,7 +48,7 @@ void update_fonts() {
   }
 }
 
-void update_clock_area_layer(Layer *l, GContext* ctx) {
+static void update_clock_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
   GRect bounds = layer_get_unobstructed_bounds(l);
 
@@ -147,7 +147,7 @@ void ClockArea_init(Window* window) {
   update_fonts();
 }
 
-void ClockArea_deinit() {
+void ClockArea_deinit(void) {
   layer_destroy(clock_area_layer);
 
   ffont_destroy(avenir);
@@ -155,7 +155,7 @@ void ClockArea_deinit() {
   ffont_destroy(leco);
 }
 
-void ClockArea_redraw() {
+void ClockArea_redraw(void) {
   // check if the fonts need to be switched
   update_fonts();
 
