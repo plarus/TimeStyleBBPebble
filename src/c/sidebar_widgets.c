@@ -159,6 +159,7 @@ void SidebarWidgets_deinit(void) {
   #ifdef PBL_HEALTH
     gdraw_command_image_destroy(stepsImage);
     gdraw_command_image_destroy(sleepImage);
+    gdraw_command_image_destroy(heartImage);
   #endif
 }
 

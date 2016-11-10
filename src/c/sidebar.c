@@ -243,6 +243,9 @@ void Sidebar_init(Window* window) {
 
 void Sidebar_deinit(void) {
   layer_destroy(sidebarLayer);
+#ifdef PBL_IF_ROUND
+  layer_destroy(sidebarLayer2);
+#endif
 
   SidebarWidgets_deinit();
 }
