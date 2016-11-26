@@ -56,21 +56,6 @@
                     "type": "bitmap"
                 },
                 {
-                    "file": "data/LECO1976-Regular.ffont",
-                    "name": "LECO_REGULAR_FFONT",
-                    "type": "raw"
-                },
-                {
-                    "file": "data/AvenirNextRegular.ffont",
-                    "name": "AVENIR_REGULAR_FFONT",
-                    "type": "raw"
-                },
-                {
-                    "file": "data/AvenirNextDemiBold.ffont",
-                    "name": "AVENIR_BOLD_FFONT",
-                    "type": "raw"
-                },
-                {
                     "file": "data/WEATHER_GENERIC.pdc",
                     "name": "WEATHER_GENERIC",
                     "type": "raw"
@@ -103,6 +88,11 @@
                 {
                     "file": "data/LIGHT_RAIN.pdc",
                     "name": "WEATHER_LIGHT_RAIN",
+                    "type": "raw"
+                },
+                {
+                    "file": "data/LECO1976-Regular.ffont",
+                    "name": "LECO_REGULAR_FFONT",
                     "type": "raw"
                 },
                 {
@@ -164,6 +154,16 @@
                     "file": "data/BATTERY_BG.pdc",
                     "name": "BATTERY_BG",
                     "type": "raw"
+                },
+                {
+                    "file": "data/AvenirNextRegular.ffont",
+                    "name": "AVENIR_REGULAR_FFONT",
+                    "type": "raw"
+                },
+                {
+                    "file": "data/AvenirNextDemiBold.ffont",
+                    "name": "AVENIR_BOLD_FFONT",
+                    "type": "raw"
                 }
             ]
         },
@@ -171,7 +171,7 @@
         "targetPlatforms": [
             "diorite"
         ],
-        "uuid": "15f153de-5273-49e1-9b78-9bb8504913b1",
+        "uuid": "bc612aa2-61f0-4abf-ad2d-0846efc4afa3",
         "watchapp": {
             "watchface": true
         }
