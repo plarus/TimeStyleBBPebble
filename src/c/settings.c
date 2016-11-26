@@ -120,6 +120,8 @@ void Settings_loadFromStorage() {
   }
 
   globalSettings.activateSidebar = false; // TODO
+  globalSettings.sidebarOnBottom = true; // TODO
+
   Settings_updateDynamicSettings();
 }
 

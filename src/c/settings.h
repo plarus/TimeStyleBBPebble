@@ -26,6 +26,7 @@ typedef struct {
   // sidebar settings
   SidebarWidgetType widgets[3];
   bool sidebarOnLeft;
+  bool sidebarOnBottom;
   bool useLargeFonts;
   bool activateSidebar;
   
