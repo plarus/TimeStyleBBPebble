@@ -119,6 +119,7 @@ void Settings_loadFromStorage() {
     }
   }
 
+  globalSettings.activateSidebar = false; // TODO
   Settings_updateDynamicSettings();
 }
 

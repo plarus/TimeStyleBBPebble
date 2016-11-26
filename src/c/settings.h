@@ -27,7 +27,8 @@ typedef struct {
   SidebarWidgetType widgets[3];
   bool sidebarOnLeft;
   bool useLargeFonts;
-
+  bool activateSidebar;
+  
   // weather widget settings
   bool useMetric;
 

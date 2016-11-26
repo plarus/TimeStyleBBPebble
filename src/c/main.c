@@ -58,7 +58,9 @@ void redrawScreen() {
   update_clock();
 
   // update the sidebar
-  Sidebar_redraw();
+  if(globalSettings.activateSidebar) {
+    Sidebar_redraw();
+  }
 
   ClockArea_redraw();
 }
@@ -67,7 +69,10 @@ static void main_window_load(Window *window) {
   window_set_background_color(window, globalSettings.timeBgColor);
 
   // create the sidebar
-  Sidebar_init(window);
+  if(globalSettings.activateSidebar) {
+    Sidebar_init(window);
+  }
+
 
   ClockArea_init(window);
 
@@ -126,12 +131,16 @@ void bluetoothStateChanged(bool newConnectionState) {
 
   isPhoneConnected = newConnectionState;
 
-  Sidebar_redraw();
+  if(globalSettings.activateSidebar) {
+    Sidebar_redraw();
+  }
 }
 
 // force the sidebar to redraw any time the battery state changes
 void batteryStateChanged(BatteryChargeState charge_state) {
-  Sidebar_redraw();
+  if(globalSettings.activateSidebar) {
+    Sidebar_redraw();
+  }
 }
 
 // fixes for disappearing elements after notifications

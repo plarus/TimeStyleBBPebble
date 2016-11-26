@@ -1,4 +1,4 @@
-#include <pebble.h>
+﻿#include <pebble.h>
 #include <pebble-fctx/fctx.h>
 #include <pebble-fctx/fpath.h>
 #include <pebble-fctx/ffont.h>
@@ -100,7 +100,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
     // for rectangular watches, adjust X position based on sidebar position
     if(globalSettings.sidebarOnLeft) {
       h_adjust += 15;
-    } else {
+    } else if(globalSettings.activateSidebar) {
       h_adjust -= 16;
     }
   #endif
