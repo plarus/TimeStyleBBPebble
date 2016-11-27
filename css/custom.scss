@@ -35,6 +35,17 @@
     border-right: 0 none;
     border-left: 10px solid #FFFFFF;
   }
+
+  &.sidebar_bottom {
+    border-right: 0 none;
+    border-left: 0 none;
+    border-bottom: 20px solid #FFFFFF;
+  }
+
+  &.sidebar_none {
+    border-right: 0 none;
+    border-left: 0 none;
+  }
 }
 
 .example_img {
