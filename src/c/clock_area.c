@@ -104,13 +104,13 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
     }
   #else
     // for rectangular watches, adjust X position based on sidebar position
-    if(globalSettings.sidebarOnLeft) {
+    if(globalSettings.sidebarLocation == RIGHT) {
+        h_adjust -= 16;
+    } else if(globalSettings.sidebarLocation == LEFT) {
       h_adjust += 15;
-    } else if(globalSettings.sidebarOnBottom) {
+    } else if(globalSettings.sidebarLocation == BOTTOM) {
       h_adjust -= 16;
       font_size = 3 * bounds.size.h / 9;
-    } else if(globalSettings.activateSidebar) {
-      h_adjust -= 16;
     }
   #endif
 
@@ -119,7 +119,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
   fctx_set_text_em_height(&fctx, hours_font, font_size);
   fctx_set_text_em_height(&fctx, minutes_font, font_size);
 
-  if(globalSettings.sidebarOnBottom) {
+  if(globalSettings.sidebarLocation == BOTTOM) {
     // draw time
     time_pos.x = INT_TO_FIXED(bounds.size.w / 2);
     time_pos.y = INT_TO_FIXED(2 * (v_padding + v_adjust));
@@ -204,7 +204,7 @@ void ClockArea_update_time(struct tm* time_info) {
   strftime(time_minutes, sizeof(time_minutes), "%M", time_info);
 
   // full time
-  if(globalSettings.sidebarOnBottom) {
+  if(globalSettings.sidebarLocation == BOTTOM) {
     full_time[0] = time_hours[0];
     full_time[1] = time_hours[1];
     full_time[2] = ':';

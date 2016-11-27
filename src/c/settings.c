@@ -39,8 +39,7 @@ void Settings_loadFromStorage() {
   globalSettings.widgets[3] = BATTERY_METER;
 
   // set default bar display
-  globalSettings.activateSidebar = true;
-  globalSettings.sidebarOnBottom = true;
+  globalSettings.sidebarLocation = BOTTOM; //TODO: Set to RIGHT
 
   // set default disconnect icon activation
   globalSettings.activateDisconnectIcon = false; //TODO: Set to true
@@ -71,7 +70,9 @@ void Settings_loadFromStorage() {
     globalSettings.widgets[0] = storedSettings.widgets[0];
     globalSettings.widgets[1] = storedSettings.widgets[1];
     globalSettings.widgets[2] = storedSettings.widgets[2];
-    globalSettings.sidebarOnLeft = storedSettings.sidebarOnLeft;
+    if(storedSettings.sidebarOnLeft){
+      globalSettings.sidebarLocation = LEFT;
+    }
     globalSettings.useLargeFonts = storedSettings.useLargeFonts;
     globalSettings.useMetric = storedSettings.useMetric;
     globalSettings.showBatteryPct = storedSettings.showBatteryPct;
@@ -108,7 +109,9 @@ void Settings_loadFromStorage() {
     // all settings except colors automatically return "0" or "false" if
     // they haven't been set yet, so we don't need to check if they exist
     globalSettings.useMetric              = persist_read_bool(SETTING_USE_METRIC_KEY);
-    globalSettings.sidebarOnLeft          = persist_read_bool(SETTING_SIDEBAR_LEFT_KEY);
+    if(persist_read_bool(SETTING_SIDEBAR_LEFT_KEY)){
+      globalSettings.sidebarLocation      = LEFT;
+    }
     globalSettings.btVibe                 = persist_read_bool(SETTING_BT_VIBE_KEY);
     globalSettings.languageId             = persist_read_int(SETTING_LANGUAGE_ID_KEY);
     globalSettings.showLeadingZero        = persist_read_int(SETTING_LEADING_ZERO_KEY);
@@ -150,7 +153,7 @@ void Settings_saveToStorage() {
   storedSettings.widgets[0] = globalSettings.widgets[0];
   storedSettings.widgets[1] = globalSettings.widgets[1];
   storedSettings.widgets[2] = globalSettings.widgets[2];
-  storedSettings.sidebarOnLeft = globalSettings.sidebarOnLeft;
+  storedSettings.sidebarOnLeft = (globalSettings.sidebarLocation == LEFT);
   storedSettings.useLargeFonts = globalSettings.useLargeFonts;
   storedSettings.useMetric = globalSettings.useMetric;
   storedSettings.showBatteryPct = globalSettings.showBatteryPct;

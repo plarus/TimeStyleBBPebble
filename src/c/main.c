@@ -58,7 +58,7 @@ void redrawScreen() {
   update_clock();
 
   // update the sidebar
-  if(globalSettings.activateSidebar) {
+  if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
 
@@ -69,7 +69,7 @@ static void main_window_load(Window *window) {
   window_set_background_color(window, globalSettings.timeBgColor);
 
   // create the sidebar
-  if(globalSettings.activateSidebar) {
+  if(globalSettings.sidebarLocation != NONE) {
     Sidebar_init(window);
   }
 
@@ -131,14 +131,14 @@ void bluetoothStateChanged(bool newConnectionState) {
 
   isPhoneConnected = newConnectionState;
 
-  if(globalSettings.activateSidebar) {
+  if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
 }
 
 // force the sidebar to redraw any time the battery state changes
 void batteryStateChanged(BatteryChargeState charge_state) {
-  if(globalSettings.activateSidebar) {
+  if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
 }

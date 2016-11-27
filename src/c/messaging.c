@@ -107,7 +107,11 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   }
 
   if(sidebarPos_tuple != NULL) {
-    globalSettings.sidebarOnLeft = (bool)sidebarPos_tuple->value->int8;
+    if((bool)sidebarPos_tuple->value->int8) {
+      globalSettings.sidebarLocation = LEFT;
+    } else {
+      globalSettings.sidebarLocation = BOTTOM; //TODO TMP
+    }
   }
 
   if(useMetric_tuple != NULL) {

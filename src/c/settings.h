@@ -7,6 +7,14 @@
 // settings "version" for app version 4.0
 #define CURRENT_SETTINGS_VERSION 6
 
+typedef enum {
+  NONE     = 0,
+  LEFT     = 1,
+  RIGHT    = 2,
+  BOTTOM   = 3
+} BarLocationType;
+
+
 typedef struct {
   // color settings
   GColor timeColor;
@@ -25,10 +33,8 @@ typedef struct {
 
   // sidebar settings
   SidebarWidgetType widgets[4];
-  bool sidebarOnLeft;
-  bool sidebarOnBottom;
+  BarLocationType sidebarLocation;
   bool useLargeFonts;
-  bool activateSidebar;
   bool activateDisconnectIcon;
   
   // weather widget settings

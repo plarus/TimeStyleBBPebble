@@ -45,12 +45,12 @@ void Sidebar_init(Window* window) {
     bounds = GRect(0, 0, 40, screen_rect.size.h);
     bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
   #else
-    if(globalSettings.sidebarOnLeft) {
-      bounds = GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h);
-    } else if(globalSettings.sidebarOnBottom) {
-      bounds = GRect(0, screen_rect.size.h - SIDEBAR_HEIGHT, screen_rect.size.w, SIDEBAR_HEIGHT);
-    } else {
+    if(globalSettings.sidebarLocation == RIGHT) {
       bounds = GRect(screen_rect.size.w - SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, screen_rect.size.h);
+    } else if(globalSettings.sidebarLocation == LEFT) {
+      bounds = GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h);
+    } else if(globalSettings.sidebarLocation == BOTTOM) {
+      bounds = GRect(0, screen_rect.size.h - SIDEBAR_HEIGHT, screen_rect.size.w, SIDEBAR_HEIGHT);
     }
   #endif
 
@@ -82,12 +82,12 @@ void Sidebar_deinit() {
 void Sidebar_redraw() {
   #ifndef PBL_ROUND
     // reposition the sidebar if needed
-    if(globalSettings.sidebarOnLeft) {
-      layer_set_frame(sidebarLayer, GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h));
-    } else if(globalSettings.sidebarOnBottom) {
-      layer_set_frame(sidebarLayer, GRect(0, screen_rect.size.h - SIDEBAR_HEIGHT, screen_rect.size.w, SIDEBAR_HEIGHT));
-    } else {
+    if(globalSettings.sidebarLocation == RIGHT) {
       layer_set_frame(sidebarLayer, GRect(screen_rect.size.w - SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, screen_rect.size.h));
+    } else if(globalSettings.sidebarLocation == LEFT) {
+      layer_set_frame(sidebarLayer, GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h));
+    } else if(globalSettings.sidebarLocation == BOTTOM) {
+      layer_set_frame(sidebarLayer, GRect(0, screen_rect.size.h - SIDEBAR_HEIGHT, screen_rect.size.w, SIDEBAR_HEIGHT));
     }
   #endif
 
@@ -103,7 +103,7 @@ void Sidebar_updateTime(struct tm* timeInfo) {
   SidebarWidgets_updateTime(timeInfo);
 
   // redraw the sidebar in case it changed in any way
-  if(globalSettings.activateSidebar) {
+  if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
 }
@@ -256,7 +256,7 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
   displayWidgets[0] = getSidebarWidgetByType(globalSettings.widgets[0]);
   displayWidgets[1] = getSidebarWidgetByType(globalSettings.widgets[1]);
   displayWidgets[2] = getSidebarWidgetByType(globalSettings.widgets[2]);
-  if(globalSettings.sidebarOnBottom) {
+  if(globalSettings.sidebarLocation == BOTTOM) {
     displayWidgets[3] = getSidebarWidgetByType(globalSettings.widgets[3]);
   }
 
@@ -272,7 +272,7 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
     }
   }
 
-  if(globalSettings.sidebarOnBottom) {
+  if(globalSettings.sidebarLocation == BOTTOM) {
     int h_padding = H_PADDING_DEFAULT;
 
     // calculate the three widget positions
