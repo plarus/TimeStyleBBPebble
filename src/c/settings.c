@@ -42,6 +42,9 @@ void Settings_loadFromStorage() {
   globalSettings.activateSidebar = true;
   globalSettings.sidebarOnBottom = true;
 
+  // set default disconnect icon activation
+  globalSettings.activateDisconnectIcon = false; //TODO: Set to true
+
   strncpy(globalSettings.altclockName, "ALT", sizeof(globalSettings.altclockName));
   globalSettings.decimalSeparator = '.';
 

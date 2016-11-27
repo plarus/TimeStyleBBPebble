@@ -29,6 +29,7 @@ typedef struct {
   bool sidebarOnBottom;
   bool useLargeFonts;
   bool activateSidebar;
+  bool activateDisconnectIcon;
   
   // weather widget settings
   bool useMetric;
