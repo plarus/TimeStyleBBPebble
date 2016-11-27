@@ -39,7 +39,7 @@ void Settings_loadFromStorage() {
   globalSettings.widgets[3] = BATTERY_METER;
 
   // set default bar display
-  globalSettings.sidebarLocation = BOTTOM; //TODO: Set to RIGHT
+  globalSettings.sidebarLocation = RIGHT;
 
   // set default disconnect icon activation
   globalSettings.activateDisconnectIcon = false; //TODO: Set to true
@@ -70,9 +70,6 @@ void Settings_loadFromStorage() {
     globalSettings.widgets[0] = storedSettings.widgets[0];
     globalSettings.widgets[1] = storedSettings.widgets[1];
     globalSettings.widgets[2] = storedSettings.widgets[2];
-    if(storedSettings.sidebarOnLeft){
-      globalSettings.sidebarLocation = LEFT;
-    }
     globalSettings.useLargeFonts = storedSettings.useLargeFonts;
     globalSettings.useMetric = storedSettings.useMetric;
     globalSettings.showBatteryPct = storedSettings.showBatteryPct;
@@ -82,6 +79,7 @@ void Settings_loadFromStorage() {
     globalSettings.decimalSeparator = storedSettings.decimalSeparator;
     memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
     globalSettings.altclockOffset = storedSettings.altclockOffset;
+    globalSettings.sidebarLocation = storedSettings.sidebarLocation;
   } else if( current_settings_version >= 0 ) {
     // old settings format
     if(persist_exists(SETTING_TIME_COLOR_KEY) && persist_exists(SETTING_TIME_BG_COLOR_KEY) &&
@@ -111,6 +109,8 @@ void Settings_loadFromStorage() {
     globalSettings.useMetric              = persist_read_bool(SETTING_USE_METRIC_KEY);
     if(persist_read_bool(SETTING_SIDEBAR_LEFT_KEY)){
       globalSettings.sidebarLocation      = LEFT;
+    }else{
+      globalSettings.sidebarLocation      = RIGHT;
     }
     globalSettings.btVibe                 = persist_read_bool(SETTING_BT_VIBE_KEY);
     globalSettings.languageId             = persist_read_int(SETTING_LANGUAGE_ID_KEY);
@@ -153,7 +153,6 @@ void Settings_saveToStorage() {
   storedSettings.widgets[0] = globalSettings.widgets[0];
   storedSettings.widgets[1] = globalSettings.widgets[1];
   storedSettings.widgets[2] = globalSettings.widgets[2];
-  storedSettings.sidebarOnLeft = (globalSettings.sidebarLocation == LEFT);
   storedSettings.useLargeFonts = globalSettings.useLargeFonts;
   storedSettings.useMetric = globalSettings.useMetric;
   storedSettings.showBatteryPct = globalSettings.showBatteryPct;
@@ -163,6 +162,7 @@ void Settings_saveToStorage() {
   storedSettings.decimalSeparator = globalSettings.decimalSeparator;
   memcpy(storedSettings.altclockName, globalSettings.altclockName, 8);
   storedSettings.altclockOffset = globalSettings.altclockOffset;
+  storedSettings.sidebarLocation = globalSettings.sidebarLocation;
 
   persist_write_data(SETTING_VERSION6_AND_HIGHER, &storedSettings, sizeof(StoredSettings));
   persist_write_int(SETTINGS_VERSION_KEY, CURRENT_SETTINGS_VERSION);

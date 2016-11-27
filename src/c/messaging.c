@@ -63,7 +63,7 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   Tuple *timeColor_tuple = dict_find(iterator, MESSAGE_KEY_SettingColorTime);
   Tuple *bgColor_tuple = dict_find(iterator, MESSAGE_KEY_SettingColorBG);
   Tuple *sidebarColor_tuple = dict_find(iterator, MESSAGE_KEY_SettingColorSidebar);
-  Tuple *sidebarPos_tuple = dict_find(iterator, MESSAGE_KEY_SettingSidebarOnLeft);
+  Tuple *sidebarPos_tuple = dict_find(iterator, MESSAGE_KEY_SettingSidebarPosition);
   Tuple *sidebarTextColor_tuple = dict_find(iterator, MESSAGE_KEY_SettingSidebarTextColor);
   Tuple *useMetric_tuple = dict_find(iterator, MESSAGE_KEY_SettingUseMetric);
   Tuple *btVibe_tuple = dict_find(iterator, MESSAGE_KEY_SettingBluetoothVibe);
@@ -107,11 +107,7 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   }
 
   if(sidebarPos_tuple != NULL) {
-    if((bool)sidebarPos_tuple->value->int8) {
-      globalSettings.sidebarLocation = LEFT;
-    } else {
-      globalSettings.sidebarLocation = BOTTOM; //TODO TMP
-    }
+    globalSettings.sidebarLocation = (BarLocationType)sidebarPos_tuple->value->int8;
   }
 
   if(useMetric_tuple != NULL) {

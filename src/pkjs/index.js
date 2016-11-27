@@ -149,10 +149,14 @@ Pebble.addEventListener('webviewclosed', function(e) {
     dict.SettingWidget2ID = configData.widget_2_id;
 
     if(configData.sidebar_position) {
-      if(configData.sidebar_position == 'right') {
-        dict.SettingSidebarOnLeft = 0;
+      if(configData.sidebar_position == 'none') {
+        dict.SettingSidebarPosition = 0;
+      } else if(configData.sidebar_position == 'left') {
+        dict.SettingSidebarPosition = 1;
+      } else if(configData.sidebar_position == 'right') {
+        dict.SettingSidebarPosition = 2;
       } else {
-        dict.SettingSidebarOnLeft = 1;
+        dict.SettingSidebarPosition = 3;
       }
     }
 

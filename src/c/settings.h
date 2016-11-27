@@ -83,7 +83,7 @@ typedef struct {
 
   // sidebar settings
   uint8_t widgets[3];
-  uint8_t sidebarOnLeft:1;
+  uint8_t spare:1;
   uint8_t useLargeFonts:1;
 
   // weather widget settings
@@ -101,6 +101,9 @@ typedef struct {
   // alt tz widget settings
   char altclockName[8];
   int8_t altclockOffset;
+
+  // sidebar location settings
+  BarLocationType sidebarLocation:2;
 } StoredSettings;
 
 extern Settings globalSettings;
