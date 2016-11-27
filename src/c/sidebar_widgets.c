@@ -34,43 +34,43 @@ char currentBeats[5];
 // the widgets
 SidebarWidget batteryMeterWidget;
 int BatteryMeter_getHeight();
-void BatteryMeter_draw(GContext* ctx, int yPosition);
+void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget emptyWidget;
 int EmptyWidget_getHeight();
-void EmptyWidget_draw(GContext* ctx, int yPosition);
+void EmptyWidget_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget dateWidget;
 int DateWidget_getHeight();
-void DateWidget_draw(GContext* ctx, int yPosition);
+void DateWidget_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget currentWeatherWidget;
 int CurrentWeather_getHeight();
-void CurrentWeather_draw(GContext* ctx, int yPosition);
+void CurrentWeather_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget weatherForecastWidget;
 int WeatherForecast_getHeight();
-void WeatherForecast_draw(GContext* ctx, int yPosition);
+void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget btDisconnectWidget;
 int BTDisconnect_getHeight();
-void BTDisconnect_draw(GContext* ctx, int yPosition);
+void BTDisconnect_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget weekNumberWidget;
 int WeekNumber_getHeight();
-void WeekNumber_draw(GContext* ctx, int yPosition);
+void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget secondsWidget;
 int Seconds_getHeight();
-void Seconds_draw(GContext* ctx, int yPosition);
+void Seconds_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget altTimeWidget;
 int AltTime_getHeight();
-void AltTime_draw(GContext* ctx, int yPosition);
+void AltTime_draw(GContext* ctx, int xPosition, int yPosition);
 
 SidebarWidget beatsWidget;
 int Beats_getHeight();
-void Beats_draw(GContext* ctx, int yPosition);
+void Beats_draw(GContext* ctx, int xPosition, int yPosition);
 
 #ifdef PBL_HEALTH
   GDrawCommandImage* sleepImage;
@@ -79,13 +79,13 @@ void Beats_draw(GContext* ctx, int yPosition);
 
   SidebarWidget healthWidget;
   int Health_getHeight();
-  void Health_draw(GContext* ctx, int yPosition);
-  void Sleep_draw(GContext* ctx, int yPosition);
-  void Steps_draw(GContext* ctx, int yPosition);
+  void Health_draw(GContext* ctx, int xPosition, int yPosition);
+  void Sleep_draw(GContext* ctx, int xPosition, int yPosition);
+  void Steps_draw(GContext* ctx, int xPosition, int yPosition);
 
   SidebarWidget heartRateWidget;
   int HeartRate_getHeight();
-  void HeartRate_draw(GContext* ctx, int yPosition);
+  void HeartRate_draw(GContext* ctx, int xPosition, int yPosition);
 #endif
 
 void SidebarWidgets_init() {
@@ -276,7 +276,7 @@ int EmptyWidget_getHeight() {
   return 0;
 }
 
-void EmptyWidget_draw(GContext* ctx, int yPosition) {
+void EmptyWidget_draw(GContext* ctx, int xPosition, int yPosition) {
   return;
 }
 
@@ -292,7 +292,7 @@ int BatteryMeter_getHeight() {
   }
 }
 
-void BatteryMeter_draw(GContext* ctx, int yPosition) {
+void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
 
   BatteryChargeState chargeState = battery_state_service_peek();
   uint8_t battery_percent = (chargeState.charge_percent > 0) ? chargeState.charge_percent : 5;
@@ -304,14 +304,14 @@ void BatteryMeter_draw(GContext* ctx, int yPosition) {
 
   if (batteryImage) {
     gdraw_command_image_recolor(batteryImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, batteryImage, GPoint(3 + SidebarWidgets_xOffset, batteryPositionY));
+    gdraw_command_image_draw(ctx, batteryImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, batteryPositionY));
   }
 
   if(chargeState.is_charging) {
     if(batteryChargeImage) {
       // the charge "bolt" icon uses inverted colors
       gdraw_command_image_recolor(batteryChargeImage, globalSettings.iconStrokeColor, globalSettings.iconFillColor);
-      gdraw_command_image_draw(ctx, batteryChargeImage, GPoint(3 + SidebarWidgets_xOffset, batteryPositionY));
+      gdraw_command_image_draw(ctx, batteryChargeImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, batteryPositionY));
     }
   } else {
 
@@ -325,7 +325,7 @@ void BatteryMeter_draw(GContext* ctx, int yPosition) {
       }
     #endif
 
-    graphics_fill_rect(ctx, GRect(6 + SidebarWidgets_xOffset, 8 + batteryPositionY, width, 8), 0, GCornerNone);
+    graphics_fill_rect(ctx, GRect(xPosition + 6 + SidebarWidgets_xOffset, 8 + batteryPositionY, width, 8), 0, GCornerNone);
   }
 
   // never show battery % while charging, because of this issue:
@@ -340,7 +340,7 @@ void BatteryMeter_draw(GContext* ctx, int yPosition) {
       graphics_draw_text(ctx,
                          batteryString,
                          batteryFont,
-                         GRect(-4 + SidebarWidgets_xOffset, 18 + batteryPositionY, 38, 20),
+                         GRect(xPosition - 4 + SidebarWidgets_xOffset, 18 + batteryPositionY, 38, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -350,7 +350,7 @@ void BatteryMeter_draw(GContext* ctx, int yPosition) {
       graphics_draw_text(ctx,
                          batteryString,
                          batteryFont,
-                         GRect(-4 + SidebarWidgets_xOffset, 14 + batteryPositionY, 38, 20),
+                         GRect(xPosition - 4 + SidebarWidgets_xOffset, 14 + batteryPositionY, 38, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -368,7 +368,7 @@ int DateWidget_getHeight() {
   }
 }
 
-void DateWidget_draw(GContext* ctx, int yPosition) {
+void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   // compensate for extra space that appears on the top of the date widget
@@ -378,7 +378,7 @@ void DateWidget_draw(GContext* ctx, int yPosition) {
   graphics_draw_text(ctx,
                      currentDayName,
                      currentSidebarFont,
-                     GRect(-5 + SidebarWidgets_xOffset, yPosition, 40, 20),
+                     GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition, 40, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
@@ -388,14 +388,14 @@ void DateWidget_draw(GContext* ctx, int yPosition) {
   if(!globalSettings.useLargeFonts) {
     if(dateImage) {
       gdraw_command_image_recolor(dateImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-      gdraw_command_image_draw(ctx, dateImage, GPoint(3 + SidebarWidgets_xOffset, yPosition + 23));
+      gdraw_command_image_draw(ctx, dateImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition + 23));
     }
   } else {
     graphics_context_set_fill_color(ctx, globalSettings.iconStrokeColor);
-    graphics_fill_rect(ctx, GRect(2 + SidebarWidgets_xOffset, yPosition + 30, 26, 22), 2, GCornersAll);
+    graphics_fill_rect(ctx, GRect(xPosition + 2 + SidebarWidgets_xOffset, yPosition + 30, 26, 22), 2, GCornersAll);
 
     graphics_context_set_fill_color(ctx, globalSettings.iconFillColor);
-    graphics_fill_rect(ctx, GRect(4 + SidebarWidgets_xOffset, yPosition + 32, 22, 18), 0, GCornersAll);
+    graphics_fill_rect(ctx, GRect(xPosition + 4 + SidebarWidgets_xOffset, yPosition + 32, 22, 18), 0, GCornersAll);
   }
 
   // next, draw the date number
@@ -407,7 +407,7 @@ void DateWidget_draw(GContext* ctx, int yPosition) {
   graphics_draw_text(ctx,
                      currentDayNum,
                      currentSidebarFont,
-                     GRect(-5 + SidebarWidgets_xOffset, yPosition + yOffset, 40, 20),
+                     GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + yOffset, 40, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
@@ -423,7 +423,7 @@ void DateWidget_draw(GContext* ctx, int yPosition) {
     graphics_draw_text(ctx,
                        currentMonth,
                        currentSidebarFont,
-                       GRect(-5 + SidebarWidgets_xOffset, yPosition + yOffset, 40, 20),
+                       GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + yOffset, 40, 20),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
@@ -442,12 +442,12 @@ int CurrentWeather_getHeight() {
   }
 }
 
-void CurrentWeather_draw(GContext* ctx, int yPosition) {
+void CurrentWeather_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   if (Weather_currentWeatherIcon) {
     gdraw_command_image_recolor(Weather_currentWeatherIcon, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, Weather_currentWeatherIcon, GPoint(3 + SidebarWidgets_xOffset, yPosition));
+    gdraw_command_image_draw(ctx, Weather_currentWeatherIcon, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition));
   }
 
   // draw weather data only if it has been set
@@ -468,7 +468,7 @@ void CurrentWeather_draw(GContext* ctx, int yPosition) {
       graphics_draw_text(ctx,
                          tempString,
                          currentSidebarFont,
-                         GRect(-5 + SidebarWidgets_xOffset, yPosition + 24, 38, 20),
+                         GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + 24, 38, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -478,7 +478,7 @@ void CurrentWeather_draw(GContext* ctx, int yPosition) {
       graphics_draw_text(ctx,
                          tempString,
                          currentSidebarFont,
-                         GRect(-5 + SidebarWidgets_xOffset, yPosition + 20, 35, 20),
+                         GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + 20, 35, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -488,7 +488,7 @@ void CurrentWeather_draw(GContext* ctx, int yPosition) {
     graphics_draw_text(ctx,
                        "...",
                        currentSidebarFont,
-                       GRect(-5 + SidebarWidgets_xOffset, yPosition, 38, 20),
+                       GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition, 38, 20),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
@@ -501,12 +501,12 @@ int BTDisconnect_getHeight() {
   return 22;
 }
 
-void BTDisconnect_draw(GContext* ctx, int yPosition) {
+void BTDisconnect_draw(GContext* ctx, int xPosition, int yPosition) {
   if(disconnectImage) {
     gdraw_command_image_recolor(disconnectImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
 
 
-    gdraw_command_image_draw(ctx, disconnectImage, GPoint(3 + SidebarWidgets_xOffset, yPosition));
+    gdraw_command_image_draw(ctx, disconnectImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition));
   }
 }
 
@@ -516,7 +516,7 @@ int WeekNumber_getHeight() {
   return (globalSettings.useLargeFonts) ? 29 : 26;
 }
 
-void WeekNumber_draw(GContext* ctx, int yPosition) {
+void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   // note that it draws "above" the y position to correct for
@@ -524,7 +524,7 @@ void WeekNumber_draw(GContext* ctx, int yPosition) {
   graphics_draw_text(ctx,
                      wordForWeek[globalSettings.languageId],
                      smSidebarFont,
-                     GRect(-4 + SidebarWidgets_xOffset, yPosition - 4, 38, 20),
+                     GRect(xPosition - 4 + SidebarWidgets_xOffset, yPosition - 4, 38, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
@@ -533,7 +533,7 @@ void WeekNumber_draw(GContext* ctx, int yPosition) {
     graphics_draw_text(ctx,
                        currentWeekNum,
                        mdSidebarFont,
-                       GRect(0 + SidebarWidgets_xOffset, yPosition + 9, 30, 20),
+                       GRect(xPosition + SidebarWidgets_xOffset, yPosition + 9, 30, 20),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
@@ -541,7 +541,7 @@ void WeekNumber_draw(GContext* ctx, int yPosition) {
     graphics_draw_text(ctx,
                        currentWeekNum,
                        lgSidebarFont,
-                       GRect(0 + SidebarWidgets_xOffset, yPosition + 6, 30, 20),
+                       GRect(xPosition + SidebarWidgets_xOffset, yPosition + 6, 30, 20),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
@@ -554,13 +554,13 @@ int Seconds_getHeight() {
   return 14;
 }
 
-void Seconds_draw(GContext* ctx, int yPosition) {
+void Seconds_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   graphics_draw_text(ctx,
                      currentSecondsNum,
                      lgSidebarFont,
-                     GRect(0 + SidebarWidgets_xOffset, yPosition - 10, 30, 20),
+                     GRect(xPosition + SidebarWidgets_xOffset, yPosition - 10, 30, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
@@ -576,13 +576,13 @@ int WeatherForecast_getHeight() {
   }
 }
 
-void WeatherForecast_draw(GContext* ctx, int yPosition) {
+void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   if(Weather_forecastWeatherIcon) {
     gdraw_command_image_recolor(Weather_forecastWeatherIcon, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
 
-    gdraw_command_image_draw(ctx, Weather_forecastWeatherIcon, GPoint(3 + SidebarWidgets_xOffset, yPosition));
+    gdraw_command_image_draw(ctx, Weather_forecastWeatherIcon, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition));
   }
 
   // draw weather data only if it has been set
@@ -607,7 +607,7 @@ void WeatherForecast_draw(GContext* ctx, int yPosition) {
       graphics_draw_text(ctx,
                          tempString,
                          currentSidebarFont,
-                         GRect(-5 + SidebarWidgets_xOffset, yPosition + 24, 38, 20),
+                         GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + 24, 38, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -619,7 +619,7 @@ void WeatherForecast_draw(GContext* ctx, int yPosition) {
       graphics_draw_text(ctx,
                          tempString,
                          currentSidebarFont,
-                         GRect(-5 + SidebarWidgets_xOffset, yPosition + 42, 38, 20),
+                         GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + 42, 38, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -629,7 +629,7 @@ void WeatherForecast_draw(GContext* ctx, int yPosition) {
       graphics_draw_text(ctx,
                          tempString,
                          currentSidebarFont,
-                         GRect(0 + SidebarWidgets_xOffset, yPosition + 20, 30, 20),
+                         GRect(xPosition + SidebarWidgets_xOffset, yPosition + 20, 30, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -641,7 +641,7 @@ void WeatherForecast_draw(GContext* ctx, int yPosition) {
       graphics_draw_text(ctx,
                          tempString,
                          currentSidebarFont,
-                         GRect(0 + SidebarWidgets_xOffset, yPosition + 39, 30, 20),
+                         GRect(xPosition + SidebarWidgets_xOffset, yPosition + 39, 30, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -651,7 +651,7 @@ void WeatherForecast_draw(GContext* ctx, int yPosition) {
     graphics_draw_text(ctx,
                        "...",
                        currentSidebarFont,
-                       GRect(-5 + SidebarWidgets_xOffset, yPosition, 38, 20),
+                       GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition, 38, 20),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
@@ -664,7 +664,7 @@ int AltTime_getHeight() {
   return (globalSettings.useLargeFonts) ? 29 : 26;
 }
 
-void AltTime_draw(GContext* ctx, int yPosition) {
+void AltTime_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   graphics_draw_text(ctx,
@@ -680,7 +680,7 @@ void AltTime_draw(GContext* ctx, int yPosition) {
   graphics_draw_text(ctx,
                      altClock,
                      currentSidebarFont,
-                     GRect(-1 + SidebarWidgets_xOffset, yPosition + yMod, 30, 20),
+                     GRect(xPosition - 1 + SidebarWidgets_xOffset, yPosition + yMod, 30, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
@@ -699,23 +699,23 @@ int Health_getHeight() {
   }
 }
 
-void Health_draw(GContext* ctx, int yPosition) {
+void Health_draw(GContext* ctx, int xPosition, int yPosition) {
   // check if we're showing the sleep data or step data
 
   // is the user asleep?
   bool sleep_mode = is_user_sleeping();
 
   if(sleep_mode) {
-    Sleep_draw(ctx, yPosition);
+    Sleep_draw(ctx, xPosition, yPosition);
   } else {
-    Steps_draw(ctx, yPosition);
+    Steps_draw(ctx, xPosition, yPosition);
   }
 }
 
-void Sleep_draw(GContext* ctx, int yPosition) {
+void Sleep_draw(GContext* ctx, int xPosition, int yPosition) {
   if(sleepImage) {
     gdraw_command_image_recolor(sleepImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, sleepImage, GPoint(3 + SidebarWidgets_xOffset, yPosition - 7));
+    gdraw_command_image_draw(ctx, sleepImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition - 7));
   }
 
   // get sleep in seconds
@@ -754,18 +754,18 @@ void Sleep_draw(GContext* ctx, int yPosition) {
   graphics_draw_text(ctx,
                      sleep_text,
                      smSidebarFont,
-                     GRect(-2 + SidebarWidgets_xOffset, yPosition + 30, 34, 20),
+                     GRect(xPosition - 2 + SidebarWidgets_xOffset, yPosition + 30, 34, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
 
 }
 
-void Steps_draw(GContext* ctx, int yPosition) {
+void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
 
   if(stepsImage) {
     gdraw_command_image_recolor(stepsImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, stepsImage, GPoint(3 + SidebarWidgets_xOffset, yPosition - 7));
+    gdraw_command_image_draw(ctx, stepsImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition - 7));
   }
 
   char steps_text[8];
@@ -833,7 +833,7 @@ void Steps_draw(GContext* ctx, int yPosition) {
   graphics_draw_text(ctx,
                      steps_text,
                      (use_small_font) ? smSidebarFont : mdSidebarFont,
-                     GRect(-2 + SidebarWidgets_xOffset, yPosition + 13, 35, 20),
+                     GRect(xPosition - 2 + SidebarWidgets_xOffset, yPosition + 13, 35, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
@@ -847,10 +847,10 @@ int HeartRate_getHeight() {
   }
 }
 
-void HeartRate_draw(GContext* ctx, int yPosition) {
+void HeartRate_draw(GContext* ctx, int xPosition, int yPosition) {
   if(heartImage) {
     gdraw_command_image_recolor(heartImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, heartImage, GPoint(3 + SidebarWidgets_xOffset, yPosition));
+    gdraw_command_image_draw(ctx, heartImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition));
   }
 
   int yOffset = globalSettings.useLargeFonts ? 17 : 21;
@@ -865,7 +865,7 @@ void HeartRate_draw(GContext* ctx, int yPosition) {
   graphics_draw_text(ctx,
                      heart_rate_text,
                      currentSidebarFont,
-                     GRect(-5 + SidebarWidgets_xOffset, yPosition + yOffset, 38, 20),
+                     GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + yOffset, 38, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
@@ -879,13 +879,13 @@ int Beats_getHeight() {
   return (globalSettings.useLargeFonts) ? 29 : 26;
 }
 
-void Beats_draw(GContext* ctx, int yPosition) {
+void Beats_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   graphics_draw_text(ctx,
                      "@",
                      smSidebarFont,
-                     GRect(SidebarWidgets_xOffset, yPosition - 5, 30, 20),
+                     GRect(xPosition + SidebarWidgets_xOffset, yPosition - 5, 30, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
@@ -895,7 +895,7 @@ void Beats_draw(GContext* ctx, int yPosition) {
   graphics_draw_text(ctx,
                      currentBeats,
                      currentSidebarFont,
-                     GRect(SidebarWidgets_xOffset, yPosition + yMod, 30, 20),
+                     GRect(xPosition + SidebarWidgets_xOffset, yPosition + yMod, 30, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);

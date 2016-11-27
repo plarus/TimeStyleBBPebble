@@ -131,7 +131,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
     graphics_draw_text(ctx,
                        currentDate,
                        date_font,
-                       GRect(2, bounds.size.h / 2 - 10, bounds.size.w - 2 * 2, 30),
+                       GRect(0, bounds.size.h / 2 - 15, bounds.size.w, 30),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);

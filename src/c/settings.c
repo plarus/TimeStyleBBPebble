@@ -36,6 +36,11 @@ void Settings_loadFromStorage() {
   globalSettings.widgets[0] = PBL_IF_HEALTH_ELSE(HEALTH, BATTERY_METER);
   globalSettings.widgets[1] = EMPTY;
   globalSettings.widgets[2] = DATE;
+  globalSettings.widgets[3] = BATTERY_METER;
+
+  // set default bar display
+  globalSettings.activateSidebar = true;
+  globalSettings.sidebarOnBottom = true;
 
   strncpy(globalSettings.altclockName, "ALT", sizeof(globalSettings.altclockName));
   globalSettings.decimalSeparator = '.';
@@ -118,9 +123,6 @@ void Settings_loadFromStorage() {
       globalSettings.decimalSeparator = (char)persist_read_int(SETTING_DECIMAL_SEPARATOR_KEY);
     }
   }
-
-  globalSettings.activateSidebar = false; // TODO
-  globalSettings.sidebarOnBottom = true; // TODO
 
   Settings_updateDynamicSettings();
 }

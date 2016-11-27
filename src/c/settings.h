@@ -24,7 +24,7 @@ typedef struct {
   int hourlyVibe;
 
   // sidebar settings
-  SidebarWidgetType widgets[3];
+  SidebarWidgetType widgets[4];
   bool sidebarOnLeft;
   bool sidebarOnBottom;
   bool useLargeFonts;

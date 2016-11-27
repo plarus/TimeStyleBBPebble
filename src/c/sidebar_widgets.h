@@ -44,7 +44,7 @@ typedef struct {
   /*
    * Draws the widget using the provided graphics context
    */
-  void (*draw)(GContext* ctx, int yPosition);
+  void (*draw)(GContext* ctx, int xPosition, int yPosition);
 } SidebarWidget;
 
 void SidebarWidgets_init();
