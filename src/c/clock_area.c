@@ -10,13 +10,13 @@
 
 char time_hours[3];
 char time_minutes[3];
-char full_time[6];
 char currentDate[21];
 char currentDayNum[3];
 
 Layer* clock_area_layer;
 FFont* hours_font;
 FFont* minutes_font;
+FFont* colon_font;
 
 GFont date_font;
 
@@ -34,22 +34,27 @@ void update_fonts() {
     case FONT_SETTING_DEFAULT:
         hours_font = avenir;
         minutes_font = avenir;
+        colon_font = avenir;
       break;
     case FONT_SETTING_BOLD:
         hours_font = avenir_bold;
         minutes_font = avenir_bold;
+        colon_font = avenir_bold;
       break;
     case FONT_SETTING_BOLD_H:
         hours_font = avenir_bold;
         minutes_font = avenir;
+        colon_font = avenir;
       break;
     case FONT_SETTING_BOLD_M:
         hours_font = avenir;
         minutes_font = avenir_bold;
+        colon_font = avenir;
       break;
     case FONT_SETTING_LECO:
         hours_font = leco;
         minutes_font = leco;
+        colon_font = leco;
       break;
   }
 }
@@ -118,13 +123,26 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
   fctx_begin_fill(&fctx);
   fctx_set_text_em_height(&fctx, hours_font, font_size);
   fctx_set_text_em_height(&fctx, minutes_font, font_size);
+  fctx_set_text_em_height(&fctx, colon_font, font_size);
 
   if(globalSettings.sidebarLocation == BOTTOM) {
-    // draw time
-    time_pos.x = INT_TO_FIXED(bounds.size.w / 2);
+    int colon_adjust = 7;
+
+    // draw hours
+    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 - colon_adjust);
     time_pos.y = INT_TO_FIXED(2 * (v_padding + v_adjust));
     fctx_set_offset(&fctx, time_pos);
-    fctx_draw_string(&fctx, full_time, hours_font, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
+
+    //draw ":"
+    time_pos.x = INT_TO_FIXED(bounds.size.w / 2);
+    fctx_set_offset(&fctx, time_pos);
+    fctx_draw_string(&fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
+
+    //draw minutes
+    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + colon_adjust);
+    fctx_set_offset(&fctx, time_pos);
+    fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
 
     // draw date
     graphics_context_set_text_color(ctx, globalSettings.timeColor);
@@ -205,13 +223,6 @@ void ClockArea_update_time(struct tm* time_info) {
 
   // full time
   if(globalSettings.sidebarLocation == BOTTOM) {
-    full_time[0] = time_hours[0];
-    full_time[1] = time_hours[1];
-    full_time[2] = ':';
-    full_time[3] = time_minutes[0];
-    full_time[4] = time_minutes[1];
-    full_time[5] = '\0';
-
     strftime(currentDayNum,  3, "%e", time_info);
     // remove padding on date num, if needed
     if(currentDayNum[0] == ' ') {
