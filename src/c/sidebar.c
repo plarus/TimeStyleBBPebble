@@ -51,6 +51,8 @@ void Sidebar_init(Window* window) {
       bounds = GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h);
     } else if(globalSettings.sidebarLocation == BOTTOM) {
       bounds = GRect(0, screen_rect.size.h - SIDEBAR_HEIGHT, screen_rect.size.w, SIDEBAR_HEIGHT);
+    }else {
+      bounds = GRect(0, 0, 0, 0);
     }
   #endif
 
@@ -88,6 +90,8 @@ void Sidebar_redraw() {
       layer_set_frame(sidebarLayer, GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h));
     } else if(globalSettings.sidebarLocation == BOTTOM) {
       layer_set_frame(sidebarLayer, GRect(0, screen_rect.size.h - SIDEBAR_HEIGHT, screen_rect.size.w, SIDEBAR_HEIGHT));
+    } else {
+      layer_set_frame(sidebarLayer, GRect(0, 0, 0, 0));
     }
   #endif
 
@@ -294,7 +298,9 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
       displayWidgets[2].draw(ctx, middle2WidgetPos, V_PADDING_DEFAULT);
     }
     displayWidgets[3].draw(ctx, rightWidgetPos, V_PADDING_DEFAULT);
-  } else {
+
+  } else if(globalSettings.sidebarLocation != NONE) {
+
     // if the widgets are too tall, enable "compact mode"
     int compact_mode_threshold = bounds.size.h - V_PADDING_DEFAULT * 2 - 3;
     int v_padding = V_PADDING_DEFAULT;

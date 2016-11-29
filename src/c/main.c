@@ -58,9 +58,7 @@ void redrawScreen() {
   update_clock();
 
   // update the sidebar
-  if(globalSettings.sidebarLocation != NONE) {
-    Sidebar_redraw();
-  }
+  Sidebar_redraw();
 
   ClockArea_redraw();
 }
@@ -69,10 +67,7 @@ static void main_window_load(Window *window) {
   window_set_background_color(window, globalSettings.timeBgColor);
 
   // create the sidebar
-  if(globalSettings.sidebarLocation != NONE) {
-    Sidebar_init(window);
-  }
-
+  Sidebar_init(window);
 
   ClockArea_init(window);
 
