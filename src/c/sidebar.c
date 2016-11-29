@@ -277,27 +277,37 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
   }
 
   if(globalSettings.sidebarLocation == BOTTOM) {
-    int h_padding = H_PADDING_DEFAULT;
-
-    // calculate the three widget positions
-    int leftWidgetPos = h_padding;
+    // calculate the three horizontal widget positions
+    int leftWidgetPos = H_PADDING_DEFAULT;
     int middleWidgetPos = (bounds.size.w - SIDEBAR_WIDTH) / 2;
-    int middle1WidgetPos = (bounds.size.w - 5 * h_padding) / 4 + 2 * h_padding;
-    int middle2WidgetPos = (bounds.size.w - 5 * h_padding) / 2 + 3 * h_padding;
-    int rightWidgetPos = bounds.size.w - h_padding - SIDEBAR_WIDTH;
+    int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - SIDEBAR_WIDTH;
+    int v_padding;
 
     // draw the widgets
-    displayWidgets[0].draw(ctx, leftWidgetPos, V_PADDING_DEFAULT);
+    v_padding= (SIDEBAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
+    displayWidgets[0].draw(ctx, leftWidgetPos, v_padding);
 
     if(globalSettings.widgets[1] == EMPTY) {
-      displayWidgets[2].draw(ctx, middleWidgetPos, V_PADDING_DEFAULT);
+      v_padding = (SIDEBAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
     }else if(globalSettings.widgets[2] == EMPTY) {
-      displayWidgets[1].draw(ctx, middleWidgetPos, V_PADDING_DEFAULT);
+      v_padding = (SIDEBAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
     } else {
-      displayWidgets[1].draw(ctx, middle1WidgetPos, V_PADDING_DEFAULT);
-      displayWidgets[2].draw(ctx, middle2WidgetPos, V_PADDING_DEFAULT);
+      // we have 4 widgets
+
+      // middle position 1
+      middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 4 + 2 * H_PADDING_DEFAULT;
+      v_padding = (SIDEBAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
+
+      // middle position 2
+      middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 2 + 3 * H_PADDING_DEFAULT;
+      v_padding = (SIDEBAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
     }
-    displayWidgets[3].draw(ctx, rightWidgetPos, V_PADDING_DEFAULT);
+    v_padding = (SIDEBAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+    displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
 
   } else if(globalSettings.sidebarLocation != NONE) {
 
