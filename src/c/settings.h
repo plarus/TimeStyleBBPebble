@@ -104,6 +104,10 @@ typedef struct {
 
   // sidebar location settings
   BarLocationType sidebarLocation:2;
+
+  // bluetooth disconnection icon
+  int8_t activateDisconnectIcon:1;
+
 } StoredSettings;
 
 extern Settings globalSettings;
