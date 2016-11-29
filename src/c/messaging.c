@@ -78,6 +78,7 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   Tuple *widget0Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget0ID);
   Tuple *widget1Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget1ID);
   Tuple *widget2Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget2ID);
+  Tuple *widget3Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget3ID);
 
   Tuple *altclockName_tuple = dict_find(iterator, MESSAGE_KEY_SettingAltClockName);
   Tuple *altclockOffset_tuple = dict_find(iterator, MESSAGE_KEY_SettingAltClockOffset);
@@ -162,6 +163,10 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
 
   if(widget2Id_tuple != NULL) {
     globalSettings.widgets[2] = widget2Id_tuple->value->int8;
+  }
+
+  if(widget3Id_tuple != NULL) {
+    globalSettings.widgets[3] = widget3Id_tuple->value->int8;
   }
 
   if(altclockName_tuple != NULL) {

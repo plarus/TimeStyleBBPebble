@@ -36,7 +36,7 @@ void Settings_loadFromStorage() {
   globalSettings.widgets[0] = PBL_IF_HEALTH_ELSE(HEALTH, BATTERY_METER);
   globalSettings.widgets[1] = EMPTY;
   globalSettings.widgets[2] = DATE;
-  globalSettings.widgets[3] = BATTERY_METER;
+  globalSettings.widgets[3] = EMPTY;
 
   // set default bar display
   globalSettings.sidebarLocation = RIGHT;
@@ -67,9 +67,13 @@ void Settings_loadFromStorage() {
     globalSettings.clockFontId = storedSettings.clockFontId;
     globalSettings.btVibe = storedSettings.btVibe;
     globalSettings.hourlyVibe = storedSettings.hourlyVibe;
+    globalSettings.sidebarLocation = storedSettings.sidebarLocation;
     globalSettings.widgets[0] = storedSettings.widgets[0];
     globalSettings.widgets[1] = storedSettings.widgets[1];
     globalSettings.widgets[2] = storedSettings.widgets[2];
+    if (globalSettings.sidebarLocation == BOTTOM) {
+      globalSettings.widgets[3] = storedSettings.widget4;
+    }
     globalSettings.useLargeFonts = storedSettings.useLargeFonts;
     globalSettings.useMetric = storedSettings.useMetric;
     globalSettings.showBatteryPct = storedSettings.showBatteryPct;
@@ -80,7 +84,6 @@ void Settings_loadFromStorage() {
     memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
     globalSettings.altclockOffset = storedSettings.altclockOffset;
     globalSettings.activateDisconnectIcon = storedSettings.activateDisconnectIcon;
-    globalSettings.sidebarLocation = storedSettings.sidebarLocation;
   } else if( current_settings_version >= 0 ) {
     // old settings format
     if(persist_exists(SETTING_TIME_COLOR_KEY) && persist_exists(SETTING_TIME_BG_COLOR_KEY) &&
@@ -154,6 +157,7 @@ void Settings_saveToStorage() {
   storedSettings.widgets[0] = globalSettings.widgets[0];
   storedSettings.widgets[1] = globalSettings.widgets[1];
   storedSettings.widgets[2] = globalSettings.widgets[2];
+  storedSettings.widget4    = globalSettings.widgets[3];
   storedSettings.useLargeFonts = globalSettings.useLargeFonts;
   storedSettings.useMetric = globalSettings.useMetric;
   storedSettings.showBatteryPct = globalSettings.showBatteryPct;
@@ -175,7 +179,7 @@ void Settings_updateDynamicSettings() {
   globalSettings.updateScreenEverySecond = false;
   globalSettings.enableAutoBatteryWidget = true;
 
-  for(int i = 0; i < 3; i++) {
+  for(int i = 0; i < 4; i++) {
     // if there are any weather widgets, enable weather checking
     // if(globalSettings.widgets[i] == WEATHER_CURRENT ||
     //    globalSettings.widgets[i] == WEATHER_FORECAST_TODAY) {

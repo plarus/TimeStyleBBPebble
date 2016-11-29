@@ -108,6 +108,8 @@ typedef struct {
   // bluetooth disconnection icon
   int8_t activateDisconnectIcon:1;
 
+  // Fourth widget for bottom display
+  uint8_t widget4;
 } StoredSettings;
 
 extern Settings globalSettings;

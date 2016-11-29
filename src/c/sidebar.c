@@ -160,9 +160,14 @@ int getReplacableWidget() {
     }
   }
 
+  // use widget 4 only if bottom widget is used
+  if(globalSettings.widgets[3] == EMPTY && globalSettings.sidebarLocation == BOTTOM) {
+    return 3;
+  }
+
   // are there any bluetooth-enabled widgets? if so, they're the second-best
   // candidates
-  for(int i = 0; i < 3; i++) {
+  for(int i = 0; i < 4; i++) {
     if(globalSettings.widgets[i] == WEATHER_CURRENT || globalSettings.widgets[i] == WEATHER_FORECAST_TODAY) {
       return i;
     }

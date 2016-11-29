@@ -1,7 +1,7 @@
 
 var weather = require('./weather');
 
-var CONFIG_VERSION = 8;
+var CONFIG_VERSION = 9;
 // var BASE_CONFIG_URL = 'http://localhost:4000/';
 var BASE_CONFIG_URL = 'http://plarus.github.io/TimeStylePebble/';
 
@@ -156,6 +156,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
     dict.SettingWidget0ID = configData.widget_0_id;
     dict.SettingWidget1ID = configData.widget_1_id;
     dict.SettingWidget2ID = configData.widget_2_id;
+    dict.SettingWidget3ID = configData.widget_3_id;
 
     if(configData.sidebar_position) {
       if(configData.sidebar_position == 'none') {
@@ -248,7 +249,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
     // determine whether or not the weather checking should be enabled
     var disableWeather;
 
-    var widgetIDs = [configData.widget_0_id, configData.widget_1_id, configData.widget_2_id];
+    var widgetIDs = [configData.widget_0_id, configData.widget_1_id, configData.widget_2_id, configData.widget_3_id];
 
     // if there is either a current conditions or a today's forecast widget, enable the weather
     if(widgetIDs.indexOf(7) != -1 || widgetIDs.indexOf(8) != -1) {
