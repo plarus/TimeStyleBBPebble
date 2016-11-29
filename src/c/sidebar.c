@@ -288,6 +288,9 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
     int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - SIDEBAR_WIDTH;
     int v_padding;
 
+    // use compact mode for bottom widget
+    SidebarWidgets_useCompactMode = true;
+
     // draw the widgets
     v_padding= (SIDEBAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
     displayWidgets[0].draw(ctx, leftWidgetPos, v_padding);
