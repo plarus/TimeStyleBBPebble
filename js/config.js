@@ -1,4 +1,4 @@
-var CURRENT_SETTINGS_VERSION = 8;
+var CURRENT_SETTINGS_VERSION = 9;
 
 // if we have any persistent data saved, load it in
 $(document).ready(function() {
@@ -74,6 +74,7 @@ function loadPreviousSettings() {
       widget_0_id: top_widget, // current weather
       widget_1_id: '0', // empty
       widget_2_id: '4', // today's date
+      widget_3_id: '0', // empty
       sidebar_position: 'right',
       use_large_sidebar_font_setting: 'no',
 
@@ -169,6 +170,7 @@ function loadPreviousSettings() {
   $('#widget_0_selector').val(savedSettings.widget_0_id);
   $('#widget_1_selector').val(savedSettings.widget_1_id);
   $('#widget_2_selector').val(savedSettings.widget_2_id);
+  $('#widget_3_selector').val(savedSettings.widget_3_id);
 
   // load alt timezone widget settings
   $('#altclock_name').val(savedSettings.altclock_name);
@@ -353,7 +355,7 @@ function updateSidebarPreview() {
 
   var useLargeFonts = ($('#use_large_sidebar_font_setting .btn.active').data('setting') == 'yes') ? true : false;
 
-  for(var i = 0; i < 3; i++) {
+  for(var i = 0; i < 4; i++) {
     var widget_id = $('#widget_' + i + '_selector').val();
 
     var image_url = 'images/sidebar_widgets/';
@@ -544,6 +546,7 @@ function sendSettingsToWatch() {
   config.widget_0_id = parseInt($('#widget_0_selector').val(), 10);
   config.widget_1_id = parseInt($('#widget_1_selector').val(), 10);
   config.widget_2_id = parseInt($('#widget_2_selector').val(), 10);
+  config.widget_3_id = parseInt($('#widget_3_selector').val(), 10);
 
   if($('#sidebar_position_setting .btn.active').size() > 0) {
     config.sidebar_position = $('#sidebar_position_setting .btn.active').data('setting');
@@ -642,7 +645,8 @@ function trackSettings(config) {
   // track the sidebar layout selections
   var sidebarLayout = widgetNames[config.widget_0_id] + ', ' +
                       widgetNames[config.widget_1_id] + ', ' +
-                      widgetNames[config.widget_2_id];
+                      widgetNames[config.widget_2_id] + ', ' +
+                      widgetNames[config.widget_3_id];
   ga('set', 'dimension2', sidebarLayout);
 
   // sidebar options
