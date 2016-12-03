@@ -670,7 +670,7 @@ void AltTime_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_draw_text(ctx,
                      globalSettings.altclockName,
                      smSidebarFont,
-                     GRect(0 + SidebarWidgets_xOffset, yPosition - 5, 30, 20),
+                     GRect(xPosition + SidebarWidgets_xOffset, yPosition - 5, 30, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
