@@ -117,9 +117,10 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
       if(globalSettings.clockFontId == FONT_SETTING_LECO) {
         h_adjust += 1;
       } else {
-        h_adjust -= 1;
+        h_adjust -= 2;
       }
-      font_size = 3 * bounds.size.h / 9;
+      font_size = bounds.size.h / 3;
+      v_adjust -= 3;
     }
   #endif
 
@@ -129,20 +130,28 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
   fctx_set_text_em_height(&fctx, minutes_font, font_size);
   fctx_set_text_em_height(&fctx, colon_font, font_size);
 
+  int h_middle = bounds.size.w / 2;
+
   if(globalSettings.sidebarLocation == BOTTOM) {
+    int h_colon_margin = 7;
+
     // draw hours
-    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 - 7 + h_adjust);
-    time_pos.y = INT_TO_FIXED(3 * (v_padding + v_adjust));
+    time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
+    time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
     fctx_set_offset(&fctx, time_pos);
     fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
 
     //draw ":"
-    time_pos.x = INT_TO_FIXED(bounds.size.w / 2);
+    if(globalSettings.clockFontId == FONT_SETTING_LECO) {
+      time_pos.x = INT_TO_FIXED(h_middle);
+    } else {
+      time_pos.x = INT_TO_FIXED(h_middle - 1);
+    }
     fctx_set_offset(&fctx, time_pos);
     fctx_draw_string(&fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
 
     //draw minutes
-    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + 7 + h_adjust);
+    time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
     fctx_set_offset(&fctx, time_pos);
     fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
 
@@ -157,7 +166,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
                        NULL);
   } else {
     // draw hours
-    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + h_adjust);
+    time_pos.x = INT_TO_FIXED(h_middle + h_adjust);
     time_pos.y = INT_TO_FIXED(v_padding + v_adjust);
     fctx_set_offset(&fctx, time_pos);
     fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
