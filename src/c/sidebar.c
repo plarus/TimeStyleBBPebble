@@ -299,11 +299,22 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
     if(globalSettings.widgets[1] == EMPTY) {
       v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
       displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
+
+      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
     }else if(globalSettings.widgets[2] == EMPTY) {
       v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
       displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
-    } else {
-      // we have 4 widgets
+
+      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
+    }else if(globalSettings.widgets[3] == EMPTY) {
+      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
+
+      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      displayWidgets[2].draw(ctx, rightWidgetPos, v_padding);
+    } else { // we have 4 widgets
 
       // middle position 1
       middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 4 + 2 * H_PADDING_DEFAULT;
@@ -314,10 +325,10 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
       middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 2 + 3 * H_PADDING_DEFAULT;
       v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
       displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
-    }
-    v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
-    displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
 
+      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
+    }
   } else if(globalSettings.sidebarLocation != NONE) {
 
     // if the widgets are too tall, enable "compact mode"
