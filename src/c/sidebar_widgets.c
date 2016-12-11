@@ -7,6 +7,7 @@
 #include "sidebar_widgets.h"
 
 bool SidebarWidgets_useCompactMode = false;
+bool SidebarWidgets_fixedHeight = false;
 int SidebarWidgets_xOffset;
 
 // sidebar icons
@@ -285,7 +286,9 @@ void EmptyWidget_draw(GContext* ctx, int xPosition, int yPosition) {
 int BatteryMeter_getHeight() {
   BatteryChargeState chargeState = battery_state_service_peek();
 
-  if(chargeState.is_charging || !globalSettings.showBatteryPct) {
+  if(SidebarWidgets_fixedHeight) {
+    return FIXED_WIDGET_HEIGHT;
+  } else if(chargeState.is_charging || !globalSettings.showBatteryPct) {
     return 14; // graphic only height
   } else {
     return (globalSettings.useLargeFonts) ? 33 : 27; // heights with text
@@ -300,7 +303,18 @@ void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   char batteryString[6];
-  int batteryPositionY = yPosition - 5; // correct for vertical empty space on battery icon
+  int batteryPositionY = yPosition;
+
+  if(SidebarWidgets_fixedHeight){
+    if(!globalSettings.showBatteryPct || chargeState.is_charging) {
+      batteryPositionY += (FIXED_WIDGET_HEIGHT / 2) - 12;
+    } else {
+      batteryPositionY += 3;
+    }
+  } else {
+    // correct for vertical empty space on battery icon
+    batteryPositionY -= 5;
+  }
 
   if (batteryImage) {
     gdraw_command_image_recolor(batteryImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
@@ -331,30 +345,35 @@ void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
   // never show battery % while charging, because of this issue:
   // https://github.com/freakified/TimeStylePebble/issues/11
   if(globalSettings.showBatteryPct && !chargeState.is_charging) {
+    int textOffsetY;
+
     if(!globalSettings.useLargeFonts) {
+      if(SidebarWidgets_fixedHeight) {
+        textOffsetY = 28;
+      } else {
+        textOffsetY = 18;
+      }
+
       // put the percent sign on the opposite side if turkish
       snprintf(batteryString, sizeof(batteryString),
                (globalSettings.languageId == LANGUAGE_TR) ? "%%%d" : "%d%%",
                battery_percent);
-
-      graphics_draw_text(ctx,
-                         batteryString,
-                         batteryFont,
-                         GRect(xPosition - 4 + SidebarWidgets_xOffset, 18 + batteryPositionY, 38, 20),
-                         GTextOverflowModeFill,
-                         GTextAlignmentCenter,
-                         NULL);
     } else {
-      snprintf(batteryString, sizeof(batteryString), "%d", battery_percent);
+      if(SidebarWidgets_fixedHeight) {
+        textOffsetY = 21;
+      } else {
+        textOffsetY = 14;
+      }
 
-      graphics_draw_text(ctx,
-                         batteryString,
-                         batteryFont,
-                         GRect(xPosition - 4 + SidebarWidgets_xOffset, 14 + batteryPositionY, 38, 20),
-                         GTextOverflowModeFill,
-                         GTextAlignmentCenter,
-                         NULL);
+      snprintf(batteryString, sizeof(batteryString), "%d", battery_percent);
     }
+    graphics_draw_text(ctx,
+                       batteryString,
+                       batteryFont,
+                       GRect(xPosition - 4 + SidebarWidgets_xOffset, textOffsetY + batteryPositionY, 38, 20),
+                       GTextOverflowModeFill,
+                       GTextAlignmentCenter,
+                       NULL);
   }
 }
 
@@ -513,27 +532,35 @@ void BTDisconnect_draw(GContext* ctx, int xPosition, int yPosition) {
 /***** Week Number Widget *****/
 
 int WeekNumber_getHeight() {
-  return (globalSettings.useLargeFonts) ? 29 : 26;
+  if(SidebarWidgets_fixedHeight) {
+    return FIXED_WIDGET_HEIGHT;
+  } else {
+    return (globalSettings.useLargeFonts) ? 29 : 26;
+  }
 }
 
 void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
+
+  int yTextPosition = SidebarWidgets_fixedHeight ? yPosition + 6 : yPosition - 4;
 
   // note that it draws "above" the y position to correct for
   // the vertical padding
   graphics_draw_text(ctx,
                      wordForWeek[globalSettings.languageId],
                      smSidebarFont,
-                     GRect(xPosition - 4 + SidebarWidgets_xOffset, yPosition - 4, 38, 20),
+                     GRect(xPosition - 4 + SidebarWidgets_xOffset, yTextPosition, 38, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
+
+  yTextPosition = SidebarWidgets_fixedHeight ? yPosition + 18 : yPosition;
 
   if(!globalSettings.useLargeFonts) {
     graphics_draw_text(ctx,
                        currentWeekNum,
                        mdSidebarFont,
-                       GRect(xPosition + SidebarWidgets_xOffset, yPosition + 9, 30, 20),
+                       GRect(xPosition + SidebarWidgets_xOffset, yTextPosition + 9, 30, 20),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
@@ -541,7 +568,7 @@ void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
     graphics_draw_text(ctx,
                        currentWeekNum,
                        lgSidebarFont,
-                       GRect(xPosition + SidebarWidgets_xOffset, yPosition + 6, 30, 20),
+                       GRect(xPosition + SidebarWidgets_xOffset, yTextPosition + 6, 30, 20),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
@@ -695,7 +722,11 @@ int Health_getHeight() {
   if(is_user_sleeping()) {
     return 44;
   } else {
-    return 32;
+    if(SidebarWidgets_fixedHeight) {
+      return FIXED_WIDGET_HEIGHT;
+    } else {
+      return 32;
+    }
   }
 }
 
@@ -762,10 +793,11 @@ void Sleep_draw(GContext* ctx, int xPosition, int yPosition) {
 }
 
 void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
-
   if(stepsImage) {
+    int yIconPosition = SidebarWidgets_fixedHeight ? yPosition + 2 : yPosition - 7;
+
     gdraw_command_image_recolor(stepsImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, stepsImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition - 7));
+    gdraw_command_image_draw(ctx, stepsImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yIconPosition));
   }
 
   char steps_text[8];
@@ -830,17 +862,31 @@ void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
 
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
+  int yTextPosition = yPosition;
+
+  if(SidebarWidgets_fixedHeight) {
+    if(globalSettings.useLargeFonts) {
+      yTextPosition += 29;
+    } else {
+      yTextPosition += 27;
+    }
+  } else {
+    yTextPosition += 13;
+  }
+
   graphics_draw_text(ctx,
                      steps_text,
                      (use_small_font) ? smSidebarFont : mdSidebarFont,
-                     GRect(xPosition - 2 + SidebarWidgets_xOffset, yPosition + 13, 35, 20),
+                     GRect(xPosition - 2 + SidebarWidgets_xOffset, yTextPosition, 35, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
 }
 
 int HeartRate_getHeight() {
-  if(globalSettings.useLargeFonts) {
+  if(SidebarWidgets_fixedHeight) {
+    return FIXED_WIDGET_HEIGHT;
+  } else if(globalSettings.useLargeFonts) {
     return 40;
   } else {
     return 38;
@@ -849,11 +895,17 @@ int HeartRate_getHeight() {
 
 void HeartRate_draw(GContext* ctx, int xPosition, int yPosition) {
   if(heartImage) {
+    int yIconPosition = SidebarWidgets_fixedHeight ? yPosition + 3 : yPosition;
+
     gdraw_command_image_recolor(heartImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, heartImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition));
+    gdraw_command_image_draw(ctx, heartImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yIconPosition));
   }
 
-  int yOffset = globalSettings.useLargeFonts ? 17 : 21;
+  int yOffset = globalSettings.useLargeFonts ? 17 : 20;
+
+  if(SidebarWidgets_fixedHeight) {
+    yOffset += 7;
+  }
 
   // TODO: accessibility check?
   int heart_rate = health_service_peek_current_value(HealthMetricHeartRateBPM);
