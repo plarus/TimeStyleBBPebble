@@ -110,11 +110,15 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
   #else
     // for rectangular watches, adjust X position based on sidebar position
     if(globalSettings.sidebarLocation == RIGHT) {
-        h_adjust -= 16;
+      h_adjust -= 16;
     } else if(globalSettings.sidebarLocation == LEFT) {
       h_adjust += 15;
     } else if(globalSettings.sidebarLocation == BOTTOM) {
-      h_adjust -= 16;
+      if(globalSettings.clockFontId == FONT_SETTING_LECO) {
+        h_adjust += 1;
+      } else {
+        h_adjust -= 1;
+      }
       font_size = 3 * bounds.size.h / 9;
     }
   #endif
@@ -126,11 +130,9 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
   fctx_set_text_em_height(&fctx, colon_font, font_size);
 
   if(globalSettings.sidebarLocation == BOTTOM) {
-    int colon_adjust = 7;
-
     // draw hours
-    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 - colon_adjust);
-    time_pos.y = INT_TO_FIXED(2 * (v_padding + v_adjust));
+    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 - 7 + h_adjust);
+    time_pos.y = INT_TO_FIXED(3 * (v_padding + v_adjust));
     fctx_set_offset(&fctx, time_pos);
     fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
 
@@ -140,7 +142,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
     fctx_draw_string(&fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
 
     //draw minutes
-    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + colon_adjust);
+    time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + 7 + h_adjust);
     fctx_set_offset(&fctx, time_pos);
     fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
 
@@ -149,7 +151,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
     graphics_draw_text(ctx,
                        currentDate,
                        date_font,
-                       GRect(0, bounds.size.h / 2 - 15, bounds.size.w, 30),
+                       GRect(0, bounds.size.h / 2 - 14, bounds.size.w, 30),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
