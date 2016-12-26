@@ -21,6 +21,7 @@ GFont smSidebarFont;
 GFont mdSidebarFont;
 GFont lgSidebarFont;
 GFont currentSidebarFont;
+GFont currentSidebarSmallFont;
 GFont batteryFont;
 
 // the date, time and weather strings
@@ -163,9 +164,11 @@ void SidebarWidgets_deinit() {
 void SidebarWidgets_updateFonts() {
   if(globalSettings.useLargeFonts) {
     currentSidebarFont = lgSidebarFont;
+    currentSidebarSmallFont = mdSidebarFont;
     batteryFont = lgSidebarFont;
   } else {
     currentSidebarFont = mdSidebarFont;
+    currentSidebarSmallFont = smSidebarFont;
     batteryFont = smSidebarFont;
   }
 }
@@ -535,7 +538,7 @@ int WeekNumber_getHeight() {
   if(SidebarWidgets_fixedHeight) {
     return FIXED_WIDGET_HEIGHT;
   } else {
-    return (globalSettings.useLargeFonts) ? 29 : 26;
+    return (globalSettings.useLargeFonts) ? 31 : 26;
   }
 }
 
@@ -543,36 +546,28 @@ void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   int yTextPosition = SidebarWidgets_fixedHeight ? yPosition + 6 : yPosition - 4;
+  yTextPosition = globalSettings.useLargeFonts ? yTextPosition - 2 : yTextPosition;
 
   // note that it draws "above" the y position to correct for
   // the vertical padding
   graphics_draw_text(ctx,
                      wordForWeek[globalSettings.languageId],
-                     smSidebarFont,
+                     currentSidebarSmallFont,
                      GRect(xPosition - 4 + SidebarWidgets_xOffset, yTextPosition, 38, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
 
   yTextPosition = SidebarWidgets_fixedHeight ? yPosition + 18 : yPosition;
+  yTextPosition = globalSettings.useLargeFonts ? yTextPosition + 6 : yTextPosition + 9;
 
-  if(!globalSettings.useLargeFonts) {
-    graphics_draw_text(ctx,
-                       currentWeekNum,
-                       mdSidebarFont,
-                       GRect(xPosition + SidebarWidgets_xOffset, yTextPosition + 9, 30, 20),
-                       GTextOverflowModeFill,
-                       GTextAlignmentCenter,
-                       NULL);
-  } else {
-    graphics_draw_text(ctx,
-                       currentWeekNum,
-                       lgSidebarFont,
-                       GRect(xPosition + SidebarWidgets_xOffset, yTextPosition + 6, 30, 20),
-                       GTextOverflowModeFill,
-                       GTextAlignmentCenter,
-                       NULL);
-  }
+  graphics_draw_text(ctx,
+                     currentWeekNum,
+                     currentSidebarFont,
+                     GRect(xPosition + SidebarWidgets_xOffset, yTextPosition, 30, 20),
+                     GTextOverflowModeFill,
+                     GTextAlignmentCenter,
+                     NULL);
 }
 
 /***** Seconds Widget *****/
@@ -688,21 +683,29 @@ void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
 /***** Alternate Time Zone Widget *****/
 
 int AltTime_getHeight() {
-  return (globalSettings.useLargeFonts) ? 29 : 26;
+  if(SidebarWidgets_fixedHeight) {
+    return FIXED_WIDGET_HEIGHT;
+  } else {
+    return (globalSettings.useLargeFonts) ? 31 : 26;
+  }
 }
 
 void AltTime_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
+  int yMod = SidebarWidgets_fixedHeight ? 6 : - 5;
+  yMod = globalSettings.useLargeFonts ? yMod - 2 : yMod;
+
   graphics_draw_text(ctx,
                      globalSettings.altclockName,
-                     smSidebarFont,
-                     GRect(xPosition + SidebarWidgets_xOffset, yPosition - 5, 30, 20),
+                     currentSidebarSmallFont,
+                     GRect(xPosition + SidebarWidgets_xOffset, yPosition + yMod, 30, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
 
-  int yMod = (globalSettings.useLargeFonts) ? 5 : 8;
+  yMod = SidebarWidgets_fixedHeight ? 19 : 0;
+  yMod = (globalSettings.useLargeFonts) ? yMod + 5 : yMod + 8;
 
   graphics_draw_text(ctx,
                      altClock,
@@ -928,21 +931,28 @@ void HeartRate_draw(GContext* ctx, int xPosition, int yPosition) {
 /***** Beats (Swatch Internet Time) widget *****/
 
 int Beats_getHeight() {
-  return (globalSettings.useLargeFonts) ? 29 : 26;
+  if(SidebarWidgets_fixedHeight) {
+    return FIXED_WIDGET_HEIGHT;
+  } else {
+    return (globalSettings.useLargeFonts) ? 31 : 26;
+  }
 }
 
 void Beats_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
+  int yMod = SidebarWidgets_fixedHeight ? 6 : - 5;
+  yMod = globalSettings.useLargeFonts ? yMod - 2 : yMod;
   graphics_draw_text(ctx,
                      "@",
-                     smSidebarFont,
-                     GRect(xPosition + SidebarWidgets_xOffset, yPosition - 5, 30, 20),
+                     currentSidebarSmallFont,
+                     GRect(xPosition + SidebarWidgets_xOffset, yPosition + yMod, 30, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
 
-  int yMod = (globalSettings.useLargeFonts) ? 5 : 8;
+  yMod = SidebarWidgets_fixedHeight ? 19 : 0;
+  yMod = (globalSettings.useLargeFonts) ? yMod + 5 : yMod + 8;
 
   graphics_draw_text(ctx,
                      currentBeats,
