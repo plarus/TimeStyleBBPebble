@@ -295,24 +295,24 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
     v_padding= (BOTTOM_BAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
     displayWidgets[0].draw(ctx, leftWidgetPos, v_padding);
 
-    if(globalSettings.widgets[1] == EMPTY) {
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
-      displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
+    if(globalSettings.widgets[3] == EMPTY) {
+      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
-      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
+      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      displayWidgets[2].draw(ctx, rightWidgetPos, v_padding);
     }else if(globalSettings.widgets[2] == EMPTY) {
       v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
       displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
       v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
       displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
-    }else if(globalSettings.widgets[3] == EMPTY) {
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
-      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
-
+    }else if(globalSettings.widgets[1] == EMPTY) {
       v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
-      displayWidgets[2].draw(ctx, rightWidgetPos, v_padding);
+      displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
+
+      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
     } else { // we have 4 widgets
 
       // middle position 1
