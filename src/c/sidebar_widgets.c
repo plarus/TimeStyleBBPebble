@@ -206,7 +206,7 @@ void SidebarWidgets_updateTime(struct tm* timeInfo) {
     // apply the configured offset value
     hour += globalSettings.altclockOffset;
 
-    char am_pm = (mod(hour, 24) < 12) ? 'a' : 'p';
+    char am_pm;
 
     // format it
     if(clock_is_24h_style()) {
@@ -217,6 +217,7 @@ void SidebarWidgets_updateTime(struct tm* timeInfo) {
       if(hour == 0) {
         hour = 12;
       }
+      am_pm = (mod(hour, 24) < 12) ? 'a' : 'p';
     }
 
     if(globalSettings.showLeadingZero && hour < 10) {

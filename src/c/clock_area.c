@@ -13,12 +13,15 @@ char time_minutes[3];
 char currentDate[21];
 char currentDayNum[3];
 
+bool isAmHour;
+
 Layer* clock_area_layer;
 FFont* hours_font;
 FFont* minutes_font;
 FFont* colon_font;
 
 GFont date_font;
+GFont am_pm_font;
 
 // just allocate all the fonts at startup because i don't feel like
 // dealing with allocating and deallocating things
@@ -91,7 +94,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
 
   // alternate metrics for LECO
   if(globalSettings.clockFontId == FONT_SETTING_LECO) {
-    font_size = 4 * bounds.size.h / 7 + 6;
+    font_size += 6;
     v_padding = bounds.size.h / 20;
     h_adjust = -4;
     v_adjust = 0;
@@ -141,6 +144,19 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
   if(globalSettings.sidebarLocation == BOTTOM) {
     int h_colon_margin = 7;
 
+    graphics_context_set_text_color(ctx, globalSettings.timeColor);
+
+    if(!clock_is_24h_style()) {
+      // draw am/pm
+      graphics_draw_text(ctx,
+                         isAmHour ? "AM" : "PM",
+                         am_pm_font,
+                         GRect(0, v_padding / 2 + v_adjust, bounds.size.w - h_colon_margin + h_adjust, 20),
+                         GTextOverflowModeFill,
+                         GTextAlignmentRight,
+                         NULL);
+    }
+
     // draw hours
     time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
     time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
@@ -162,7 +178,6 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
     fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
 
     // draw date
-    graphics_context_set_text_color(ctx, globalSettings.timeColor);
     graphics_draw_text(ctx,
                        currentDate,
                        date_font,
@@ -206,6 +221,7 @@ void ClockArea_init(Window* window) {
   leco =        ffont_create_from_resource(RESOURCE_ID_LECO_REGULAR_FFONT);
 
   date_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
+  am_pm_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 
   // select fonts based on settings
   update_fonts();
@@ -227,7 +243,6 @@ void ClockArea_redraw() {
 }
 
 void ClockArea_update_time(struct tm* time_info) {
-
   // hours
   if (clock_is_24h_style()) {
     strftime(time_hours, sizeof(time_hours), (globalSettings.showLeadingZero) ? "%H" : "%k", time_info);
@@ -252,6 +267,8 @@ void ClockArea_update_time(struct tm* time_info) {
     strncat(currentDate, currentDayNum, sizeof(currentDayNum));
     strncat(currentDate, " " , 2);
     strncat(currentDate, monthNames[globalSettings.languageId][time_info->tm_mon], 8);
+
+    isAmHour = time_info->tm_hour < 12;
   }
 
   ClockArea_redraw();
