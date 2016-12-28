@@ -33,7 +33,10 @@ void update_clock() {
   timeInfo = localtime(&rawTime);
 
   ClockArea_update_time(timeInfo);
-  Sidebar_updateTime(timeInfo);
+
+  if(globalSettings.sidebarLocation != NONE) {
+    Sidebar_updateTime(timeInfo);
+  }
 }
 
 /* forces everything on screen to be redrawn -- perfect for keeping track of settings! */

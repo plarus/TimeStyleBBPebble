@@ -107,9 +107,7 @@ void Sidebar_updateTime(struct tm* timeInfo) {
   SidebarWidgets_updateTime(timeInfo);
 
   // redraw the sidebar in case it changed in any way
-  if(globalSettings.sidebarLocation != NONE) {
-    Sidebar_redraw();
-  }
+  Sidebar_redraw();
 }
 
 bool isAutoBatteryShown() {
