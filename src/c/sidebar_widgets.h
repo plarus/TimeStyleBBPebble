@@ -2,7 +2,7 @@
 #include <pebble.h>
 
 
-#define FIXED_WIDGET_HEIGHT 55
+#define FIXED_WIDGET_HEIGHT 51
 
 /*
  * "Compact Mode" is a global setting shared by all widgets, which determines

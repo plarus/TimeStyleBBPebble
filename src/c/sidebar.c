@@ -243,12 +243,13 @@ void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType widgetTyp
 #endif
 
 void updateRectSidebar(Layer *l, GContext* ctx) {
-  GRect bounds = layer_get_unobstructed_bounds(l);
+  GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
+  GRect bounds = layer_get_bounds(l);
 
   SidebarWidgets_updateFonts();
 
   graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
-  graphics_fill_rect(ctx, layer_get_bounds(l), 0, GCornerNone);
+  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
 
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
@@ -332,7 +333,7 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
   } else if(globalSettings.sidebarLocation != NONE) {
 
     // if the widgets are too tall, enable "compact mode"
-    int compact_mode_threshold = bounds.size.h - V_PADDING_DEFAULT * 2 - 3;
+    int compact_mode_threshold = unobstructed_bounds.size.h - V_PADDING_DEFAULT * 2 - 3;
     int v_padding = V_PADDING_DEFAULT;
 
     SidebarWidgets_useCompactMode = false; // ensure that we compare the non-compacted heights
@@ -355,7 +356,7 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
 
     // calculate the three widget positions
     int topWidgetPos = v_padding;
-    int lowerWidgetPos = bounds.size.h - v_padding - displayWidgets[2].getHeight();
+    int lowerWidgetPos = unobstructed_bounds.size.h - v_padding - displayWidgets[2].getHeight();
 
     // vertically center the middle widget using MATH
     int middleWidgetPos = ((lowerWidgetPos - displayWidgets[1].getHeight()) + (topWidgetPos + displayWidgets[0].getHeight())) / 2;

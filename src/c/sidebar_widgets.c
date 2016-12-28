@@ -352,7 +352,7 @@ void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
 
     if(!globalSettings.useLargeFonts) {
       if(SidebarWidgets_fixedHeight) {
-        textOffsetY = 28;
+        textOffsetY = 25;
       } else {
         textOffsetY = 18;
       }
@@ -363,7 +363,7 @@ void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
                battery_percent);
     } else {
       if(SidebarWidgets_fixedHeight) {
-        textOffsetY = 21;
+        textOffsetY = 18;
       } else {
         textOffsetY = 14;
       }
@@ -558,7 +558,7 @@ void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
                      GTextAlignmentCenter,
                      NULL);
 
-  yTextPosition = SidebarWidgets_fixedHeight ? yPosition + 18 : yPosition;
+  yTextPosition = SidebarWidgets_fixedHeight ? yPosition + 15 : yPosition;
   yTextPosition = globalSettings.useLargeFonts ? yTextPosition + 6 : yTextPosition + 9;
 
   graphics_draw_text(ctx,
@@ -704,7 +704,7 @@ void AltTime_draw(GContext* ctx, int xPosition, int yPosition) {
                      GTextAlignmentCenter,
                      NULL);
 
-  yMod = SidebarWidgets_fixedHeight ? 19 : 0;
+  yMod = SidebarWidgets_fixedHeight ? 16 : 0;
   yMod = (globalSettings.useLargeFonts) ? yMod + 5 : yMod + 8;
 
   graphics_draw_text(ctx,
@@ -869,9 +869,9 @@ void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
 
   if(SidebarWidgets_fixedHeight) {
     if(globalSettings.useLargeFonts) {
-      yTextPosition += 29;
+      yTextPosition += 26;
     } else {
-      yTextPosition += 27;
+      yTextPosition += 24;
     }
   } else {
     yTextPosition += 13;
@@ -907,7 +907,7 @@ void HeartRate_draw(GContext* ctx, int xPosition, int yPosition) {
   int yOffset = globalSettings.useLargeFonts ? 17 : 20;
 
   if(SidebarWidgets_fixedHeight) {
-    yOffset += 7;
+    yOffset += 4;
   }
 
   // TODO: accessibility check?
@@ -951,7 +951,7 @@ void Beats_draw(GContext* ctx, int xPosition, int yPosition) {
                      GTextAlignmentCenter,
                      NULL);
 
-  yMod = SidebarWidgets_fixedHeight ? 19 : 0;
+  yMod = SidebarWidgets_fixedHeight ? 16 : 0;
   yMod = (globalSettings.useLargeFonts) ? yMod + 5 : yMod + 8;
 
   graphics_draw_text(ctx,

@@ -61,9 +61,15 @@ void update_fonts() {
 
 void update_clock_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
-  GRect bounds = layer_get_unobstructed_bounds(l);
+  GRect bounds;
 
-  #ifdef PBL_ROUND
+  #ifndef PBL_ROUND
+    if(globalSettings.sidebarLocation == BOTTOM) {
+      bounds = layer_get_bounds(l);
+    } else {
+      bounds = layer_get_unobstructed_bounds(l);
+    }
+  #else
     bounds = GRect(0, ROUND_VERTICAL_PADDING, screen_rect.size.w, screen_rect.size.h - ROUND_VERTICAL_PADDING * 2);
   #endif
 
