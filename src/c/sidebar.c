@@ -19,9 +19,10 @@ GRect screen_rect;
 
 // "private" functions
 // layer update callbacks
-void updateRectSidebar(Layer *l, GContext* ctx);
+#ifndef PBL_ROUND
+  void updateRectSidebar(Layer *l, GContext* ctx);
+#else
 
-#ifdef PBL_ROUND
   void updateRoundSidebarLeft(Layer *l, GContext* ctx);
   void updateRoundSidebarRight(Layer *l, GContext* ctx);
 
@@ -79,6 +80,10 @@ void Sidebar_init(Window* window) {
 
 void Sidebar_deinit() {
   layer_destroy(sidebarLayer);
+
+  #ifdef PBL_ROUND
+    layer_destroy(sidebarLayer2);
+  #endif
 
   SidebarWidgets_deinit();
 }
@@ -243,7 +248,8 @@ void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType widgetTyp
 
   widget.draw(ctx, 0, widgetPosition);
 }
-#endif
+
+#else
 
 void updateRectSidebar(Layer *l, GContext* ctx) {
   GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
@@ -372,3 +378,5 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
     displayWidgets[2].draw(ctx, 0, lowerWidgetPos);
   }
 }
+
+#endif
