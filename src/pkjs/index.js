@@ -159,14 +159,16 @@ Pebble.addEventListener('webviewclosed', function(e) {
     dict.SettingWidget3ID = configData.widget_3_id;
 
     if(configData.sidebar_position) {
-      if(configData.sidebar_position == 'none') {
-        dict.SettingSidebarPosition = 0;
-      } else if(configData.sidebar_position == 'left') {
+      if(configData.sidebar_position == 'left') {
         dict.SettingSidebarPosition = 1;
       } else if(configData.sidebar_position == 'right') {
         dict.SettingSidebarPosition = 2;
-      } else {
+      } else if(configData.sidebar_position == 'bottom') {
         dict.SettingSidebarPosition = 3;
+      } else if(configData.sidebar_position == 'top') {
+        dict.SettingSidebarPosition = 4;
+      } else { // 'none'
+        dict.SettingSidebarPosition = 0;
       }
     }
 

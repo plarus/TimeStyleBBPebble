@@ -71,7 +71,7 @@ void Settings_loadFromStorage() {
     globalSettings.widgets[0] = storedSettings.widgets[0];
     globalSettings.widgets[1] = storedSettings.widgets[1];
     globalSettings.widgets[2] = storedSettings.widgets[2];
-    if (globalSettings.sidebarLocation == BOTTOM) {
+    if (globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
       globalSettings.widgets[3] = storedSettings.widget4;
     }
     globalSettings.useLargeFonts = storedSettings.useLargeFonts;

@@ -7,11 +7,14 @@
 // settings "version" for app version 4.0
 #define CURRENT_SETTINGS_VERSION 6
 
+#define FIXED_WIDGET_HEIGHT 51
+
 typedef enum {
   NONE     = 0,
   LEFT     = 1,
   RIGHT    = 2,
-  BOTTOM   = 3
+  BOTTOM   = 3,
+  TOP      = 4
 } BarLocationType;
 
 
@@ -105,7 +108,7 @@ typedef struct {
   int8_t altclockOffset;
 
   // sidebar location settings
-  BarLocationType sidebarLocation:2;
+  BarLocationType sidebarLocation:3;
 
   // bluetooth disconnection icon
   int8_t activateDisconnectIcon:1;

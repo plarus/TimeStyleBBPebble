@@ -13,7 +13,7 @@
 #define H_PADDING_DEFAULT 4
 
 #define SIDEBAR_WIDTH 30
-#define BOTTOM_BAR_HEIGHT FIXED_WIDGET_HEIGHT
+#define HORIZONTAL_BAR_HEIGHT FIXED_WIDGET_HEIGHT
 
 GRect screen_rect;
 
@@ -50,7 +50,9 @@ void Sidebar_init(Window* window) {
     } else if(globalSettings.sidebarLocation == LEFT) {
       bounds = GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h);
     } else if(globalSettings.sidebarLocation == BOTTOM) {
-      bounds = GRect(0, screen_rect.size.h - BOTTOM_BAR_HEIGHT, screen_rect.size.w, BOTTOM_BAR_HEIGHT);
+      bounds = GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
+    } else if(globalSettings.sidebarLocation == TOP) {
+      bounds = GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
     }else {
       bounds = GRect(0, 0, 0, 0);
     }
@@ -89,7 +91,9 @@ void Sidebar_redraw() {
     } else if(globalSettings.sidebarLocation == LEFT) {
       layer_set_frame(sidebarLayer, GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h));
     } else if(globalSettings.sidebarLocation == BOTTOM) {
-      layer_set_frame(sidebarLayer, GRect(0, screen_rect.size.h - BOTTOM_BAR_HEIGHT, screen_rect.size.w, BOTTOM_BAR_HEIGHT));
+      layer_set_frame(sidebarLayer, GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT));
+    } else if(globalSettings.sidebarLocation == TOP) {
+      layer_set_frame(sidebarLayer, GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT));
     } else {
       layer_set_frame(sidebarLayer, GRect(0, 0, 0, 0));
     }
@@ -158,8 +162,9 @@ int getReplacableWidget() {
     }
   }
 
-  // use widget 4 only if bottom widget is used
-  if(globalSettings.widgets[3] == EMPTY && globalSettings.sidebarLocation == BOTTOM) {
+  // use widget 4 only if bottom or top widget is used
+  if(globalSettings.widgets[3] == EMPTY &&
+     (globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP)) {
     return 3;
   }
 
@@ -264,7 +269,7 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
   displayWidgets[0] = getSidebarWidgetByType(globalSettings.widgets[0]);
   displayWidgets[1] = getSidebarWidgetByType(globalSettings.widgets[1]);
   displayWidgets[2] = getSidebarWidgetByType(globalSettings.widgets[2]);
-  if(globalSettings.sidebarLocation == BOTTOM) {
+  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
     displayWidgets[3] = getSidebarWidgetByType(globalSettings.widgets[3]);
   }
 
@@ -280,52 +285,52 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
     }
   }
 
-  if(globalSettings.sidebarLocation == BOTTOM) {
+  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
     // calculate the three horizontal widget positions
     int leftWidgetPos = H_PADDING_DEFAULT;
     int middleWidgetPos = (bounds.size.w - SIDEBAR_WIDTH) / 2;
     int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - SIDEBAR_WIDTH;
     int v_padding;
 
-    // use compact mode and fixed height for bottom widget
+    // use compact mode and fixed height for bottom and top widget
     SidebarWidgets_useCompactMode = true;
     SidebarWidgets_fixedHeight = true;
 
     // draw the widgets
-    v_padding= (BOTTOM_BAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
+    v_padding= (HORIZONTAL_BAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
     displayWidgets[0].draw(ctx, leftWidgetPos, v_padding);
 
     if(globalSettings.widgets[3] == EMPTY) {
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
       displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
       displayWidgets[2].draw(ctx, rightWidgetPos, v_padding);
     }else if(globalSettings.widgets[2] == EMPTY) {
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
       displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
       displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
     }else if(globalSettings.widgets[1] == EMPTY) {
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
       displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
 
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
       displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
     } else { // we have 4 widgets
 
       // middle position 1
       middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 4 + 2 * H_PADDING_DEFAULT;
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
       displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
       // middle position 2
       middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 2 + 3 * H_PADDING_DEFAULT;
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
       displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
 
-      v_padding = (BOTTOM_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
       displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
     }
   } else if(globalSettings.sidebarLocation != NONE) {

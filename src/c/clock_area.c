@@ -65,12 +65,16 @@ void update_fonts() {
 void update_clock_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
   GRect bounds;
+  GRect fullscreen_bounds = layer_get_bounds(l);
+  GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
+
+  int16_t obstruction_height = fullscreen_bounds.size.h - unobstructed_bounds.size.h;
 
   #ifndef PBL_ROUND
-    if(globalSettings.sidebarLocation == BOTTOM) {
-      bounds = layer_get_bounds(l);
+    if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+      bounds = fullscreen_bounds;
     } else {
-      bounds = layer_get_unobstructed_bounds(l);
+      bounds = unobstructed_bounds;
     }
   #else
     bounds = GRect(0, ROUND_VERTICAL_PADDING, screen_rect.size.w, screen_rect.size.h - ROUND_VERTICAL_PADDING * 2);
@@ -122,14 +126,18 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
       h_adjust -= 16;
     } else if(globalSettings.sidebarLocation == LEFT) {
       h_adjust += 15;
-    } else if(globalSettings.sidebarLocation == BOTTOM) {
+    } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
       if(globalSettings.clockFontId == FONT_SETTING_LECO) {
         h_adjust += 1;
       } else {
         h_adjust -= 2;
       }
       font_size = bounds.size.h / 3;
-      v_adjust -= 3;
+      if(globalSettings.sidebarLocation == BOTTOM) {
+        v_adjust -= 3;
+      } else {
+        v_adjust += FIXED_WIDGET_HEIGHT - obstruction_height - 3;
+      }
     }
   #endif
 
@@ -141,7 +149,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
 
   int h_middle = bounds.size.w / 2;
 
-  if(globalSettings.sidebarLocation == BOTTOM) {
+  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
     int h_colon_margin = 7;
 
     graphics_context_set_text_color(ctx, globalSettings.timeColor);
@@ -181,7 +189,7 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
     graphics_draw_text(ctx,
                        currentDate,
                        date_font,
-                       GRect(0, bounds.size.h / 2 - 14, bounds.size.w, 30),
+                       GRect(0, bounds.size.h / 2 - 11 + v_adjust, bounds.size.w, 30),
                        GTextOverflowModeFill,
                        GTextAlignmentCenter,
                        NULL);
@@ -254,7 +262,7 @@ void ClockArea_update_time(struct tm* time_info) {
   strftime(time_minutes, sizeof(time_minutes), "%M", time_info);
 
   // full time
-  if(globalSettings.sidebarLocation == BOTTOM) {
+  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
     strftime(currentDayNum,  3, "%e", time_info);
     // remove padding on date num, if needed
     if(currentDayNum[0] == ' ') {

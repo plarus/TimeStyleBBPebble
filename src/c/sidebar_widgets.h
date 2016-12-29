@@ -1,9 +1,6 @@
 #pragma once
 #include <pebble.h>
 
-
-#define FIXED_WIDGET_HEIGHT 51
-
 /*
  * "Compact Mode" is a global setting shared by all widgets, which determines
  * whether they should try to reduce their padding. Intended to allow larger
@@ -13,7 +10,7 @@ extern bool SidebarWidgets_useCompactMode;
 
 /*
  * "Fixed Height" is a global setting shared by all widgets, which force
- * a fixed height for all widgets. It is used by bottom bar
+ * a fixed height for all widgets. It is used by bottom and top bar
  */
 extern bool SidebarWidgets_fixedHeight;
 
