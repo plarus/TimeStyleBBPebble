@@ -62,20 +62,12 @@ void update_fonts() {
   }
 }
 
-void update_clock_area_layer(Layer *l, GContext* ctx) {
+void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
   GRect bounds;
-  GRect fullscreen_bounds = layer_get_bounds(l);
-  GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
-
-  int16_t obstruction_height = fullscreen_bounds.size.h - unobstructed_bounds.size.h;
 
   #ifndef PBL_ROUND
-    if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-      bounds = fullscreen_bounds;
-    } else {
-      bounds = unobstructed_bounds;
-    }
+    bounds = layer_get_unobstructed_bounds(l);
   #else
     bounds = GRect(0, ROUND_VERTICAL_PADDING, screen_rect.size.w, screen_rect.size.h - ROUND_VERTICAL_PADDING * 2);
   #endif
@@ -126,18 +118,6 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
       h_adjust -= 16;
     } else if(globalSettings.sidebarLocation == LEFT) {
       h_adjust += 15;
-    } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-      if(globalSettings.clockFontId == FONT_SETTING_LECO) {
-        h_adjust += 1;
-      } else {
-        h_adjust -= 2;
-      }
-      font_size = bounds.size.h / 3;
-      if(globalSettings.sidebarLocation == BOTTOM) {
-        v_adjust -= 3;
-      } else {
-        v_adjust += FIXED_WIDGET_HEIGHT - obstruction_height - 3;
-      }
     }
   #endif
 
@@ -145,71 +125,130 @@ void update_clock_area_layer(Layer *l, GContext* ctx) {
   fctx_begin_fill(&fctx);
   fctx_set_text_em_height(&fctx, hours_font, font_size);
   fctx_set_text_em_height(&fctx, minutes_font, font_size);
-  fctx_set_text_em_height(&fctx, colon_font, font_size);
 
-  int h_middle = bounds.size.w / 2;
+  // draw hours
+  time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + h_adjust);
+  time_pos.y = INT_TO_FIXED(v_padding + v_adjust);
+  fctx_set_offset(&fctx, time_pos);
+  fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
 
-  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-    int h_colon_margin = 7;
+  //draw minutes
+  time_pos.y = INT_TO_FIXED(bounds.size.h - v_padding + v_adjust);
+  fctx_set_offset(&fctx, time_pos);
+  fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentCenter, FTextAnchorBaseline);
 
-    graphics_context_set_text_color(ctx, globalSettings.timeColor);
-
-    if(!clock_is_24h_style()) {
-      // draw am/pm
-      graphics_draw_text(ctx,
-                         isAmHour ? "AM" : "PM",
-                         am_pm_font,
-                         GRect(0, v_padding / 2 + v_adjust, bounds.size.w - h_colon_margin + h_adjust, 20),
-                         GTextOverflowModeFill,
-                         GTextAlignmentRight,
-                         NULL);
-    }
-
-    // draw hours
-    time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
-    time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
-    fctx_set_offset(&fctx, time_pos);
-    fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
-
-    //draw ":"
-    if(globalSettings.clockFontId == FONT_SETTING_LECO) {
-      time_pos.x = INT_TO_FIXED(h_middle);
-    } else {
-      time_pos.x = INT_TO_FIXED(h_middle - 1);
-    }
-    fctx_set_offset(&fctx, time_pos);
-    fctx_draw_string(&fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
-
-    //draw minutes
-    time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
-    fctx_set_offset(&fctx, time_pos);
-    fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
-
-    // draw date
-    graphics_draw_text(ctx,
-                       currentDate,
-                       date_font,
-                       GRect(0, bounds.size.h / 2 - 11 + v_adjust, bounds.size.w, 30),
-                       GTextOverflowModeFill,
-                       GTextAlignmentCenter,
-                       NULL);
-  } else {
-    // draw hours
-    time_pos.x = INT_TO_FIXED(h_middle + h_adjust);
-    time_pos.y = INT_TO_FIXED(v_padding + v_adjust);
-    fctx_set_offset(&fctx, time_pos);
-    fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
-
-    //draw minutes
-    time_pos.y = INT_TO_FIXED(bounds.size.h - v_padding + v_adjust);
-    fctx_set_offset(&fctx, time_pos);
-    fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentCenter, FTextAnchorBaseline);
-  }
   fctx_end_fill(&fctx);
-
   fctx_deinit_context(&fctx);
 }
 
+void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
+  // check layer bounds
+  GRect fullscreen_bounds = layer_get_bounds(l);
+  GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
+
+  int16_t obstruction_height = fullscreen_bounds.size.h - unobstructed_bounds.size.h;
+
+  // initialize FCTX, the fancy 3rd party drawing library that all the cool kids use
+  FContext fctx;
+
+  fctx_init_context(&fctx, ctx);
+  fctx_set_color_bias(&fctx, 0);
+  fctx_set_fill_color(&fctx, globalSettings.timeColor);
+
+  // calculate font size
+  int font_size = fullscreen_bounds.size.h / 3;
+
+  // avenir + avenir bold metrics
+  int v_padding = fullscreen_bounds.size.h / 16;
+  int h_adjust = -2;
+  int v_adjust = 0;
+
+  // alternate metrics for LECO
+  if(globalSettings.clockFontId == FONT_SETTING_LECO) {
+    v_padding = fullscreen_bounds.size.h / 20;
+    h_adjust = -3;
+    v_adjust = 0;
+
+    // leco looks awful with antialiasing
+    #ifdef PBL_COLOR
+      fctx_enable_aa(false);
+    #endif
+  } else {
+    #ifdef PBL_COLOR
+      fctx_enable_aa(true);
+    #endif
+  }
+
+  // for rectangular watches, adjust X position based on sidebar position
+  if(globalSettings.sidebarLocation == BOTTOM) {
+    v_adjust -= 3;
+  } else {
+    v_adjust += FIXED_WIDGET_HEIGHT - obstruction_height - 3;
+  }
+
+  int h_middle = fullscreen_bounds.size.w / 2;
+  int h_colon_margin = 7;
+
+  FPoint time_pos;
+  fctx_begin_fill(&fctx);
+  fctx_set_text_em_height(&fctx, hours_font, font_size);
+  fctx_set_text_em_height(&fctx, minutes_font, font_size);
+  fctx_set_text_em_height(&fctx, colon_font, font_size);
+
+  graphics_context_set_text_color(ctx, globalSettings.timeColor);
+
+  if(!clock_is_24h_style()) {
+    // draw am/pm
+    graphics_draw_text(ctx,
+                       isAmHour ? "AM" : "PM",
+                       am_pm_font,
+                       GRect(0, v_padding / 2 + v_adjust, fullscreen_bounds.size.w - h_colon_margin + h_adjust, 20),
+                       GTextOverflowModeFill,
+                       GTextAlignmentRight,
+                       NULL);
+  }
+
+  // draw hours
+  time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
+  time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
+  fctx_set_offset(&fctx, time_pos);
+  fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
+
+  //draw ":"
+  if(globalSettings.clockFontId == FONT_SETTING_LECO) {
+    time_pos.x = INT_TO_FIXED(h_middle);
+  } else {
+    time_pos.x = INT_TO_FIXED(h_middle - 1);
+  }
+  fctx_set_offset(&fctx, time_pos);
+  fctx_draw_string(&fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
+
+  //draw minutes
+  time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
+  fctx_set_offset(&fctx, time_pos);
+  fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
+
+  // draw date
+  graphics_draw_text(ctx,
+                     currentDate,
+                     date_font,
+                     GRect(0, fullscreen_bounds.size.h / 2 - 11 + v_adjust, fullscreen_bounds.size.w, 30),
+                     GTextOverflowModeFill,
+                     GTextAlignmentCenter,
+                     NULL);
+
+  fctx_end_fill(&fctx);
+  fctx_deinit_context(&fctx);
+}
+
+void update_clock_area_layer(Layer *l, GContext* ctx) {
+
+  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+      update_clock_and_date_area_layer(l, ctx);
+  } else {
+      update_original_clock_area_layer(l, ctx);
+  }
+}
 
 void ClockArea_init(Window* window) {
   // record the screen size, since we NEVER GET IT AGAIN
