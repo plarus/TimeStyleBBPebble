@@ -36,15 +36,23 @@
     border-left: 10px solid #FFFFFF;
   }
 
-  &.sidebar_bottom {
-    border-right: 0 none;
-    border-left: 0 none;
-    border-bottom: 20px solid #FFFFFF;
-  }
-
   &.sidebar_none {
     border-right: 0 none;
     border-left: 0 none;
+  }
+
+  &.sidebar_top {
+    border-right: 0 none;
+    border-left: 0 none;
+    border-top: 20px solid #FFFFFF;
+    border-bottom: 0 none;
+  }
+
+  &.sidebar_bottom {
+    border-right: 0 none;
+    border-left: 0 none;
+    border-top: 0 none;
+    border-bottom: 20px solid #FFFFFF;
   }
 }
 
@@ -255,6 +263,11 @@
   > div {
     display: inline-block;
   }
+}
+
+#sidebar_position_setting label.btn {
+  width: 32%;
+  margin-bottom: 3px;
 }
 
 #presets_scroller_outer {

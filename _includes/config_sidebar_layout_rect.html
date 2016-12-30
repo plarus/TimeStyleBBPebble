@@ -37,7 +37,7 @@
 <label>Sidebar Display</label><br>
 <label class="subtle">Position</label>
 <div id="sidebar_position_setting" class="form-group">
-  <div class="btn-group btn-group-justified"  data-toggle="buttons">
+  <div data-toggle="buttons">
     <label class="btn btn-default" data-setting="left">
       <input type="radio" name="options" id="option1" autocomplete="off">
       <div class="example_face sidebar_left"></div>
@@ -48,16 +48,22 @@
       <div class="example_face"></div>
       Right
     </label>
-    <label class="btn btn-default" data-setting="bottom">
+    <label class="btn btn-default" data-setting="none">
       <input type="radio" name="options" id="option3" autocomplete="off">
+      <div class="example_face sidebar_none"></div>
+      None
+    </label>
+    <label class="btn btn-default" data-setting="top">
+      <input type="radio" name="options" id="option4" autocomplete="off">
+      <div class="example_face sidebar_top"></div>
+      Top
+    </label>
+    <label class="btn btn-default" data-setting="bottom">
+      <input type="radio" name="options" id="option5" autocomplete="off">
       <div class="example_face sidebar_bottom"></div>
       Bottom
     </label>
-    <label class="btn btn-default" data-setting="none">
-      <input type="radio" name="options" id="option4" autocomplete="off">
-      <div class="example_face sidebar_none"></div>
-      None
-    </label></div>
+  </div>
 </div>
 <label class="subtle">Text Size</label>
 <div id="use_large_sidebar_font_setting" class="form-group" >
