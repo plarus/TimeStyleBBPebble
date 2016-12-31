@@ -11,8 +11,6 @@
 #define V_PADDING_COMPACT 4
 
 #define H_PADDING_DEFAULT 4
-
-#define SIDEBAR_WIDTH 30
 #define HORIZONTAL_BAR_HEIGHT FIXED_WIDGET_HEIGHT
 
 GRect screen_rect;
@@ -47,9 +45,9 @@ void Sidebar_init(Window* window) {
     bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
   #else
     if(globalSettings.sidebarLocation == RIGHT) {
-      bounds = GRect(screen_rect.size.w - SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, screen_rect.size.h);
+      bounds = GRect(screen_rect.size.w - ACTION_BAR_WIDTH, 0, ACTION_BAR_WIDTH, screen_rect.size.h);
     } else if(globalSettings.sidebarLocation == LEFT) {
-      bounds = GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h);
+      bounds = GRect(0, 0, ACTION_BAR_WIDTH, screen_rect.size.h);
     } else if(globalSettings.sidebarLocation == BOTTOM) {
       bounds = GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
     } else if(globalSettings.sidebarLocation == TOP) {
@@ -92,9 +90,9 @@ void Sidebar_redraw() {
   #ifndef PBL_ROUND
     // reposition the sidebar if needed
     if(globalSettings.sidebarLocation == RIGHT) {
-      layer_set_frame(sidebarLayer, GRect(screen_rect.size.w - SIDEBAR_WIDTH, 0, SIDEBAR_WIDTH, screen_rect.size.h));
+      layer_set_frame(sidebarLayer, GRect(screen_rect.size.w - ACTION_BAR_WIDTH, 0, ACTION_BAR_WIDTH, screen_rect.size.h));
     } else if(globalSettings.sidebarLocation == LEFT) {
-      layer_set_frame(sidebarLayer, GRect(0, 0, SIDEBAR_WIDTH, screen_rect.size.h));
+      layer_set_frame(sidebarLayer, GRect(0, 0, ACTION_BAR_WIDTH, screen_rect.size.h));
     } else if(globalSettings.sidebarLocation == BOTTOM) {
       layer_set_frame(sidebarLayer, GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT));
     } else if(globalSettings.sidebarLocation == TOP) {
@@ -252,6 +250,9 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
   GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
   GRect bounds = layer_get_bounds(l);
 
+  // this ends up being zero on every rectangular platform besides emery
+  SidebarWidgets_xOffset = (ACTION_BAR_WIDTH - 30) / 2;
+
   SidebarWidgets_updateFonts();
 
   graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
@@ -291,8 +292,8 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
     // calculate the three horizontal widget positions
     int leftWidgetPos = H_PADDING_DEFAULT;
-    int middleWidgetPos = (bounds.size.w - SIDEBAR_WIDTH) / 2;
-    int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - SIDEBAR_WIDTH;
+    int middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
+    int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - ACTION_BAR_WIDTH;
     int v_padding;
 
     // use compact mode and fixed height for bottom and top widget

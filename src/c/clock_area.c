@@ -119,9 +119,9 @@ void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   #else
     // for rectangular watches, adjust X position based on sidebar position
     if(globalSettings.sidebarLocation == RIGHT) {
-      h_adjust -= 16;
+      h_adjust -= ACTION_BAR_WIDTH / 2 + 1;
     } else if(globalSettings.sidebarLocation == LEFT) {
-      h_adjust += 15;
+      h_adjust += ACTION_BAR_WIDTH / 2;
     }else if(globalSettings.sidebarLocation == TOP) {
       v_adjust += FIXED_WIDGET_HEIGHT;
     }
