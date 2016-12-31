@@ -323,6 +323,4 @@ void ClockArea_update_time(struct tm* time_info) {
 
     isAmHour = time_info->tm_hour < 12;
   }
-
-  ClockArea_redraw();
 }

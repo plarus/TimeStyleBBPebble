@@ -76,7 +76,6 @@ static void main_window_load(Window *window) {
 
   // Make sure the time is displayed from the start
   redrawScreen();
-  update_clock();
 }
 
 static void main_window_unload(Window *window) {
@@ -108,6 +107,12 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   }
 
   update_clock();
+
+  // redraw all screen
+  if(globalSettings.sidebarLocation != NONE) {
+    Sidebar_redraw();
+  }
+  ClockArea_redraw();
 }
 
 void bluetoothStateChanged(bool newConnectionState) {
