@@ -3,34 +3,9 @@
 #include "settings.h"
 #include "messaging.h"
 
-void (*message_processed_callback)(void);
+static MessageProcessedCallback message_processed_callback;
 
-void messaging_requestNewWeatherData() {
-  // just send an empty message for now
-  DictionaryIterator *iter;
-  app_message_outbox_begin(&iter);
-  dict_write_uint32(iter, 0, 0);
-  app_message_outbox_send();
-}
-
-void messaging_init(void (*processed_callback)(void)) {
-  // register my custom callback
-  message_processed_callback = processed_callback;
-
-  // Register callbacks
-  app_message_register_inbox_received(inbox_received_callback);
-  app_message_register_inbox_dropped(inbox_dropped_callback);
-  app_message_register_outbox_failed(outbox_failed_callback);
-  app_message_register_outbox_sent(outbox_sent_callback);
-
-  // Open AppMessage
-  app_message_open(512, 8);
-
-  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Watch messaging is started!");
-  app_message_register_inbox_received(inbox_received_callback);
-}
-
-void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   // does this message contain current weather conditions?
   Tuple *weatherTemp_tuple = dict_find(iterator, MESSAGE_KEY_WeatherTemperature);
   Tuple *weatherConditions_tuple = dict_find(iterator, MESSAGE_KEY_WeatherCondition);
@@ -200,15 +175,40 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   message_processed_callback();
 }
 
-void inbox_dropped_callback(AppMessageResult reason, void *context) {
+static void inbox_dropped_callback(AppMessageResult reason, void *context) {
   // APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
 }
 
-void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
   // APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed! %d %d %d", reason, APP_MSG_SEND_TIMEOUT, APP_MSG_SEND_REJECTED);
 
 }
 
-void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   // APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+}
+
+void messaging_requestNewWeatherData(void) {
+  // just send an empty message for now
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+  dict_write_uint32(iter, 0, 0);
+  app_message_outbox_send();
+}
+
+void messaging_init(MessageProcessedCallback processed_callback) {
+  // register my custom callback
+  message_processed_callback = processed_callback;
+
+  // Register callbacks
+  app_message_register_inbox_received(inbox_received_callback);
+  app_message_register_inbox_dropped(inbox_dropped_callback);
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
+
+  // Open AppMessage
+  app_message_open(512, 8);
+
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Watch messaging is started!");
+  app_message_register_inbox_received(inbox_received_callback);
 }

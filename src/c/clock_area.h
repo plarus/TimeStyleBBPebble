@@ -9,6 +9,6 @@
 
 // "public" functions
 void ClockArea_init(Window* window);
-void ClockArea_deinit();
-void ClockArea_redraw();
+void ClockArea_deinit(void);
+void ClockArea_redraw(void);
 void ClockArea_update_time(struct tm* time_info);

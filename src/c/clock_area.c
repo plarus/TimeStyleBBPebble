@@ -8,31 +8,31 @@
 
 #define ROUND_VERTICAL_PADDING 15
 
-char time_hours[3];
-char time_minutes[3];
-char currentDate[21];
-char currentDayNum[3];
+static char time_hours[3];
+static char time_minutes[3];
+static char currentDate[21];
+static char currentDayNum[3];
 
-bool isAmHour;
+static bool isAmHour;
 
-Layer* clock_area_layer;
-FFont* hours_font;
-FFont* minutes_font;
-FFont* colon_font;
+static Layer* clock_area_layer;
+static FFont* hours_font;
+static FFont* minutes_font;
+static FFont* colon_font;
 
-GFont date_font;
-GFont am_pm_font;
+static GFont date_font;
+static GFont am_pm_font;
 
 // just allocate all the fonts at startup because i don't feel like
 // dealing with allocating and deallocating things
-FFont* avenir;
-FFont* avenir_bold;
-FFont* leco;
+static FFont* avenir;
+static FFont* avenir_bold;
+static FFont* leco;
 
-GRect screen_rect;
+static GRect screen_rect;
 
 // "private" functions
-void update_fonts() {
+static void update_fonts(void) {
   switch(globalSettings.clockFontId) {
     case FONT_SETTING_DEFAULT:
         hours_font = avenir;
@@ -62,7 +62,7 @@ void update_fonts() {
   }
 }
 
-void update_original_clock_area_layer(Layer *l, GContext* ctx) {
+static void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
   GRect bounds;
 
@@ -147,7 +147,7 @@ void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   fctx_deinit_context(&fctx);
 }
 
-void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
+static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
   GRect fullscreen_bounds = layer_get_bounds(l);
   GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
@@ -247,7 +247,7 @@ void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   fctx_deinit_context(&fctx);
 }
 
-void update_clock_area_layer(Layer *l, GContext* ctx) {
+static void update_clock_area_layer(Layer *l, GContext* ctx) {
 
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
       update_clock_and_date_area_layer(l, ctx);
@@ -280,7 +280,7 @@ void ClockArea_init(Window* window) {
   update_fonts();
 }
 
-void ClockArea_deinit() {
+void ClockArea_deinit(void) {
   layer_destroy(clock_area_layer);
 
   ffont_destroy(avenir);
@@ -288,7 +288,7 @@ void ClockArea_deinit() {
   ffont_destroy(leco);
 }
 
-void ClockArea_redraw() {
+void ClockArea_redraw(void) {
   // check if the fonts need to be switched
   update_fonts();
 

@@ -3,7 +3,7 @@
 
 Settings globalSettings;
 
-void Settings_init() {
+void Settings_init(void) {
   // first, check if we have any saved settings
   // int settingsVersion = persist_read_int(SETTINGS_VERSION_KEY);
 
@@ -11,7 +11,7 @@ void Settings_init() {
   Settings_loadFromStorage();
 }
 
-void Settings_deinit() {
+void Settings_deinit(void) {
   // write all settings to storage
   Settings_saveToStorage();
 }
@@ -19,7 +19,7 @@ void Settings_deinit() {
 /*
  * Load the saved color settings, or if they don't exist load defaults
  */
-void Settings_loadFromStorage() {
+void Settings_loadFromStorage(void) {
   // load the default colors
   globalSettings.timeBgColor      = GColorBlack;
   globalSettings.sidebarTextColor = GColorBlack;
@@ -137,7 +137,7 @@ void Settings_loadFromStorage() {
   Settings_updateDynamicSettings();
 }
 
-void Settings_saveToStorage() {
+void Settings_saveToStorage(void) {
   // ensure that the weather disabled setting is accurate before saving it
   Settings_updateDynamicSettings();
 
@@ -174,7 +174,7 @@ void Settings_saveToStorage() {
   persist_write_int(SETTINGS_VERSION_KEY, CURRENT_SETTINGS_VERSION);
 }
 
-void Settings_updateDynamicSettings() {
+void Settings_updateDynamicSettings(void) {
   globalSettings.disableWeather = true;
   globalSettings.updateScreenEverySecond = false;
   globalSettings.enableAutoBatteryWidget = true;
