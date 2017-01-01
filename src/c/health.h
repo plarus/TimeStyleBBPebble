@@ -6,6 +6,7 @@ typedef void (*HealthEventCallback)(void);
 bool Health_init(HealthEventCallback callback);
 void Health_deinit(void);
 bool Health_isUserSleeping(void);
+bool Health_sleepingToBeDisplayed(void);
 HealthValue Health_getSleepSeconds(void);
 HealthValue Health_getRestfulSleepSeconds(void);
 HealthValue Health_getDistanceWalked(void);

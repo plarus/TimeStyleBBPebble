@@ -4,7 +4,11 @@
 
 static HealthEventCallback s_health_event_callback;
 
+
+#define SECONDS_AFTER_WAKE_UP 1800 // Half hour
+
 static bool s_sleeping;
+static time_t s_endSleepTime;
 static HealthValue s_sleep_seconds;
 static HealthValue s_restful_sleep_seconds;
 static HealthValue s_distance_walked;
@@ -31,11 +35,17 @@ static void health_event_handler(HealthEventType event, void *context) {
     } else if (event == HealthEventSleepUpdate) {
         HealthActivityMask mask = health_service_peek_current_activities();
         s_sleeping = (mask & HealthActivitySleep) || (mask & HealthActivityRestfulSleep);
+        if(s_sleeping){
+          s_endSleepTime = time(NULL);
+        }
         s_sleep_seconds = get_health_value_sum_today(HealthMetricSleepSeconds);
         s_restful_sleep_seconds = get_health_value_sum_today(HealthMetricSleepRestfulSeconds);
     } else if (event == HealthEventMovementUpdate) {
         HealthActivityMask mask = health_service_peek_current_activities();
         s_sleeping = (mask & HealthActivitySleep) || (mask & HealthActivityRestfulSleep);
+        if(s_sleeping){
+          s_endSleepTime = time(NULL);
+        }
         s_distance_walked = get_health_value_sum_today(HealthMetricWalkedDistanceMeters);
         s_steps = get_health_value_sum_today(HealthMetricStepCount);
     } else if (event == HealthEventHeartRateUpdate) {
@@ -63,6 +73,10 @@ void Health_deinit(void) {
 
 bool Health_isUserSleeping(void) {
     return s_sleeping;
+}
+
+bool Health_sleepingToBeDisplayed(void) {
+    return s_sleeping || (s_endSleepTime + SECONDS_AFTER_WAKE_UP > time(NULL));
 }
 
 HealthValue Health_getSleepSeconds(void) {

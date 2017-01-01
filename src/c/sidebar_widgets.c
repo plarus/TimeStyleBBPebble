@@ -85,7 +85,11 @@ static void Beats_draw(GContext* ctx, int xPosition, int yPosition);
   static SidebarWidget healthWidget;
   static int Health_getHeight(void);
   static void Health_draw(GContext* ctx, int xPosition, int yPosition);
+  static SidebarWidget sleepWidget;
+  static int Sleep_getHeight(void);
   static void Sleep_draw(GContext* ctx, int xPosition, int yPosition);
+  static SidebarWidget stepsWidget;
+  static int Steps_getHeight(void);
   static void Steps_draw(GContext* ctx, int xPosition, int yPosition);
 
   static SidebarWidget heartRateWidget;
@@ -142,7 +146,13 @@ void SidebarWidgets_init(void) {
   #ifdef PBL_HEALTH
     healthWidget.getHeight = Health_getHeight;
     healthWidget.draw = Health_draw;
-    
+
+    sleepWidget.getHeight = Sleep_getHeight;
+    sleepWidget.draw = Sleep_draw;
+
+    stepsWidget.getHeight = Steps_getHeight;
+    stepsWidget.draw = Steps_draw;
+
     heartRateWidget.getHeight = HeartRate_getHeight;
     heartRateWidget.draw = HeartRate_draw;
   #endif
@@ -271,6 +281,10 @@ SidebarWidget getSidebarWidgetByType(SidebarWidgetType type) {
     #ifdef PBL_HEALTH
       case HEALTH:
         return healthWidget;
+      case SLEEP:
+        return sleepWidget;
+      case STEP:
+        return stepsWidget;
       case HEARTRATE:
         return heartRateWidget;
     #endif
@@ -727,25 +741,25 @@ static void AltTime_draw(GContext* ctx, int xPosition, int yPosition) {
 
 #ifdef PBL_HEALTH
 static int Health_getHeight(void) {
-  if(Health_isUserSleeping()) {
-    return 44;
+  if(Health_sleepingToBeDisplayed()) {
+    return Sleep_getHeight();
   } else {
-    if(SidebarWidgets_fixedHeight) {
-      return FIXED_WIDGET_HEIGHT;
-    } else {
-      return 32;
-    }
+    return Steps_getHeight();
   }
 }
 
 static void Health_draw(GContext* ctx, int xPosition, int yPosition) {
   // check if we're showing the sleep data or step data
 
-  if(Health_isUserSleeping()) {
+  if(Health_sleepingToBeDisplayed()) {
     Sleep_draw(ctx, xPosition, yPosition);
   } else {
     Steps_draw(ctx, xPosition, yPosition);
   }
+}
+
+static int Sleep_getHeight(void) {
+  return 44;
 }
 
 static void Sleep_draw(GContext* ctx, int xPosition, int yPosition) {
@@ -787,6 +801,14 @@ static void Sleep_draw(GContext* ctx, int xPosition, int yPosition) {
                      GTextAlignmentCenter,
                      NULL);
 
+}
+
+static int Steps_getHeight(void) {
+  if(SidebarWidgets_fixedHeight) {
+    return FIXED_WIDGET_HEIGHT;
+  } else {
+    return 32;
+  }
 }
 
 static void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
