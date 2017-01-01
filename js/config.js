@@ -298,8 +298,8 @@ function showOnlySelectedWidgetSettings() {
     $('#widget_altclock_settings').hide();
   }
 
-  // heath widget
-  if(selections.indexOf('10') != -1) {
+  // health, sleep, steps widgets
+  if(selections.indexOf('10') != -1 || selections.indexOf('13') != -1 || selections.indexOf('14') != -1) {
     $('#widget_health_settings').show();
   } else {
     $('#widget_health_settings').hide();
@@ -318,19 +318,24 @@ function widgetsShouldBeCompact() {
   if(useLargeFonts) {
     widgetHeights = {
       '0' : 0,
+      '1' : 22,
       '2' : (showBatteryPct) ? 33 : 14,
-      '3' : 29,
+      '3' : 31,
       '4' : 62,
       '5' : 14,
-      '6' : 29,
+      '6' : 31,
       '7' : 44,
       '8' : 63,
-      '9' : 31,
-      '10' : 32
+      '10' : 32,
+      '11' : 31,
+      '12' : 40,
+      '13' : 44,
+      '14' : 32
     }
   } else {
     widgetHeights = {
       '0' : 0,
+      '1' : 22,
       '2' : (showBatteryPct) ? 27 : 14,
       '3' : 26,
       '4' : 58,
@@ -338,8 +343,11 @@ function widgetsShouldBeCompact() {
       '6' : 26,
       '7' : 42,
       '8' : 60,
-      '9' : 31,
-      '10' : 32
+      '10' : 32,
+      '11' : 26,
+      '12' : 38,
+      '13' : 44,
+      '14' : 32
     }
   }
 
@@ -406,6 +414,12 @@ function updateSidebarPreview() {
         break;
       case '12':
         image_url += 'HRM';
+        break;
+      case '13':
+        image_url += 'SLEEP';
+        break;
+      case '14':
+        image_url += 'STEPS';
         break;
       case '0':
         image_url += 'NONE';
@@ -636,10 +650,11 @@ function trackSettings(config) {
     '6': 'WeekNum',
     '7': 'WeatherCurrent',
     '8': 'WeatherToday',
-    '9': 'CurrentTime',
     '10': 'Health',
     '11': 'SwatchBeats',
-    '12': 'HeartRate'
+    '12': 'HeartRate',
+    '13': 'Sleep',
+    '14': 'Steps',
   };
 
   // track the sidebar layout selections
