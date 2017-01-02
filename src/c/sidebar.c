@@ -353,7 +353,3 @@ void Sidebar_redraw(void) {
     layer_mark_dirty(sidebarLayer2);
   #endif
 }
-
-void Sidebar_updateTime(struct tm* timeInfo) {
-  SidebarWidgets_updateTime(timeInfo);
-}

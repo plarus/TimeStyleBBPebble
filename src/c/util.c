@@ -19,16 +19,3 @@ void gdraw_command_image_recolor(GDrawCommandImage *img, GColor fill_color, GCol
   gdraw_command_list_iterate(gdraw_command_image_get_command_list(img),
                              recolor_iterator_cb, &colors);
 }
-
-int time_get_beats(const struct tm *tm) {
-  // code from https://gist.github.com/insom/bf40b91fd25ae1d84764
-
-  time_t t = mktime((struct tm *)tm);
-  t = t + 3600; // Add an hour to make into BMT
-
-  struct tm *bt = gmtime(&t);
-  double sex = (bt->tm_hour * 3600) + (bt->tm_min * 60) + bt->tm_sec;
-  int beats = (int)(10 * (sex / 864)) % 1000;
-
-  return beats;
-}

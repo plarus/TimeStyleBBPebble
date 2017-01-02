@@ -59,4 +59,3 @@ void SidebarWidgets_init(void);
 void SidebarWidgets_deinit(void);
 SidebarWidget getSidebarWidgetByType(SidebarWidgetType type);
 void SidebarWidgets_updateFonts(void);
-void SidebarWidgets_updateTime(struct tm* timeInfo);

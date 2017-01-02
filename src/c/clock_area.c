@@ -5,15 +5,9 @@
 #include "clock_area.h"
 #include "settings.h"
 #include "languages.h"
+#include "time_date.h"
 
 #define ROUND_VERTICAL_PADDING 15
-
-static char time_hours[3];
-static char time_minutes[3];
-static char currentDate[21];
-static char currentDayNum[3];
-
-static bool isAmHour;
 
 static Layer* clock_area_layer;
 static FFont* hours_font;
@@ -136,12 +130,12 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + h_adjust);
   time_pos.y = INT_TO_FIXED(v_padding + v_adjust);
   fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
+  fctx_draw_string(&fctx, time_date_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
 
   //draw minutes
   time_pos.y = INT_TO_FIXED(bounds.size.h - v_padding + v_adjust);
   fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentCenter, FTextAnchorBaseline);
+  fctx_draw_string(&fctx, time_date_minutes, minutes_font, GTextAlignmentCenter, FTextAnchorBaseline);
 
   fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
@@ -206,7 +200,7 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   if(!clock_is_24h_style()) {
     // draw am/pm
     graphics_draw_text(ctx,
-                       isAmHour ? "AM" : "PM",
+                       time_date_isAmHour ? "AM" : "PM",
                        am_pm_font,
                        GRect(0, v_padding / 2 + v_adjust, fullscreen_bounds.size.w - h_colon_margin + h_adjust, 20),
                        GTextOverflowModeFill,
@@ -218,7 +212,7 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
   time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
   fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
+  fctx_draw_string(&fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
 
   //draw ":"
   if(globalSettings.clockFontId == FONT_SETTING_LECO) {
@@ -232,11 +226,11 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   //draw minutes
   time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
   fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
+  fctx_draw_string(&fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
 
   // draw date
   graphics_draw_text(ctx,
-                     currentDate,
+                     time_date_currentDate,
                      date_font,
                      GRect(0, fullscreen_bounds.size.h / 2 - 11 + v_adjust, fullscreen_bounds.size.w, 30),
                      GTextOverflowModeFill,
@@ -293,34 +287,4 @@ void ClockArea_redraw(void) {
   update_fonts();
 
   layer_mark_dirty(clock_area_layer);
-}
-
-void ClockArea_update_time(struct tm* time_info) {
-  // hours
-  if (clock_is_24h_style()) {
-    strftime(time_hours, sizeof(time_hours), (globalSettings.showLeadingZero) ? "%H" : "%k", time_info);
-  } else {
-    strftime(time_hours, sizeof(time_hours), (globalSettings.showLeadingZero) ? "%I" : "%l", time_info);
-  }
-
-  // minutes
-  strftime(time_minutes, sizeof(time_minutes), "%M", time_info);
-
-  // full time
-  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-    strftime(currentDayNum,  3, "%e", time_info);
-    // remove padding on date num, if needed
-    if(currentDayNum[0] == ' ') {
-      currentDayNum[0] = currentDayNum[1];
-      currentDayNum[1] = '\0';
-    }
-
-    strncpy(currentDate, dayNames[globalSettings.languageId][time_info->tm_wday], 8);
-    strncat(currentDate, " " , 2);
-    strncat(currentDate, currentDayNum, sizeof(currentDayNum));
-    strncat(currentDate, " " , 2);
-    strncat(currentDate, monthNames[globalSettings.languageId][time_info->tm_mon], 8);
-
-    isAmHour = time_info->tm_hour < 12;
-  }
 }

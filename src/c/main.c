@@ -8,6 +8,7 @@
 #ifdef PBL_HEALTH
 #include "health.h"
 #endif
+#include "time_date.h"
 
 // windows and layers
 static Window* mainWindow;
@@ -29,11 +30,7 @@ static void update_clock(void) {
   time(&rawTime);
   timeInfo = localtime(&rawTime);
 
-  ClockArea_update_time(timeInfo);
-
-  if(globalSettings.sidebarLocation != NONE) {
-    Sidebar_updateTime(timeInfo);
-  }
+  time_date_update(timeInfo);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {

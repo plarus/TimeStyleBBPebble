@@ -7,7 +7,9 @@
 #ifdef PBL_HEALTH
 #include "health.h"
 #endif
+#include "time_date.h"
 #include "sidebar_widgets.h"
+
 
 bool SidebarWidgets_useCompactMode = false;
 bool SidebarWidgets_fixedHeight = false;
@@ -26,15 +28,6 @@ static GFont lgSidebarFont;
 static GFont currentSidebarFont;
 static GFont currentSidebarSmallFont;
 static GFont batteryFont;
-
-// the date, time and weather strings
-static char currentDayName[8];
-static char currentDayNum[5];
-static char currentMonth[8];
-static char currentWeekNum[5];
-static char currentSecondsNum[5];
-static char altClock[8];
-static char currentBeats[5];
 
 // the widgets
 static SidebarWidget batteryMeterWidget;
@@ -184,71 +177,6 @@ void SidebarWidgets_updateFonts(void) {
     currentSidebarFont = mdSidebarFont;
     currentSidebarSmallFont = smSidebarFont;
     batteryFont = smSidebarFont;
-  }
-}
-
-// c can't do true modulus on negative numbers, apparently
-// from http://stackoverflow.com/questions/11720656/modulo-operation-with-negative-numbers
-static int mod(int a, int b) {
-    int r = a % b;
-    return r < 0 ? r + b : r;
-}
-
-void SidebarWidgets_updateTime(struct tm* timeInfo) {
-  // APP_LOG(APP_LOG_LEVEL_DEBUG,"Current RAM: %d", heap_bytes_free());
-
-  // set all the date strings
-  strftime(currentDayNum,  3, "%e", timeInfo);
-  strftime(currentWeekNum, 3, "%V", timeInfo);
-
-  // remove padding on date num, if needed
-  if(currentDayNum[0] == ' ') {
-    currentDayNum[0] = currentDayNum[1];
-    currentDayNum[1] = '\0';
-  }
-
-  // set the seconds string
-  strftime(currentSecondsNum, 4, ":%S", timeInfo);
-
-  strncpy(currentDayName, dayNames[globalSettings.languageId][timeInfo->tm_wday], sizeof(currentDayName));
-  strncpy(currentMonth, monthNames[globalSettings.languageId][timeInfo->tm_mon], sizeof(currentMonth));
-
-  if(globalSettings.enableAltTimeZone) {
-    // set the alternate time zone string
-    int hour = timeInfo->tm_hour;
-
-    // apply the configured offset value
-    hour += globalSettings.altclockOffset;
-
-    char am_pm;
-
-    // format it
-    if(clock_is_24h_style()) {
-      hour = mod(hour, 24);
-      am_pm = (char) 0;
-    } else {
-      hour = mod(hour, 12);
-      if(hour == 0) {
-        hour = 12;
-      }
-      am_pm = (mod(hour, 24) < 12) ? 'a' : 'p';
-    }
-
-    if(globalSettings.showLeadingZero && hour < 10) {
-      snprintf(altClock, sizeof(altClock), "0%i%c", hour, am_pm);
-    } else {
-      snprintf(altClock, sizeof(altClock), "%i%c", hour, am_pm);
-    }
-  }
-
-  if(globalSettings.enableBeats) {
-    // this must be last, because time_get_beats screws with the time structure
-    int beats = 0;
-
-    // set the swatch internet time beats
-    beats = time_get_beats(timeInfo);
-  
-    snprintf(currentBeats, sizeof(currentBeats), "%i", beats);
   }
 }
 
@@ -419,7 +347,7 @@ static void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
 
   // first draw the day name
   graphics_draw_text(ctx,
-                     currentDayName,
+                     time_date_currentDayName,
                      currentSidebarFont,
                      GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition, 40, 20),
                      GTextOverflowModeFill,
@@ -448,7 +376,7 @@ static void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
   yOffset = globalSettings.useLargeFonts ? 24 : 26;
 
   graphics_draw_text(ctx,
-                     currentDayNum,
+                     time_date_currentDayNum,
                      currentSidebarFont,
                      GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + yOffset, 40, 20),
                      GTextOverflowModeFill,
@@ -464,7 +392,7 @@ static void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
     yOffset = globalSettings.useLargeFonts ? 48 : 47;
 
     graphics_draw_text(ctx,
-                       currentMonth,
+                       time_date_currentMonth,
                        currentSidebarFont,
                        GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + yOffset, 40, 20),
                        GTextOverflowModeFill,
@@ -583,7 +511,7 @@ static void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
   yTextPosition = globalSettings.useLargeFonts ? yTextPosition + 6 : yTextPosition + 9;
 
   graphics_draw_text(ctx,
-                     currentWeekNum,
+                     time_date_currentWeekNum,
                      currentSidebarFont,
                      GRect(xPosition + SidebarWidgets_xOffset, yTextPosition, 30, 20),
                      GTextOverflowModeFill,
@@ -601,7 +529,7 @@ static void Seconds_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   graphics_draw_text(ctx,
-                     currentSecondsNum,
+                     time_date_currentSecondsNum,
                      lgSidebarFont,
                      GRect(xPosition + SidebarWidgets_xOffset, yPosition - 10, 30, 20),
                      GTextOverflowModeFill,
@@ -729,7 +657,7 @@ static void AltTime_draw(GContext* ctx, int xPosition, int yPosition) {
   yMod = (globalSettings.useLargeFonts) ? yMod + 5 : yMod + 8;
 
   graphics_draw_text(ctx,
-                     altClock,
+                     time_date_altClock,
                      currentSidebarFont,
                      GRect(xPosition - 1 + SidebarWidgets_xOffset, yPosition + yMod, 30, 20),
                      GTextOverflowModeFill,
@@ -961,7 +889,7 @@ static void Beats_draw(GContext* ctx, int xPosition, int yPosition) {
   yMod = (globalSettings.useLargeFonts) ? yMod + 5 : yMod + 8;
 
   graphics_draw_text(ctx,
-                     currentBeats,
+                     time_date_currentBeats,
                      currentSidebarFont,
                      GRect(xPosition + SidebarWidgets_xOffset, yPosition + yMod, 30, 20),
                      GTextOverflowModeFill,
