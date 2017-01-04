@@ -26,36 +26,6 @@ static FFont* leco;
 static GRect screen_rect;
 
 // "private" functions
-static void update_fonts(void) {
-  switch(globalSettings.clockFontId) {
-    case FONT_SETTING_DEFAULT:
-        hours_font = avenir;
-        minutes_font = avenir;
-        colon_font = avenir;
-      break;
-    case FONT_SETTING_BOLD:
-        hours_font = avenir_bold;
-        minutes_font = avenir_bold;
-        colon_font = avenir_bold;
-      break;
-    case FONT_SETTING_BOLD_H:
-        hours_font = avenir_bold;
-        minutes_font = avenir;
-        colon_font = avenir;
-      break;
-    case FONT_SETTING_BOLD_M:
-        hours_font = avenir;
-        minutes_font = avenir_bold;
-        colon_font = avenir;
-      break;
-    case FONT_SETTING_LECO:
-        hours_font = leco;
-        minutes_font = leco;
-        colon_font = leco;
-      break;
-  }
-}
-
 static void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
   GRect bounds;
@@ -269,9 +239,6 @@ void ClockArea_init(Window* window) {
 
   date_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
   am_pm_font = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
-
-  // select fonts based on settings
-  update_fonts();
 }
 
 void ClockArea_deinit(void) {
@@ -283,8 +250,35 @@ void ClockArea_deinit(void) {
 }
 
 void ClockArea_redraw(void) {
-  // check if the fonts need to be switched
-  update_fonts();
-
   layer_mark_dirty(clock_area_layer);
+}
+
+void ClockArea_update_fonts(void) {
+  switch(globalSettings.clockFontId) {
+    case FONT_SETTING_DEFAULT:
+        hours_font = avenir;
+        minutes_font = avenir;
+        colon_font = avenir;
+      break;
+    case FONT_SETTING_BOLD:
+        hours_font = avenir_bold;
+        minutes_font = avenir_bold;
+        colon_font = avenir_bold;
+      break;
+    case FONT_SETTING_BOLD_H:
+        hours_font = avenir_bold;
+        minutes_font = avenir;
+        colon_font = avenir;
+      break;
+    case FONT_SETTING_BOLD_M:
+        hours_font = avenir;
+        minutes_font = avenir_bold;
+        colon_font = avenir;
+      break;
+    case FONT_SETTING_LECO:
+        hours_font = leco;
+        minutes_font = leco;
+        colon_font = leco;
+      break;
+  }
 }

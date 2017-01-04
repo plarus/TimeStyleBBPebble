@@ -115,6 +115,9 @@ static void redrawScreen() {
   // update the sidebar
   Sidebar_redraw();
 
+  // check if the fonts need to be switched
+  ClockArea_update_fonts();
+
   ClockArea_redraw();
 }
 
