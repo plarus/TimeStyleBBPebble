@@ -6,6 +6,7 @@
 #include "languages.h"
 #include "sidebar.h"
 #include "sidebar_widgets.h"
+#include "util.h"
 
 #define V_PADDING_DEFAULT 8
 #define V_PADDING_COMPACT 4
@@ -14,6 +15,7 @@
 #define HORIZONTAL_BAR_HEIGHT FIXED_WIDGET_HEIGHT
 
 static GRect screen_rect;
+static Layer* screen_rect_layer;
 static Layer* sidebarLayer;
 
 #ifdef PBL_ROUND
@@ -147,8 +149,8 @@ static void updateRoundSidebarLeft(Layer *l, GContext* ctx) {
 #else
 
 static void updateRectSidebar(Layer *l, GContext* ctx) {
-  GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
   GRect bounds = layer_get_bounds(l);
+  int obstruction_height = get_obstruction_height(screen_rect_layer);
 
   // this ends up being zero on every rectangular platform besides emery
   SidebarWidgets_xOffset = (ACTION_BAR_WIDTH - 30) / 2;
@@ -189,7 +191,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     }
   }
 
-  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+  if(globalSettings.sidebarLocation == BOTTOM || (globalSettings.sidebarLocation == TOP && obstruction_height == 0)) {
     // calculate the three horizontal widget positions
     int leftWidgetPos = H_PADDING_DEFAULT;
     int middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
@@ -237,7 +239,8 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
       v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
       displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
     }
-  } else if(globalSettings.sidebarLocation != NONE) {
+  } else if(globalSettings.sidebarLocation == LEFT || globalSettings.sidebarLocation == RIGHT) {
+    GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
 
     // if the widgets are too tall, enable "compact mode"
     int compact_mode_threshold = unobstructed_bounds.size.h - V_PADDING_DEFAULT * 2 - 3;
@@ -280,7 +283,8 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
 
 void Sidebar_init(Window* window) {
   // init the sidebar layer
-  screen_rect = layer_get_bounds(window_get_root_layer(window));
+  screen_rect_layer = window_get_root_layer(window);
+  screen_rect = layer_get_bounds(screen_rect_layer);
   GRect bounds;
 
   #ifdef PBL_ROUND
@@ -340,7 +344,7 @@ void Sidebar_redraw(void) {
     } else if(globalSettings.sidebarLocation == BOTTOM) {
       layer_set_frame(sidebarLayer, GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT));
     } else if(globalSettings.sidebarLocation == TOP) {
-      layer_set_frame(sidebarLayer, GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT));
+      layer_set_frame(sidebarLayer, GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT - get_obstruction_height(screen_rect_layer)));
     } else {
       layer_set_frame(sidebarLayer, GRect(0, 0, 0, 0));
     }
@@ -351,5 +355,13 @@ void Sidebar_redraw(void) {
 
   #ifdef PBL_ROUND
     layer_mark_dirty(sidebarLayer2);
+  #endif
+}
+
+void Sidebar_set_hidden(bool hide) {
+  layer_set_hidden(sidebarLayer, hide);
+
+  #ifdef PBL_ROUND
+    layer_set_hidden(sidebarLayer2, hide);
   #endif
 }

@@ -19,3 +19,10 @@ void gdraw_command_image_recolor(GDrawCommandImage *img, GColor fill_color, GCol
   gdraw_command_list_iterate(gdraw_command_image_get_command_list(img),
                              recolor_iterator_cb, &colors);
 }
+
+int16_t get_obstruction_height(Layer *s_window_layer) {
+    GRect fullscreen = layer_get_bounds(s_window_layer);
+    GRect unobstructed_bounds = layer_get_unobstructed_bounds(s_window_layer);
+
+    return fullscreen.size.h - unobstructed_bounds.size.h;
+}

@@ -65,6 +65,16 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   ClockArea_redraw();
 }
 
+static void unobstructed_area_change_handler(AnimationProgress progress, void *context) {
+  // update the sidebar
+  Sidebar_redraw();
+}
+
+static void unobstructed_area_did_change_handler(void *context) {
+  // update the sidebar
+  Sidebar_redraw();
+}
+
 /* forces everything on screen to be redrawn -- perfect for keeping track of settings! */
 static void redrawScreen() {
 
@@ -79,6 +89,22 @@ static void redrawScreen() {
       tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
       updatingEverySecond = false;
     }
+
+  }
+
+  if(globalSettings.sidebarLocation == TOP) {
+    UnobstructedAreaHandlers unobstructed_area_handlers = {
+      .change = unobstructed_area_change_handler,
+      .did_change = unobstructed_area_did_change_handler
+    };
+
+    unobstructed_area_service_subscribe(unobstructed_area_handlers, NULL);
+  } else if (globalSettings.sidebarLocation == NONE){
+    Sidebar_set_hidden(true);
+    unobstructed_area_service_unsubscribe();
+  } else {
+    Sidebar_set_hidden(false);
+    unobstructed_area_service_unsubscribe();
   }
 
   window_set_background_color(mainWindow, globalSettings.timeBgColor);
