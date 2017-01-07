@@ -17,6 +17,11 @@ typedef enum {
   TOP      = 4
 } BarLocationType;
 
+typedef enum {
+  NO_VIBE              = 0,
+  VIBE_EVERY_HOUR      = 1,
+  VIBE_EVERY_HALF_HOUR = 2
+} VibeIntervalType;
 
 typedef struct {
   // color settings
@@ -32,7 +37,7 @@ typedef struct {
 
   // vibration settings
   bool btVibe;
-  int hourlyVibe;
+  VibeIntervalType hourlyVibe;
 
   // sidebar settings
   SidebarWidgetType widgets[4];
