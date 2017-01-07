@@ -9,6 +9,7 @@
 #include "health.h"
 #endif
 #include "time_date.h"
+#include "debug.h"
 
 // windows and layers
 static Window* mainWindow;
@@ -63,16 +64,20 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     Sidebar_redraw();
   }
   ClockArea_redraw();
+
+  /* Debug */ Debug_display();
 }
 
 static void unobstructed_area_change_handler(AnimationProgress progress, void *context) {
   // update the sidebar
   Sidebar_redraw();
+  /* Debug */ Debug_unobstructedAreaChange++;
 }
 
 static void unobstructed_area_did_change_handler(void *context) {
   // update the sidebar
   Sidebar_redraw();
+  /* Debug */ Debug_unobstructedAreaChange++;
 }
 
 /* forces everything on screen to be redrawn -- perfect for keeping track of settings! */
@@ -119,6 +124,8 @@ static void redrawScreen() {
   ClockArea_update_fonts();
 
   ClockArea_redraw();
+
+  /* Debug */ Debug_RedrawFunction++;
 }
 
 static void main_window_load(Window *window) {
@@ -160,6 +167,7 @@ static void bluetoothStateChanged(bool newConnectionState) {
   if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
+  /* Debug */ Debug_bluetoothStateChange++;
 }
 
 // force the sidebar to redraw any time the battery state changes
@@ -167,6 +175,8 @@ static void batteryStateChanged(BatteryChargeState charge_state) {
   if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
+  /* Debug */ Debug_batteryHandler++;
+  /* Debug */ Debug_chargePercent = charge_state.charge_percent;
 }
 
 // fixes for disappearing elements after notifications
@@ -174,6 +184,7 @@ static void batteryStateChanged(BatteryChargeState charge_state) {
 static void app_focus_changing(bool focusing) {
   if (focusing) {
      layer_set_hidden(windowLayer, true);
+     /* Debug */ Debug_focusChange++;
   }
 }
 
@@ -181,6 +192,7 @@ static void app_focus_changed(bool focused) {
   if (focused) {
      layer_set_hidden(windowLayer, false);
      layer_mark_dirty(windowLayer);
+     /* Debug */ Debug_focusChange++;
   }
 }
 
@@ -258,6 +270,7 @@ static void deinit(void) {
 
   bluetooth_connection_service_unsubscribe();
   battery_state_service_unsubscribe();
+  /* Debug */ Debug_display();
 }
 
 int main(void) {

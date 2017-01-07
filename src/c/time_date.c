@@ -38,7 +38,6 @@ static int time_date_get_beats(const struct tm *tm) {
 }
 
 void time_date_update(struct tm* time_info) {
-  // APP_LOG(APP_LOG_LEVEL_DEBUG,"Current RAM: %d", heap_bytes_free());
 
   if (clock_is_24h_style()) {
     strftime(time_date_hours, sizeof(time_date_hours), (globalSettings.showLeadingZero) ? "%H" : "%k", time_info);

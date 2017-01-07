@@ -1,6 +1,7 @@
 #ifdef PBL_HEALTH
 #include <pebble.h>
 #include "health.h"
+#include "debug.h"
 
 static HealthEventCallback s_health_event_callback;
 
@@ -32,6 +33,7 @@ static void health_event_handler(HealthEventType event, void *context) {
         health_event_handler(HealthEventSleepUpdate, NULL);
         health_event_handler(HealthEventMovementUpdate, NULL);
         health_event_handler(HealthEventHeartRateUpdate, NULL);
+        /* Debug */ Debug_healthSignificantUpdate++;
     } else if (event == HealthEventSleepUpdate) {
         HealthActivityMask mask = health_service_peek_current_activities();
         s_sleeping = (mask & HealthActivitySleep) || (mask & HealthActivityRestfulSleep);
@@ -40,11 +42,13 @@ static void health_event_handler(HealthEventType event, void *context) {
         }
         s_sleep_seconds = get_health_value_sum_today(HealthMetricSleepSeconds);
         s_restful_sleep_seconds = get_health_value_sum_today(HealthMetricSleepRestfulSeconds);
+        /* Debug */ Debug_healthSleepCall++;
     } else if (event == HealthEventMovementUpdate) {
         HealthActivityMask mask = health_service_peek_current_activities();
         s_sleeping = (mask & HealthActivitySleep) || (mask & HealthActivityRestfulSleep);
         if(s_sleeping){
           s_endSleepTime = time(NULL);
+          /* Debug */ Debug_movSleepUpdate++;
         }
         s_distance_walked = get_health_value_sum_today(HealthMetricWalkedDistanceMeters);
         s_steps = get_health_value_sum_today(HealthMetricStepCount);
@@ -56,6 +60,7 @@ static void health_event_handler(HealthEventType event, void *context) {
     }
 
     if (s_health_event_callback) s_health_event_callback();
+    /* Debug */ Debug_healthEventHandlerCall++;
 }
 
 bool Health_init(HealthEventCallback callback) {

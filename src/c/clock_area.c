@@ -6,6 +6,7 @@
 #include "settings.h"
 #include "languages.h"
 #include "time_date.h"
+#include "debug.h"
 
 #define ROUND_VERTICAL_PADDING 15
 
@@ -218,6 +219,7 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
   } else {
       update_original_clock_area_layer(l, ctx);
   }
+  /* Debug */ Debug_clockAreaUpdate++;
 }
 
 void ClockArea_init(Window* window) {
