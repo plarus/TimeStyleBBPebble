@@ -13,8 +13,6 @@ int16_t Debug_movSleepUpdate = 0;
 int Debug_restfulSleeping = 0;
 int Debug_walking = 0;
 int Debug_running = 0;
-int16_t Debug_batteryHandler = 0;
-int8_t Debug_chargePercent = 0;
 int16_t Debug_focusChange = 0;
 int16_t Debug_bluetoothStateChange = 0;
 int16_t Debug_unobstructedAreaChange = 0;
@@ -38,9 +36,6 @@ void Debug_display(void) {
   APP_LOG(APP_LOG_LEVEL_DEBUG,"Walking: %d", Debug_walking);
   APP_LOG(APP_LOG_LEVEL_DEBUG,"Running: %d", Debug_running);
   APP_LOG(APP_LOG_LEVEL_DEBUG,"Sleep update on movement: %d", Debug_movSleepUpdate);
-
-  APP_LOG(APP_LOG_LEVEL_DEBUG,"Battery handler: %d", Debug_batteryHandler);
-  APP_LOG(APP_LOG_LEVEL_DEBUG,"Battery: %d", Debug_chargePercent);
 
   APP_LOG(APP_LOG_LEVEL_DEBUG,"Focus change: %d", Debug_focusChange);
   APP_LOG(APP_LOG_LEVEL_DEBUG,"Bluetooth change: %d", Debug_bluetoothStateChange);

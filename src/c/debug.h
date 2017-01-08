@@ -12,8 +12,6 @@ extern int16_t Debug_movSleepUpdate;
 extern int Debug_restfulSleeping;
 extern int Debug_walking;
 extern int Debug_running;
-extern int16_t Debug_batteryHandler;
-extern int8_t Debug_chargePercent;
 extern int16_t Debug_focusChange;
 extern int16_t Debug_bluetoothStateChange;
 extern int16_t Debug_unobstructedAreaChange;

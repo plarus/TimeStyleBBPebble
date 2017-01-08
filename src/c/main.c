@@ -169,15 +169,6 @@ static void bluetoothStateChanged(bool newConnectionState) {
   /* Debug */ Debug_bluetoothStateChange++;
 }
 
-// force the sidebar to redraw any time the battery state changes
-static void batteryStateChanged(BatteryChargeState charge_state) {
-  if(globalSettings.sidebarLocation != NONE) {
-    Sidebar_redraw();
-  }
-  /* Debug */ Debug_batteryHandler++;
-  /* Debug */ Debug_chargePercent = charge_state.charge_percent;
-}
-
 // fixes for disappearing elements after notifications
 // (from http://codecorner.galanter.net/2016/01/08/solved-issue-with-pebble-framebuffer-after-notification-is-dismissed/)
 static void app_focus_changing(bool focusing) {
@@ -245,9 +236,6 @@ static void init(void) {
   bluetoothStateChanged(connected);
   bluetooth_connection_service_subscribe(bluetoothStateChanged);
 
-  // register with battery service
-  battery_state_service_subscribe(batteryStateChanged);
-
   // set up focus change handlers
   app_focus_service_subscribe_handlers((AppFocusHandlers){
     .did_focus = app_focus_changed,
@@ -268,7 +256,6 @@ static void deinit(void) {
 
   tick_timer_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
-  battery_state_service_unsubscribe();
   unobstructed_area_service_unsubscribe();
 
   /* Debug */ Debug_display();
