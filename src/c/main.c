@@ -201,7 +201,8 @@ static void init(void) {
 
 #ifdef PBL_HEALTH
   // init health service
-  if (!Health_init(Sidebar_redraw)) {
+  // Do not redraw screen on health update
+  if (!Health_init(NULL)) {
       APP_LOG(APP_LOG_LEVEL_WARNING, "Could not init health service");
   }
 #endif
