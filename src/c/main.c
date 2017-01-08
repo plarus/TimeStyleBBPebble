@@ -97,6 +97,8 @@ static void redrawScreen() {
 
   }
 
+  unobstructed_area_service_unsubscribe();
+
   if(globalSettings.sidebarLocation == TOP) {
     UnobstructedAreaHandlers unobstructed_area_handlers = {
       .change = unobstructed_area_change_handler,
@@ -104,18 +106,15 @@ static void redrawScreen() {
     };
 
     unobstructed_area_service_subscribe(unobstructed_area_handlers, NULL);
-  } else if (globalSettings.sidebarLocation == NONE){
-    Sidebar_set_hidden(true);
-    unobstructed_area_service_unsubscribe();
-  } else {
-    Sidebar_set_hidden(false);
-    unobstructed_area_service_unsubscribe();
   }
 
   window_set_background_color(mainWindow, globalSettings.timeBgColor);
 
   // maybe the language changed!
   update_clock();
+
+  // maybe sidebar changed!
+  Sidebar_set_layer();
 
   // update the sidebar
   Sidebar_redraw();

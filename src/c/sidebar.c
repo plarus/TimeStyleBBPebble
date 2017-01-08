@@ -149,6 +149,20 @@ static void updateRoundSidebarLeft(Layer *l, GContext* ctx) {
 
 #else
 
+static GRect getRectSidebarBounds(void) {
+  if(globalSettings.sidebarLocation == RIGHT) {
+    return GRect(screen_rect.size.w - ACTION_BAR_WIDTH, 0, ACTION_BAR_WIDTH, screen_rect.size.h);
+  } else if(globalSettings.sidebarLocation == LEFT) {
+    return GRect(0, 0, ACTION_BAR_WIDTH, screen_rect.size.h);
+  } else if(globalSettings.sidebarLocation == BOTTOM) {
+    return GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
+  } else if(globalSettings.sidebarLocation == TOP) {
+    return GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
+  }else {
+    return GRect(0, 0, 0, 0);
+  }
+}
+
 static void updateRectSidebar(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
   int obstruction_height = get_obstruction_height(screen_rect_layer);
@@ -294,17 +308,7 @@ void Sidebar_init(Window* window) {
     bounds = GRect(0, 0, 40, screen_rect.size.h);
     bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
   #else
-    if(globalSettings.sidebarLocation == RIGHT) {
-      bounds = GRect(screen_rect.size.w - ACTION_BAR_WIDTH, 0, ACTION_BAR_WIDTH, screen_rect.size.h);
-    } else if(globalSettings.sidebarLocation == LEFT) {
-      bounds = GRect(0, 0, ACTION_BAR_WIDTH, screen_rect.size.h);
-    } else if(globalSettings.sidebarLocation == BOTTOM) {
-      bounds = GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
-    } else if(globalSettings.sidebarLocation == TOP) {
-      bounds = GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
-    }else {
-      bounds = GRect(0, 0, 0, 0);
-    }
+    bounds = getRectSidebarBounds();
   #endif
 
   // init the widgets
@@ -336,34 +340,24 @@ void Sidebar_deinit(void) {
   SidebarWidgets_deinit();
 }
 
-void Sidebar_redraw(void) {
+void Sidebar_set_layer(void) {
   #ifndef PBL_ROUND
     // reposition the sidebar if needed
-    if(globalSettings.sidebarLocation == RIGHT) {
-      layer_set_frame(sidebarLayer, GRect(screen_rect.size.w - ACTION_BAR_WIDTH, 0, ACTION_BAR_WIDTH, screen_rect.size.h));
-    } else if(globalSettings.sidebarLocation == LEFT) {
-      layer_set_frame(sidebarLayer, GRect(0, 0, ACTION_BAR_WIDTH, screen_rect.size.h));
-    } else if(globalSettings.sidebarLocation == BOTTOM) {
-      layer_set_frame(sidebarLayer, GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT));
-    } else if(globalSettings.sidebarLocation == TOP) {
-      layer_set_frame(sidebarLayer, GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT - get_obstruction_height(screen_rect_layer)));
+    layer_set_frame(sidebarLayer, getRectSidebarBounds());
+
+    if(globalSettings.sidebarLocation == NONE) {
+      layer_set_hidden(sidebarLayer, true);
     } else {
-      layer_set_frame(sidebarLayer, GRect(0, 0, 0, 0));
+      layer_set_hidden(sidebarLayer, false);
     }
   #endif
+}
 
+void Sidebar_redraw(void) {
   // redraw the layer
   layer_mark_dirty(sidebarLayer);
 
   #ifdef PBL_ROUND
     layer_mark_dirty(sidebarLayer2);
-  #endif
-}
-
-void Sidebar_set_hidden(bool hide) {
-  layer_set_hidden(sidebarLayer, hide);
-
-  #ifdef PBL_ROUND
-    layer_set_hidden(sidebarLayer2, hide);
   #endif
 }
