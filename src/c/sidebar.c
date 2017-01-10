@@ -88,8 +88,6 @@ static int getReplacableWidget(void) {
 
 #ifdef PBL_ROUND
 static void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType widgetType, int widgetXOffset) {
-  SidebarWidgets_updateFonts();
-
   graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
 
   graphics_fill_radial(ctx,
@@ -169,8 +167,6 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
 
   // this ends up being zero on every rectangular platform besides emery
   SidebarWidgets_xOffset = (ACTION_BAR_WIDTH - 30) / 2;
-
-  SidebarWidgets_updateFonts();
 
   graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);
@@ -356,6 +352,8 @@ void Sidebar_set_layer(void) {
       layer_set_hidden(sidebarLayer, false);
     }
   #endif
+
+  SidebarWidgets_updateFonts();
 }
 
 void Sidebar_redraw(void) {
