@@ -540,20 +540,23 @@ static void Seconds_draw(GContext* ctx, int xPosition, int yPosition) {
 /***** Weather Forecast Widget *****/
 
 static int WeatherForecast_getHeight(void) {
-  if(globalSettings.useLargeFonts) {
-    return 63;
+  if(SidebarWidgets_fixedHeight) {
+    return FIXED_WIDGET_HEIGHT;
   } else {
-    return 60;
+    return (globalSettings.useLargeFonts) ? 63 : 60;
   }
 }
 
 static void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
+  //srand(time(NULL));
+  //Weather_setForecastCondition(rand() % 12);
+
   if(Weather_forecastWeatherIcon) {
     gdraw_command_image_recolor(Weather_forecastWeatherIcon, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
 
-    gdraw_command_image_draw(ctx, Weather_forecastWeatherIcon, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition));
+    gdraw_command_image_draw(ctx, Weather_forecastWeatherIcon, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition + 1));
   }
 
   // draw weather data only if it has been set
@@ -577,20 +580,20 @@ static void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
 
       graphics_draw_text(ctx,
                          tempString,
-                         currentSidebarFont,
-                         GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + 24, 38, 20),
+                         smSidebarFont,
+                         GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + 23, 38, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
 
-      graphics_fill_rect(ctx, GRect(3 + SidebarWidgets_xOffset, 8 + yPosition + 37, 24, 1), 0, GCornerNone);
+      graphics_fill_rect(ctx, GRect(xPosition + 6 + SidebarWidgets_xOffset, 8 + yPosition + 30, 18, 1), 0, GCornerNone);
 
       snprintf(tempString, sizeof(tempString), " %d°", lowTemp);
 
       graphics_draw_text(ctx,
                          tempString,
-                         currentSidebarFont,
-                         GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + 42, 38, 20),
+                         smSidebarFont,
+                         GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + 35, 38, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
@@ -599,20 +602,20 @@ static void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
 
       graphics_draw_text(ctx,
                          tempString,
-                         currentSidebarFont,
-                         GRect(xPosition + SidebarWidgets_xOffset, yPosition + 20, 30, 20),
+                         smSidebarFont,
+                         GRect(xPosition + SidebarWidgets_xOffset, yPosition + 23, 30, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
 
-      graphics_fill_rect(ctx, GRect(3 + SidebarWidgets_xOffset, 8 + yPosition + 38, 24, 1), 0, GCornerNone);
+      graphics_fill_rect(ctx, GRect(xPosition + 6 + SidebarWidgets_xOffset, 8 + yPosition + 30, 18, 1), 0, GCornerNone);
 
       snprintf(tempString, sizeof(tempString), "%d", lowTemp);
 
       graphics_draw_text(ctx,
                          tempString,
-                         currentSidebarFont,
-                         GRect(xPosition + SidebarWidgets_xOffset, yPosition + 39, 30, 20),
+                         smSidebarFont,
+                         GRect(xPosition + SidebarWidgets_xOffset, yPosition + 35, 30, 20),
                          GTextOverflowModeFill,
                          GTextAlignmentCenter,
                          NULL);
