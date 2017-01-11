@@ -58,6 +58,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   }
 
   update_clock();
+  Health_update();
 
   // redraw all screen
   if(globalSettings.sidebarLocation != NONE) {
@@ -110,8 +111,9 @@ static void redrawScreen() {
 
   window_set_background_color(mainWindow, globalSettings.timeBgColor);
 
-  // maybe the language changed!
+  // Make sure display is refreshed from the start
   update_clock();
+  Health_update();
 
   // maybe sidebar changed!
   Sidebar_set_layer();
@@ -199,14 +201,6 @@ static void init(void) {
   // init weather system
   Weather_init();
 
-#ifdef PBL_HEALTH
-  // init health service
-  // Do not redraw screen on health update
-  if (!Health_init(NULL)) {
-      APP_LOG(APP_LOG_LEVEL_WARNING, "Could not init health service");
-  }
-#endif
-
   // init the messaging thing
   messaging_init(redrawScreen);
 
@@ -248,9 +242,6 @@ static void deinit(void) {
   // Destroy Window
   window_destroy(mainWindow);
 
-#ifdef PBL_HEALTH
-  Health_deinit();
-#endif
   // unload weather stuff
   Weather_deinit();
   Settings_deinit();

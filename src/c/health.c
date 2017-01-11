@@ -3,15 +3,10 @@
 #include "health.h"
 #include "debug.h"
 
-static HealthEventCallback s_health_event_callback;
-
-
 #define SECONDS_AFTER_WAKE_UP 1800 // Half hour
 
 static bool s_sleeping;
 static bool s_restfulSleeping;
-static bool s_walking;
-static bool s_running;
 static time_t s_endSleepTime;
 static HealthValue s_sleep_seconds;
 static HealthValue s_restful_sleep_seconds;
@@ -31,69 +26,32 @@ static inline HealthValue get_health_value_sum_today(HealthMetric metric) {
     return is_health_metric_accessible(metric, start, end) ? health_service_sum_today(metric) : 0;
 }
 
-static void health_event_handler(HealthEventType event, void *context) {
-    if (event == HealthEventSignificantUpdate) {
-        health_event_handler(HealthEventSleepUpdate, &event);
-        health_event_handler(HealthEventMovementUpdate, &event);
-        health_event_handler(HealthEventHeartRateUpdate, &event);
-        /* Debug */ Debug_healthSignificantUpdate++;
-    } else if (event == HealthEventSleepUpdate) {
-        HealthActivityMask mask = health_service_peek_current_activities();
-        s_sleeping = (mask & HealthActivitySleep) || (mask & HealthActivityRestfulSleep);
-        if (s_sleeping) {
-            s_endSleepTime = time(NULL);
-        }
-        s_restfulSleeping = (mask & HealthActivityRestfulSleep);
-        if (s_restfulSleeping) {
-            /* Debug */ Debug_restfulSleeping++;
-        }
-        s_sleep_seconds = get_health_value_sum_today(HealthMetricSleepSeconds);
-        s_restful_sleep_seconds = get_health_value_sum_today(HealthMetricSleepRestfulSeconds);
-        /* Debug */ Debug_healthSleepCall++;
-    } else if (event == HealthEventMovementUpdate) {
-        HealthActivityMask mask = health_service_peek_current_activities();
-        s_sleeping = (mask & HealthActivitySleep) || (mask & HealthActivityRestfulSleep);
-        if (s_sleeping) {
-            s_endSleepTime = time(NULL);
-            /* Debug */ Debug_movSleepUpdate++;
-        }
-        s_walking = mask & HealthActivityWalk;
-        if (s_walking) {
-            /* Debug */ Debug_walking++;
-        }
-        s_running = mask & HealthActivityRun;
-        if (s_running) {
-            /* Debug */ Debug_running++;
-        }
-        s_distance_walked = get_health_value_sum_today(HealthMetricWalkedDistanceMeters);
-        s_steps = get_health_value_sum_today(HealthMetricStepCount);
-    } else if (event == HealthEventHeartRateUpdate) {
-        time_t now = time(NULL);
+void Health_update(void) {
+    HealthActivityMask mask = health_service_peek_current_activities();
 
-        if (is_health_metric_accessible(HealthMetricHeartRateBPM, now, now)) {
-            s_heart_rate = health_service_peek_current_value(HealthMetricHeartRateBPM);
-        }
+    // Sleep
+    s_sleeping = (mask & HealthActivitySleep) || (mask & HealthActivityRestfulSleep);
+    s_restfulSleeping = (mask & HealthActivityRestfulSleep);
+    s_sleep_seconds = get_health_value_sum_today(HealthMetricSleepSeconds);
+    s_restful_sleep_seconds = get_health_value_sum_today(HealthMetricSleepRestfulSeconds);
+
+    if(s_sleeping) {
+        s_endSleepTime = time(NULL);
+/* Debug */ Debug_healthSleepCall++;
     }
+/* Debug */     if(s_restfulSleeping) {
+/* Debug */         Debug_restfulSleeping++;
+/* Debug */     }
 
-    // Execute callback only one time if significant update
-    if ((event != HealthEventSignificantUpdate && !context) ||
-        (event == HealthEventHeartRateUpdate && context)) {
-      if (s_health_event_callback) s_health_event_callback();
-      /* Debug */ Debug_healthEventHandlerCall++;
+    // Steps
+    s_distance_walked = get_health_value_sum_today(HealthMetricWalkedDistanceMeters);
+    s_steps = get_health_value_sum_today(HealthMetricStepCount);
+
+    // Heart rate
+    time_t now = time(NULL);
+    if (is_health_metric_accessible(HealthMetricHeartRateBPM, now, now)) {
+        s_heart_rate = health_service_peek_current_value(HealthMetricHeartRateBPM);
     }
-}
-
-bool Health_init(HealthEventCallback callback) {
-    bool b = health_service_events_subscribe(health_event_handler, NULL);
-    if (b) {
-        health_event_handler(HealthEventSignificantUpdate, NULL);
-        s_health_event_callback = callback;
-    }
-    return b;
-}
-
-void Health_deinit(void) {
-    health_service_events_unsubscribe();
 }
 
 bool Health_isUserSleeping(void) {
@@ -105,15 +63,8 @@ bool Health_isUserRestfulSleeping(void) {
 }
 
 bool Health_sleepingToBeDisplayed(void) {
+    // Sleep should be display during an half hour after wake up
     return s_sleeping || (s_endSleepTime + SECONDS_AFTER_WAKE_UP > time(NULL));
-}
-
-bool Health_isUserWalking(void) {
-    return s_walking;
-}
-
-bool Health_isUserRunning(void) {
-    return s_running;
 }
 
 HealthValue Health_getSleepSeconds(void) {
