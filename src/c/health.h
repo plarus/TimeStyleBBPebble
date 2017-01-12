@@ -1,11 +1,7 @@
 #pragma once
 #include <pebble.h>
 
-typedef void (*HealthEventCallback)(void);
-
-bool Health_init(HealthEventCallback callback);
 void Health_update(void);
-void Health_deinit(void);
 bool Health_isUserSleeping(void);
 bool Health_isUserRestfulSleeping(void);
 bool Health_sleepingToBeDisplayed(void);
