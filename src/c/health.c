@@ -4,6 +4,8 @@
 #include "debug.h"
 
 #define SECONDS_AFTER_WAKE_UP 1800 // Half hour
+#define NIGHT_SECONDS_BEFORE_MIDNIGHT SECONDS_PER_HOUR * 4 /* Night start at 8 pm */
+
 
 static bool s_sleeping;
 static bool s_restfulSleeping;
@@ -26,14 +28,35 @@ static inline HealthValue get_health_value_sum_today(HealthMetric metric) {
     return is_health_metric_accessible(metric, start, end) ? health_service_sum_today(metric) : 0;
 }
 
+static inline HealthValue get_health_value_sum_from_nigth_start(HealthMetric metric) {
+    time_t start = time_start_of_today() - NIGHT_SECONDS_BEFORE_MIDNIGHT;
+    time_t end = time(NULL);
+
+    return is_health_metric_accessible(metric, start, end) ? health_service_sum(metric, start, end) : 0;
+}
+
 void Health_update(void) {
     HealthActivityMask mask = health_service_peek_current_activities();
 
     // Sleep
     s_sleeping = (mask & HealthActivitySleep) || (mask & HealthActivityRestfulSleep);
     s_restfulSleeping = (mask & HealthActivityRestfulSleep);
+
     s_sleep_seconds = get_health_value_sum_today(HealthMetricSleepSeconds);
     s_restful_sleep_seconds = get_health_value_sum_today(HealthMetricSleepRestfulSeconds);
+
+    // Last screen update before midnight
+    if(time(NULL) - time_start_of_today() > SECONDS_PER_DAY - 90) {
+        s_sleep_seconds_before_midnight = get_health_value_sum_from_nigth_start(HealthMetricSleepSeconds);
+        s_sleep_seconds_before_midnight_time = time(NULL);
+    }
+
+    // Add first part of night if exist
+    if(s_sleep_seconds_before_midnight_time > time_start_of_today() - NIGHT_SECONDS_BEFORE_MIDNIGHT &&
+       s_sleep_seconds_before_midnight_time < time_start_of_today()) {
+        s_sleep_seconds += s_sleep_seconds_before_midnight;
+    }
+
 
     if(s_sleeping) {
         s_endSleepTime = time(NULL);
