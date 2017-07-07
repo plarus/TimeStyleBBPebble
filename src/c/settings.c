@@ -78,7 +78,12 @@ void Settings_loadFromStorage(void) {
     globalSettings.useMetric = storedSettings.useMetric;
     globalSettings.showBatteryPct = storedSettings.showBatteryPct;
     globalSettings.disableAutobattery = storedSettings.disableAutobattery;
-    globalSettings.healthUseDistance = storedSettings.healthUseDistance;
+
+    if (storedSettings.healthUseDistance) {
+      globalSettings.healthActivityDisplay = DISTANCE;
+    } else {
+      globalSettings.healthActivityDisplay = STEPS;
+    }
     globalSettings.healthUseRestfulSleep = storedSettings.healthUseRestfulSleep;
     globalSettings.decimalSeparator = storedSettings.decimalSeparator;
     memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
@@ -126,7 +131,11 @@ void Settings_loadFromStorage(void) {
     globalSettings.hourlyVibe             = persist_read_int(SETTING_HOURLY_VIBE_KEY);
     globalSettings.useLargeFonts          = persist_read_bool(SETTING_USE_LARGE_FONTS_KEY);
     globalSettings.altclockOffset         = persist_read_int(SETTING_ALTCLOCK_OFFSET_KEY);
-    globalSettings.healthUseDistance      = persist_read_bool(SETTING_HEALTH_USE_DISTANCE);
+    if(persist_read_bool(SETTING_HEALTH_USE_DISTANCE)){
+      globalSettings.healthActivityDisplay = DISTANCE;
+    }else{
+      globalSettings.healthActivityDisplay = STEPS;
+    }
     globalSettings.healthUseRestfulSleep  = persist_read_bool(SETTING_HEALTH_USE_RESTFUL_SLEEP);
 
     if(persist_exists(SETTING_DECIMAL_SEPARATOR_KEY)) {
@@ -162,7 +171,11 @@ void Settings_saveToStorage(void) {
   storedSettings.useMetric = globalSettings.useMetric;
   storedSettings.showBatteryPct = globalSettings.showBatteryPct;
   storedSettings.disableAutobattery = globalSettings.disableAutobattery;
-  storedSettings.healthUseDistance = globalSettings.healthUseDistance;
+  if (globalSettings.healthActivityDisplay == DISTANCE) {
+    storedSettings.healthUseDistance = true;
+  } else {
+    storedSettings.healthUseDistance = false;
+  }
   storedSettings.healthUseRestfulSleep = globalSettings.healthUseRestfulSleep;
   storedSettings.decimalSeparator = globalSettings.decimalSeparator;
   memcpy(storedSettings.altclockName, globalSettings.altclockName, 8);

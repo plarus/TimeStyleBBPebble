@@ -12,6 +12,8 @@ static HealthValue s_sleep_seconds;
 static HealthValue s_restful_sleep_seconds;
 static HealthValue s_distance_walked;
 static HealthValue s_steps;
+static HealthValue s_active_seconds;
+static HealthValue s_active_kCalories;
 static HealthValue s_heart_rate;
 
 static inline bool is_health_metric_accessible(HealthMetric metric, time_t time_start, time_t time_end) {
@@ -46,6 +48,8 @@ void Health_update(void) {
     // Steps
     s_distance_walked = get_health_value_sum_today(HealthMetricWalkedDistanceMeters);
     s_steps = get_health_value_sum_today(HealthMetricStepCount);
+    s_active_seconds = get_health_value_sum_today(HealthMetricActiveSeconds);
+    s_active_kCalories = get_health_value_sum_today(HealthMetricActiveKCalories);
 
     // Heart rate
     time_t now = time(NULL);
@@ -81,6 +85,14 @@ HealthValue Health_getDistanceWalked(void) {
 
 HealthValue Health_getSteps(void) {
     return s_steps;
+}
+
+HealthValue Health_getActiveSeconds(void) {
+    return s_active_seconds;
+}
+
+HealthValue Health_getActiveKCalories(void) {
+    return s_active_kCalories;
 }
 
 HealthValue Health_getHeartRate(void) {

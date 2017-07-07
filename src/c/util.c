@@ -27,3 +27,82 @@ int16_t get_obstruction_height(Layer *s_window_layer) {
     return fullscreen.size.h - unobstructed_bounds.size.h;
 }
 
+void seconds_to_minutes_hours_text(HealthValue seconds, char * hours_text, char * minutes_text) {
+
+    // convert to hours/minutes
+    int minutes = seconds / 60;
+    int hours   = minutes / 60;
+
+    // find minutes remainder
+    minutes %= 60;
+
+    snprintf(hours_text, sizeof(hours_text), "%ih", hours);
+    snprintf(minutes_text, sizeof(minutes_text), "%im", minutes);
+}
+
+void seconds_to_text(HealthValue seconds, char * hours_minutes_text) {
+
+    // convert to hours/minutes
+    int minutes = seconds / 60;
+    int hours   = minutes / 60;
+
+    // find minutes remainder
+    minutes %= 60;
+
+    snprintf(hours_minutes_text, sizeof(hours_minutes_text), "%ih%i", hours, minutes);
+}
+
+void distance_to_metric_text(HealthValue distance, char * metric_text) {
+    if(distance < 100) {
+      snprintf(metric_text, sizeof(metric_text), "%lim", distance);
+    } else if(distance < 1000) {
+      distance /= 100; // convert to tenths of km
+      snprintf(metric_text, sizeof(metric_text), ".%likm", distance);
+    } else {
+      distance /= 1000; // convert to km
+      snprintf(metric_text, sizeof(metric_text), "%likm", distance);
+    }
+}
+
+void distance_to_imperial_text(HealthValue distance, char * imperial_text) {
+    int miles_tenths = distance * 10 / 1609 % 10;
+    int miles_whole  = (int)roundf(distance / 1609.0f);
+
+    if(miles_whole > 0) {
+      snprintf(imperial_text, sizeof(steps_text), "%imi", miles_whole);
+    } else {
+      snprintf(imperial_text, sizeof(steps_text), "%c%imi", globalSettings.decimalSeparator, miles_tenths);
+    }
+}
+
+void steps_to_text(HealthValue steps, char * steps_text) {
+    // format step string
+    if(steps < 1000) {
+      snprintf(steps_text, sizeof(steps_text), "%li", steps);
+    } else {
+      int steps_thousands = steps / 1000;
+      int steps_hundreds  = steps / 100 % 10;
+
+      if (steps < 10000) {
+        snprintf(steps_text, sizeof(steps_text), "%i%c%ik", steps_thousands, globalSettings.decimalSeparator, steps_hundreds);
+      } else {
+        snprintf(steps_text, sizeof(steps_text), "%ik", steps_thousands);
+      }
+    }
+}
+
+void kCalories_to_text(kcalories, kcalories_text) {
+    // format kcalories string
+    if(kcalories < 1000) {
+      snprintf(kcalories_text, sizeof(kcalories_text), "%lik", kcalories);
+    } else {
+      int kcalories_thousands = kcalories / 1000;
+      int kcalories_hundreds  = kcalories / 100 % 10;
+
+      if (steps < 10000) {
+        snprintf(kcalories_text, sizeof(kcalories_text), "%i%c%iM", kcalories_thousands, globalSettings.decimalSeparator, kcalories_hundreds);
+      } else {
+        snprintf(kcalories_text, sizeof(kcalories_text), "%iM", kcalories_thousands);
+      }
+    }
+}

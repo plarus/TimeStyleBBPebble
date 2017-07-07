@@ -23,6 +23,13 @@ typedef enum {
   VIBE_EVERY_HALF_HOUR = 2
 } VibeIntervalType;
 
+typedef enum {
+  STEPS     = 0,
+  DISTANCE  = 1,
+  SECONDS   = 2,
+  KCALORIES = 3
+} ActivityDisplayType;
+
 typedef struct {
   // color settings
   GColor timeColor;
@@ -57,7 +64,7 @@ typedef struct {
   int altclockOffset;
 
   // health widget Settings
-  bool healthUseDistance;
+  ActivityDisplayType healthActivityDisplay;
   bool healthUseRestfulSleep;
   char decimalSeparator;
 

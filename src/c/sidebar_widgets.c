@@ -702,30 +702,22 @@ static void Sleep_draw(GContext* ctx, int xPosition, int yPosition) {
   // get sleep in seconds
   HealthValue sleep_seconds = globalSettings.healthUseRestfulSleep ? Health_getRestfulSleepSeconds() : Health_getSleepSeconds();
 
-  // convert to hours/minutes
-  int sleep_minutes = sleep_seconds / 60;
-  int sleep_hours   = sleep_minutes / 60;
+  char hours_text[4];
+  char minutes_text[4];
 
-  // find minutes remainder
-  sleep_minutes %= 60;
-
-  char sleep_text[4];
-
-  snprintf(sleep_text, sizeof(sleep_text), "%ih", sleep_hours);
+  seconds_to_minutes_hours_text(sleep_seconds, hours_text, minutes_text);
 
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
   graphics_draw_text(ctx,
-                     sleep_text,
+                     hours_text,
                      mdSidebarFont,
                      GRect(-2 + SidebarWidgets_xOffset, yPosition + 14, 34, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
 
-  snprintf(sleep_text, sizeof(sleep_text), "%im", sleep_minutes);
-
   graphics_draw_text(ctx,
-                     sleep_text,
+                     minutes_text,
                      smSidebarFont,
                      GRect(xPosition - 2 + SidebarWidgets_xOffset, yPosition + 30, 34, 20),
                      GTextOverflowModeFill,
@@ -753,52 +745,32 @@ static void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
   char steps_text[8];
   bool use_small_font = false;
 
-  if(globalSettings.healthUseDistance) {
+  if(globalSettings.healthActivityDisplay == DISTANCE) {
     HealthValue distance = Health_getDistanceWalked();
     MeasurementSystem unit_system = health_service_get_measurement_system_for_display(HealthMetricWalkedDistanceMeters);
 
     // format distance string
     if(unit_system == MeasurementSystemMetric) {
-      if(distance < 100) {
-        snprintf(steps_text, sizeof(steps_text), "%lim", distance);
-      } else if(distance < 1000) {
-        distance /= 100; // convert to tenths of km
-        snprintf(steps_text, sizeof(steps_text), ".%likm", distance);
-      } else {
-        distance /= 1000; // convert to km
+      distance_to_metric_text(distance, steps_text);
 
-        if(distance > 9) {
-          use_small_font = true;
-        }
-
-        snprintf(steps_text, sizeof(steps_text), "%likm", distance);
+      if(distance > 9999) {
+        use_small_font = true;
       }
     } else {
-      int miles_tenths = distance * 10 / 1609 % 10;
-      int miles_whole  = (int)roundf(distance / 1609.0f);
-
-      if(miles_whole > 0) {
-        snprintf(steps_text, sizeof(steps_text), "%imi", miles_whole);
-      } else {
-        snprintf(steps_text, sizeof(steps_text), "%c%imi", globalSettings.decimalSeparator, miles_tenths);
-      }
+      distance_to_imperial_text(distance, steps_text);
     }
-  } else {
+  } else if(globalSettings.healthActivityDisplay == STEPS) {
     HealthValue steps = Health_getSteps();
 
-    // format step string
-    if(steps < 1000) {
-      snprintf(steps_text, sizeof(steps_text), "%li", steps);
-    } else {
-      int steps_thousands = steps / 1000;
-      int steps_hundreds  = steps / 100 % 10;
+    steps_to_text(steps, steps_text);
+  } else if(globalSettings.healthActivityDisplay == SECONDS) {
+    HealthValue active_seconds = Health_getActiveSeconds();
 
-      if (steps < 10000) {
-        snprintf(steps_text, sizeof(steps_text), "%i%c%ik", steps_thousands, globalSettings.decimalSeparator, steps_hundreds);
-      } else {
-        snprintf(steps_text, sizeof(steps_text), "%ik", steps_thousands);
-      }
-    }
+    seconds_to_text(active_seconds, steps_text);
+  } else { //KCALORIES
+    HealthValue active_kcalories = Health_getActiveKCalories();
+
+    kCalories_to_text(active_kcalories, steps_text);
   }
 
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
