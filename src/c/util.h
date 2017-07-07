@@ -2,10 +2,14 @@
 #include <pebble.h>
 
 /*
- * For the specified GDrawCommandImage, recolors it with
- * the specified fill and stroke colors
+ * Draw image at position with the specified fill and stroke colors
  */
-void gdraw_command_image_recolor(GDrawCommandImage *img, GColor fill_color, GColor stroke_color);
+void util_image_draw(GContext* ctx, GDrawCommandImage *img, int xPosition, int yPosition);
+
+/*
+ * Draw image at position with the inverted fill and stroke colors
+ */
+void util_image_draw_inverted_color(GContext* ctx, GDrawCommandImage *img, int xPosition, int yPosition);
 
 /*
  * Get obstruction height of Timeline Quick View on the layer given as input

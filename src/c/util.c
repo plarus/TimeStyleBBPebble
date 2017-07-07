@@ -1,6 +1,6 @@
 #include <pebble.h>
+#include "settings.h"
 #include "util.h"
-
 
 bool recolor_iterator_cb(GDrawCommand *command, uint32_t index, void *context) {
   GColor *colors = (GColor *)context;
@@ -11,13 +11,27 @@ bool recolor_iterator_cb(GDrawCommand *command, uint32_t index, void *context) {
   return true;
 }
 
-void gdraw_command_image_recolor(GDrawCommandImage *img, GColor fill_color, GColor stroke_color) {
+/*
+ * For the specified GDrawCommandImage, recolors it with
+ * the specified fill and stroke colors
+ */
+void image_recolor(GDrawCommandImage *img, GColor fill_color, GColor stroke_color) {
   GColor colors[2];
   colors[0] = fill_color;
   colors[1] = stroke_color;
 
   gdraw_command_list_iterate(gdraw_command_image_get_command_list(img),
                              recolor_iterator_cb, &colors);
+}
+
+void util_image_draw(GContext* ctx, GDrawCommandImage *img, int xPosition, int yPosition) {
+  image_recolor(img, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
+  gdraw_command_image_draw(ctx, img, GPoint(xPosition, yPosition));
+}
+
+void util_image_draw_inverted_color(GContext* ctx, GDrawCommandImage *img, int xPosition, int yPosition) {
+  image_recolor(img, globalSettings.iconStrokeColor, globalSettings.iconFillColor);
+  gdraw_command_image_draw(ctx, img, GPoint(xPosition, yPosition));
 }
 
 int16_t get_obstruction_height(Layer *s_window_layer) {

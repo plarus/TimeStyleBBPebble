@@ -269,15 +269,13 @@ static void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
   }
 
   if (batteryImage) {
-    gdraw_command_image_recolor(batteryImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, batteryImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, batteryPositionY));
+    util_image_draw(ctx, batteryImage, xPosition + 3 + SidebarWidgets_xOffset, batteryPositionY);
   }
 
   if(chargeState.is_charging) {
     if(batteryChargeImage) {
       // the charge "bolt" icon uses inverted colors
-      gdraw_command_image_recolor(batteryChargeImage, globalSettings.iconStrokeColor, globalSettings.iconFillColor);
-      gdraw_command_image_draw(ctx, batteryChargeImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, batteryPositionY));
+      util_image_draw_inverted_color(ctx, batteryChargeImage, xPosition + 3 + SidebarWidgets_xOffset, batteryPositionY);
     }
   } else {
 
@@ -358,8 +356,7 @@ static void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
   // (an image in normal mode, a rectangle in large font mode)
   if(!globalSettings.useLargeFonts) {
     if(dateImage) {
-      gdraw_command_image_recolor(dateImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-      gdraw_command_image_draw(ctx, dateImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition + 23));
+      util_image_draw(ctx, dateImage, xPosition + 3 + SidebarWidgets_xOffset, yPosition + 23);
     }
   } else {
     graphics_context_set_fill_color(ctx, globalSettings.iconStrokeColor);
@@ -417,8 +414,7 @@ static void CurrentWeather_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
   if (Weather_currentWeatherIcon) {
-    gdraw_command_image_recolor(Weather_currentWeatherIcon, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, Weather_currentWeatherIcon, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition));
+    util_image_draw(ctx, Weather_currentWeatherIcon, xPosition + 3 + SidebarWidgets_xOffset, yPosition);
   }
 
   // draw weather data only if it has been set
@@ -474,10 +470,7 @@ static int BTDisconnect_getHeight(void) {
 
 static void BTDisconnect_draw(GContext* ctx, int xPosition, int yPosition) {
   if(disconnectImage) {
-    gdraw_command_image_recolor(disconnectImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-
-
-    gdraw_command_image_draw(ctx, disconnectImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition));
+    util_image_draw(ctx, disconnectImage, xPosition + 3 + SidebarWidgets_xOffset, yPosition);
   }
 }
 
@@ -554,9 +547,7 @@ static void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
   //Weather_setForecastCondition(rand() % 12);
 
   if(Weather_forecastWeatherIcon) {
-    gdraw_command_image_recolor(Weather_forecastWeatherIcon, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-
-    gdraw_command_image_draw(ctx, Weather_forecastWeatherIcon, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition + 1));
+    util_image_draw(ctx, Weather_forecastWeatherIcon, xPosition + 3 + SidebarWidgets_xOffset, yPosition + 1);
   }
 
   // draw weather data only if it has been set
@@ -695,8 +686,7 @@ static int Sleep_getHeight(void) {
 
 static void Sleep_draw(GContext* ctx, int xPosition, int yPosition) {
   if(sleepImage) {
-    gdraw_command_image_recolor(sleepImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, sleepImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yPosition - 7));
+    util_image_draw(ctx, sleepImage, xPosition + 3 + SidebarWidgets_xOffset, yPosition - 7);
   }
 
   // get sleep in seconds
@@ -738,8 +728,7 @@ static void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
   if(stepsImage) {
     int yIconPosition = SidebarWidgets_fixedHeight ? yPosition + 2 : yPosition - 7;
 
-    gdraw_command_image_recolor(stepsImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, stepsImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yIconPosition));
+    util_image_draw(ctx, stepsImage, xPosition + 3 + SidebarWidgets_xOffset, yIconPosition);
   }
 
   char steps_text[8];
@@ -810,8 +799,7 @@ static void HeartRate_draw(GContext* ctx, int xPosition, int yPosition) {
   if(heartImage) {
     int yIconPosition = SidebarWidgets_fixedHeight ? yPosition + 3 : yPosition;
 
-    gdraw_command_image_recolor(heartImage, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
-    gdraw_command_image_draw(ctx, heartImage, GPoint(xPosition + 3 + SidebarWidgets_xOffset, yIconPosition));
+    util_image_draw(ctx, heartImage, xPosition + 3 + SidebarWidgets_xOffset, yIconPosition);
   }
 
   int yOffset = globalSettings.useLargeFonts ? 17 : 20;
