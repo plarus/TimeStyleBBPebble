@@ -233,9 +233,9 @@ Pebble.addEventListener('webviewclosed', function(e) {
 
     if(configData.health_use_distance) {
       if(configData.health_use_distance == 'yes') {
-        dict.SettingHealthUseDistance = 1;
+        dict.SettingHealthActivityDisplay = 1;
       } else {
-        dict.SettingHealthUseDistance = 0;
+        dict.SettingHealthActivityDisplay = 0;
       }
     }
 

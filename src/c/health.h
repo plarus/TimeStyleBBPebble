@@ -10,5 +10,5 @@ HealthValue Health_getRestfulSleepSeconds(void);
 HealthValue Health_getDistanceWalked(void);
 HealthValue Health_getSteps(void);
 HealthValue Health_getActiveSeconds(void);
-HealthValue s_active_kCalories(void);
+HealthValue Health_getActiveKCalories(void);
 HealthValue Health_getHeartRate(void);

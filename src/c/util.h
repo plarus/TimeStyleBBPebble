@@ -44,4 +44,4 @@ void steps_to_text(HealthValue steps, char * steps_text);
 /*
  * Convert kCalories to text
  */
-void kCalories_to_text(kcalories, kcalories_text);
+void kCalories_to_text(HealthValue kcalories, char * kcalories_text);

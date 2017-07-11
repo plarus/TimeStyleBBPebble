@@ -734,7 +734,7 @@ static void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
   char steps_text[8];
   bool use_small_font = false;
 
-  if(globalSettings.healthActivityDisplay == DISTANCE) {
+  if(globalSettings.healthActivityDisplay == A_DISTANCE) {
     HealthValue distance = Health_getDistanceWalked();
     MeasurementSystem unit_system = health_service_get_measurement_system_for_display(HealthMetricWalkedDistanceMeters);
 
@@ -748,15 +748,15 @@ static void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
     } else {
       distance_to_imperial_text(distance, steps_text);
     }
-  } else if(globalSettings.healthActivityDisplay == STEPS) {
+  } else if(globalSettings.healthActivityDisplay == A_STEPS) {
     HealthValue steps = Health_getSteps();
 
     steps_to_text(steps, steps_text);
-  } else if(globalSettings.healthActivityDisplay == SECONDS) {
+  } else if(globalSettings.healthActivityDisplay == A_SECONDS) {
     HealthValue active_seconds = Health_getActiveSeconds();
 
     seconds_to_text(active_seconds, steps_text);
-  } else { //KCALORIES
+  } else { //A_KCALORIES
     HealthValue active_kcalories = Health_getActiveKCalories();
 
     kCalories_to_text(active_kcalories, steps_text);

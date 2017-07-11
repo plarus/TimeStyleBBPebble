@@ -1,6 +1,5 @@
 #include <pebble.h>
 #include <ctype.h>
-#include <math.h>
 #include "settings.h"
 #include "weather.h"
 #include "languages.h"

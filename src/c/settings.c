@@ -80,9 +80,9 @@ void Settings_loadFromStorage(void) {
     globalSettings.disableAutobattery = storedSettings.disableAutobattery;
 
     if (storedSettings.healthUseDistance) {
-      globalSettings.healthActivityDisplay = DISTANCE;
+      globalSettings.healthActivityDisplay = A_DISTANCE;
     } else {
-      globalSettings.healthActivityDisplay = STEPS;
+      globalSettings.healthActivityDisplay = A_STEPS;
     }
     globalSettings.healthUseRestfulSleep = storedSettings.healthUseRestfulSleep;
     globalSettings.decimalSeparator = storedSettings.decimalSeparator;
@@ -132,9 +132,9 @@ void Settings_loadFromStorage(void) {
     globalSettings.useLargeFonts          = persist_read_bool(SETTING_USE_LARGE_FONTS_KEY);
     globalSettings.altclockOffset         = persist_read_int(SETTING_ALTCLOCK_OFFSET_KEY);
     if(persist_read_bool(SETTING_HEALTH_USE_DISTANCE)){
-      globalSettings.healthActivityDisplay = DISTANCE;
+      globalSettings.healthActivityDisplay = A_DISTANCE;
     }else{
-      globalSettings.healthActivityDisplay = STEPS;
+      globalSettings.healthActivityDisplay = A_STEPS;
     }
     globalSettings.healthUseRestfulSleep  = persist_read_bool(SETTING_HEALTH_USE_RESTFUL_SLEEP);
 
@@ -171,7 +171,7 @@ void Settings_saveToStorage(void) {
   storedSettings.useMetric = globalSettings.useMetric;
   storedSettings.showBatteryPct = globalSettings.showBatteryPct;
   storedSettings.disableAutobattery = globalSettings.disableAutobattery;
-  if (globalSettings.healthActivityDisplay == DISTANCE) {
+  if (globalSettings.healthActivityDisplay == A_DISTANCE) {
     storedSettings.healthUseDistance = true;
   } else {
     storedSettings.healthUseDistance = false;

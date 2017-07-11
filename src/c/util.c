@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include <math.h>
 #include "settings.h"
 #include "util.h"
 
@@ -83,9 +84,9 @@ void distance_to_imperial_text(HealthValue distance, char * imperial_text) {
     int miles_whole  = (int)roundf(distance / 1609.0f);
 
     if(miles_whole > 0) {
-      snprintf(imperial_text, sizeof(steps_text), "%imi", miles_whole);
+      snprintf(imperial_text, sizeof(imperial_text), "%imi", miles_whole);
     } else {
-      snprintf(imperial_text, sizeof(steps_text), "%c%imi", globalSettings.decimalSeparator, miles_tenths);
+      snprintf(imperial_text, sizeof(imperial_text), "%c%imi", globalSettings.decimalSeparator, miles_tenths);
     }
 }
 
@@ -105,7 +106,7 @@ void steps_to_text(HealthValue steps, char * steps_text) {
     }
 }
 
-void kCalories_to_text(kcalories, kcalories_text) {
+void kCalories_to_text(HealthValue kcalories, char * kcalories_text) {
     // format kcalories string
     if(kcalories < 1000) {
       snprintf(kcalories_text, sizeof(kcalories_text), "%lik", kcalories);
@@ -113,7 +114,7 @@ void kCalories_to_text(kcalories, kcalories_text) {
       int kcalories_thousands = kcalories / 1000;
       int kcalories_hundreds  = kcalories / 100 % 10;
 
-      if (steps < 10000) {
+      if (kcalories < 10000) {
         snprintf(kcalories_text, sizeof(kcalories_text), "%i%c%iM", kcalories_thousands, globalSettings.decimalSeparator, kcalories_hundreds);
       } else {
         snprintf(kcalories_text, sizeof(kcalories_text), "%iM", kcalories_thousands);

@@ -59,7 +59,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *altclockOffset_tuple = dict_find(iterator, MESSAGE_KEY_SettingAltClockOffset);
 
   Tuple *decimalSeparator_tuple = dict_find(iterator, MESSAGE_KEY_SettingDecimalSep);
-  Tuple *healthUseDistance_tuple = dict_find(iterator, MESSAGE_KEY_SettingHealthUseDistance);
+  Tuple *healthActivityDisplay_tuple = dict_find(iterator, MESSAGE_KEY_SettingHealthActivityDisplay);
   Tuple *healthUseRestfulSleep_tuple = dict_find(iterator, MESSAGE_KEY_SettingHealthUseRestfulSleep);
 
   Tuple *autobattery_tuple = dict_find(iterator, MESSAGE_KEY_SettingDisableAutobattery);
@@ -156,8 +156,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     globalSettings.decimalSeparator = (char)decimalSeparator_tuple->value->int8;
   }
 
-  if(healthUseDistance_tuple != NULL) {
-    globalSettings.healthUseDistance = (bool)healthUseDistance_tuple->value->int8;
+  if(healthActivityDisplay_tuple != NULL) {
+    globalSettings.healthActivityDisplay = (bool)healthActivityDisplay_tuple->value->int8;
   }
 
   if(healthUseRestfulSleep_tuple != NULL) {

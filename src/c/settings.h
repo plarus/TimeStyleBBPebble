@@ -24,10 +24,10 @@ typedef enum {
 } VibeIntervalType;
 
 typedef enum {
-  STEPS     = 0,
-  DISTANCE  = 1,
-  SECONDS   = 2,
-  KCALORIES = 3
+  A_STEPS     = 0,
+  A_DISTANCE  = 1,
+  A_SECONDS   = 2,
+  A_KCALORIES = 3
 } ActivityDisplayType;
 
 typedef struct {
