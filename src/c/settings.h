@@ -131,48 +131,6 @@ typedef struct {
 
 extern Settings globalSettings;
 
-// persistent storage keys for each setting
-
-// color settings
-#define SETTING_TIME_COLOR_KEY            17
-#define SETTING_TIME_BG_COLOR_KEY         18
-#define SETTING_SIDEBAR_COLOR_KEY         19
-#define SETTING_SIDEBAR_TEXT_COLOR_KEY    20
-
-// general settings
-#define SETTING_LANGUAGE_ID_KEY           25
-#define SETTING_LEADING_ZERO_KEY          10
-#define SETTING_CLOCK_FONT_ID_KEY         13
-
-// vibration settings
-#define SETTING_BT_VIBE_KEY               23
-#define SETTING_HOURLY_VIBE_KEY           14
-
-// sidebar settings
-#define SETTING_SIDEBAR_WIDGET0_KEY       26
-#define SETTING_SIDEBAR_WIDGET1_KEY       27
-#define SETTING_SIDEBAR_WIDGET2_KEY       28
-#define SETTING_SIDEBAR_LEFT_KEY          22
-#define SETTING_USE_LARGE_FONTS_KEY       16
-
-// weather widget settings
-#define SETTING_DISABLE_WEATHER_KEY       12
-#define SETTING_USE_METRIC_KEY            21
-
-// battery meter widget settings
-#define SETTING_SHOW_BATTERY_PCT_KEY      11
-#define SETTING_DISABLE_AUTOBATTERY       36
-
-// alt tz widget settings
-#define SETTING_ALTCLOCK_NAME_KEY         30
-#define SETTING_ALTCLOCK_OFFSET_KEY       31
-
-// health widget settings
-#define SETTING_HEALTH_USE_DISTANCE       32
-#define SETTING_HEALTH_USE_RESTFUL_SLEEP  33
-#define SETTING_HEALTH_USE_METRIC         35
-#define SETTING_DECIMAL_SEPARATOR_KEY     34
-
 // key for all the settings for versions 6 and higher
 #define SETTING_VERSION6_AND_HIGHER       100
 

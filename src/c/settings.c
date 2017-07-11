@@ -52,7 +52,6 @@ void Settings_loadFromStorage(void) {
   int current_settings_version = persist_exists(SETTINGS_VERSION_KEY) ? persist_read_int(SETTINGS_VERSION_KEY) : -1;
   APP_LOG(APP_LOG_LEVEL_DEBUG,"current_settings_version: %d", current_settings_version);
   if( current_settings_version > 5 ) {
-    // new settings format
     StoredSettings storedSettings;
     memset(&storedSettings,0,sizeof(StoredSettings));
     // if previous version settings are used than only first part of settings would be overwritten,
@@ -89,58 +88,6 @@ void Settings_loadFromStorage(void) {
     memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
     globalSettings.altclockOffset = storedSettings.altclockOffset;
     globalSettings.activateDisconnectIcon = storedSettings.activateDisconnectIcon;
-  } else if( current_settings_version >= 0 ) {
-    // old settings format
-    if(persist_exists(SETTING_TIME_COLOR_KEY) && persist_exists(SETTING_TIME_BG_COLOR_KEY) &&
-       persist_exists(SETTING_SIDEBAR_COLOR_KEY) && persist_exists(SETTING_SIDEBAR_TEXT_COLOR_KEY)) {
-
-      // if the color data exists, load the colors
-      persist_read_data(SETTING_TIME_COLOR_KEY,         &globalSettings.timeColor,        sizeof(GColor));
-      persist_read_data(SETTING_TIME_BG_COLOR_KEY,      &globalSettings.timeBgColor,      sizeof(GColor));
-      persist_read_data(SETTING_SIDEBAR_COLOR_KEY,      &globalSettings.sidebarColor,     sizeof(GColor));
-      persist_read_data(SETTING_SIDEBAR_TEXT_COLOR_KEY, &globalSettings.sidebarTextColor, sizeof(GColor));
-    }
-
-    // load widgets
-    if(persist_exists(SETTING_SIDEBAR_WIDGET0_KEY)) {
-      globalSettings.widgets[0] = persist_read_int(SETTING_SIDEBAR_WIDGET0_KEY);
-      globalSettings.widgets[1] = persist_read_int(SETTING_SIDEBAR_WIDGET1_KEY);
-      globalSettings.widgets[2] = persist_read_int(SETTING_SIDEBAR_WIDGET2_KEY);
-    }
-
-    if(persist_exists(SETTING_ALTCLOCK_NAME_KEY)) {
-      persist_read_string(SETTING_ALTCLOCK_NAME_KEY, globalSettings.altclockName, sizeof(globalSettings.altclockName));
-    }
-
-    // load the rest of the settings, using default settings if none exist
-    // all settings except colors automatically return "0" or "false" if
-    // they haven't been set yet, so we don't need to check if they exist
-    globalSettings.useMetric              = persist_read_bool(SETTING_USE_METRIC_KEY);
-    if(persist_read_bool(SETTING_SIDEBAR_LEFT_KEY)){
-      globalSettings.sidebarLocation      = LEFT;
-    }else{
-      globalSettings.sidebarLocation      = RIGHT;
-    }
-    globalSettings.btVibe                 = persist_read_bool(SETTING_BT_VIBE_KEY);
-    globalSettings.languageId             = persist_read_int(SETTING_LANGUAGE_ID_KEY);
-    globalSettings.showLeadingZero        = persist_read_int(SETTING_LEADING_ZERO_KEY);
-    globalSettings.showBatteryPct         = persist_read_bool(SETTING_SHOW_BATTERY_PCT_KEY);
-    globalSettings.disableAutobattery     = persist_read_bool(SETTING_DISABLE_AUTOBATTERY);
-    globalSettings.disableWeather         = persist_read_bool(SETTING_DISABLE_WEATHER_KEY);
-    globalSettings.clockFontId            = persist_read_int(SETTING_CLOCK_FONT_ID_KEY);
-    globalSettings.hourlyVibe             = persist_read_int(SETTING_HOURLY_VIBE_KEY);
-    globalSettings.useLargeFonts          = persist_read_bool(SETTING_USE_LARGE_FONTS_KEY);
-    globalSettings.altclockOffset         = persist_read_int(SETTING_ALTCLOCK_OFFSET_KEY);
-    if(persist_read_bool(SETTING_HEALTH_USE_DISTANCE)){
-      globalSettings.healthActivityDisplay = A_DISTANCE;
-    }else{
-      globalSettings.healthActivityDisplay = A_STEPS;
-    }
-    globalSettings.healthUseRestfulSleep  = persist_read_bool(SETTING_HEALTH_USE_RESTFUL_SLEEP);
-
-    if(persist_exists(SETTING_DECIMAL_SEPARATOR_KEY)) {
-      globalSettings.decimalSeparator = (char)persist_read_int(SETTING_DECIMAL_SEPARATOR_KEY);
-    }
   }
 
   Settings_updateDynamicSettings();
