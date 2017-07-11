@@ -1,7 +1,7 @@
 {
-  "name": "timestyle-pebble",
+  "name": "timestyle-bb-pebble",
   "author": "Peyot",
-  "version": "7.1.0",
+  "version": "0.8.0",
   "keywords": [
     "pebble-watchface"
   ],
@@ -10,7 +10,7 @@
     "pebble-fctx": "^1.4.0"
   },
   "pebble": {
-    "displayName": "TimeStyle",
+    "displayName": "TimeStyle BB",
     "uuid": "bc612aa2-61f0-4abf-ad2d-0846efc4afa3",
     "sdkVersion": "3",
     "enableMultiJS": true,
