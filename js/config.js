@@ -1,4 +1,5 @@
-var CURRENT_SETTINGS_VERSION = 9;
+var CURRENT_SETTINGS_VERSION = 10;
+var appVersion;
 
 // if we have any persistent data saved, load it in
 $(document).ready(function() {
@@ -19,7 +20,7 @@ function loadSettingCheckbox(elementID, setting) {
 }
 
 function checkVersion() {
-  var appVersion = getQueryParam('appversion');
+  appVersion = getQueryParam('appversion');
 
   // if the app version is not present, or is less than the current version show the warning
   if(!appVersion || parseInt(appVersion, 10) < CURRENT_SETTINGS_VERSION) {
@@ -94,7 +95,7 @@ function loadPreviousSettings() {
       altclock_offset: 0,
 
       // health widget settings
-      health_use_distance: 'no',
+      health_activity_display: 'steps',
       health_use_restful_sleep: 'no',
       decimal_separator: '.',
 
@@ -137,7 +138,7 @@ function loadPreviousSettings() {
   loadSettingCheckbox('use_large_sidebar_font_setting', savedSettings.use_large_sidebar_font_setting);
   loadSettingCheckbox('weather_setting', savedSettings.weather_setting);
   loadSettingCheckbox('decimal_separator', savedSettings.decimal_separator);
-  loadSettingCheckbox('health_use_distance', savedSettings.health_use_distance);
+  loadSettingCheckbox('health_activity_display', savedSettings.health_activity_display);
   loadSettingCheckbox('health_use_restful_sleep', savedSettings.health_use_restful_sleep);
   loadSettingCheckbox('weather_datasource_setting', savedSettings.weather_datasource);
 
@@ -609,8 +610,17 @@ function sendSettingsToWatch() {
     config.decimal_separator = $('#decimal_separator .btn.active').data('setting');
   }
 
-  if($('#health_use_distance .btn.active')) {
-    config.health_use_distance = $('#health_use_distance .btn.active').data('setting');
+  if($('#health_activity_display .btn.active')) {
+    // Backward compatibility
+    if(appVersion && parseInt(appVersion, 10) < 10) {
+      if($('#health_activity_display .btn.active').data('setting') == 'distance') {
+        config.health_use_distance = 'yes';
+      } else {
+        config.health_use_distance = 'no';
+      }
+    } else {
+      config.health_activity_display = $('#health_activity_display .btn.active').data('setting');
+    }
   }
 
   if($('#health_use_restful_sleep .btn.active')) {

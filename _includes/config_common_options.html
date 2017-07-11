@@ -5,15 +5,22 @@
   <div class="alert alert-info" role="alert" id="autobattery_info">
     The health complication automatically switches to sleep mode based on
     whether or not you are asleep.
+    Returns to activity mode a half hour after waking up.
   </div>
   <label class="subtle">Activity</label>
-  <div id="health_use_distance" class="form-group" >
+  <div id="health_activity_display" class="form-group" >
     <div class="btn-group btn-group-justified"  data-toggle="buttons">
-      <label class="btn btn-default" data-setting="no" >
+      <label class="btn btn-default" data-setting="steps" >
         <input type="radio" name="options" autocomplete="off">Steps
       </label>
-      <label class="btn btn-default" data-setting="yes" >
+      <label class="btn btn-default" data-setting="distance" >
         <input type="radio" name="options" autocomplete="off">Distance
+      </label>
+      <label class="btn btn-default" data-setting="duration" >
+        <input type="radio" name="options" autocomplete="off">Duration
+      </label>
+      <label class="btn btn-default" data-setting="calories" >
+        <input type="radio" name="options" autocomplete="off">Calories
       </label>
     </div>
   </div>
