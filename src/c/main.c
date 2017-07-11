@@ -66,7 +66,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   }
   ClockArea_redraw();
 
-  /* Debug */ Debug_display();
+  /* Debug */ //Debug_display();
 }
 
 static void unobstructed_area_change_handler(AnimationProgress progress, void *context) {
