@@ -30,23 +30,23 @@ function checkVersion() {
 }
 
 // populates the sidebar widgets for someone with pre-widget saved settings
-function migrateLegacySettings(config) {
+//function migrateLegacySettings(config) {
 
   // stick in the new defaults
-  if(!config.weather_datasource) {
-    config.weather_datasource = 'owm';
-  }
+//  if(!config.weather_datasource) {
+//    config.weather_datasource = 'owm';
+//  }
 
-  return config;
-}
+//  return config;
+//}
 
 function loadPreviousSettings() {
   // load the previous settings
   var savedSettings = JSON.parse(window.localStorage.getItem('savedSettings'));
 
-  if(savedSettings && savedSettings.settings_version < CURRENT_SETTINGS_VERSION) {
-    savedSettings = migrateLegacySettings(savedSettings);
-  }
+//  if(savedSettings && savedSettings.settings_version < CURRENT_SETTINGS_VERSION) {
+//    savedSettings = migrateLegacySettings(savedSettings);
+//  }
 
   // health is the default except on BW watches, which have battery
   var top_widget = (has_health) ? '10' : '2';
