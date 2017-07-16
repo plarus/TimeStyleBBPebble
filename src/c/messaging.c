@@ -157,7 +157,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   }
 
   if(healthActivityDisplay_tuple != NULL) {
-    globalSettings.healthActivityDisplay = (bool)healthActivityDisplay_tuple->value->int8;
+    globalSettings.healthActivityDisplay = (ActivityDisplayType)healthActivityDisplay_tuple->value->int8;
   }
 
   if(healthUseRestfulSleep_tuple != NULL) {

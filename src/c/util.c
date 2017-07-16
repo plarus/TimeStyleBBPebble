@@ -72,7 +72,7 @@ void distance_to_metric_text(HealthValue distance, char * metric_text) {
       snprintf(metric_text, sizeof(metric_text), "%lim", distance);
     } else if(distance < 1000) {
       distance /= 100; // convert to tenths of km
-      snprintf(metric_text, sizeof(metric_text), ".%likm", distance);
+      snprintf(metric_text, sizeof(metric_text), "%c%likm", globalSettings.decimalSeparator, distance);
     } else {
       distance /= 1000; // convert to km
       snprintf(metric_text, sizeof(metric_text), "%likm", distance);
