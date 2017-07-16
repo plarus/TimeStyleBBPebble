@@ -5,7 +5,7 @@
 #define SETTINGS_VERSION_KEY 4
 
 // settings "version" for app version 4.0
-#define CURRENT_SETTINGS_VERSION 6
+#define CURRENT_SETTINGS_VERSION 7
 
 #define FIXED_WIDGET_HEIGHT 51
 
@@ -52,7 +52,7 @@ typedef struct {
   bool useLargeFonts;
   bool activateDisconnectIcon;
   
-  // weather widget settings
+  // metric or imperial unit
   bool useMetric;
 
   // battery meter widget settings
@@ -99,8 +99,7 @@ typedef struct {
   int8_t hourlyVibe:7;
 
   // sidebar settings
-  uint8_t widgets[3];
-  uint8_t spare:1;
+  uint8_t widgets[4];
   uint8_t useLargeFonts:1;
 
   // weather widget settings
@@ -111,7 +110,7 @@ typedef struct {
   uint8_t disableAutobattery:1;
 
   // health widget Settings
-  uint8_t spare2:1;
+  ActivityDisplayType healthActivityDisplay:2;
   uint8_t healthUseRestfulSleep:1;
   char decimalSeparator;
 
@@ -124,12 +123,6 @@ typedef struct {
 
   // bluetooth disconnection icon
   int8_t activateDisconnectIcon:1;
-
-  // Fourth widget for bottom display
-  uint8_t widget4;
-
-  // health activity widget Settings
-  ActivityDisplayType healthActivityDisplay:2;
 } StoredSettings;
 
 extern Settings globalSettings;
@@ -139,6 +132,7 @@ extern Settings globalSettings;
 
 void Settings_init(void);
 void Settings_deinit(void);
+void Settings_loadDefaultsSettings(void);
 void Settings_loadFromStorage(void);
 void Settings_saveToStorage(void);
 void Settings_updateDynamicSettings(void);

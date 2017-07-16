@@ -1,29 +1,37 @@
 #include <pebble.h>
+#include "languages.h"
+#include "clock_area.h"
 #include "settings.h"
 
 Settings globalSettings;
 
 void Settings_init(void) {
   // first, check if we have any saved settings
-  // int settingsVersion = persist_read_int(SETTINGS_VERSION_KEY);
-
-  // load all settings
-  Settings_loadFromStorage();
+  int current_settings_version = persist_exists(SETTINGS_VERSION_KEY) ? persist_read_int(SETTINGS_VERSION_KEY) : -1;
+  APP_LOG(APP_LOG_LEVEL_DEBUG,"current_settings_version: %d", current_settings_version);
+  if( current_settings_version <= 6 ) {
+    // load all settings
+    Settings_loadDefaultsSettings();
+  } else {
+    // load all settings
+    Settings_loadFromStorage();
+  }
+  Settings_updateDynamicSettings();
 }
 
 void Settings_deinit(void) {
+  // ensure that the weather disabled setting is accurate before saving it
+  Settings_updateDynamicSettings();
+
   // write all settings to storage
   Settings_saveToStorage();
 }
 
 /*
- * Load the saved color settings, or if they don't exist load defaults
+ * Load defaults settings
  */
-void Settings_loadFromStorage(void) {
+void Settings_loadDefaultsSettings(void) {
   // load the default colors
-  globalSettings.timeBgColor      = GColorBlack;
-  globalSettings.sidebarTextColor = GColorBlack;
-
   #ifdef PBL_COLOR
     globalSettings.timeColor      = GColorOrange;
     globalSettings.sidebarColor   = GColorOrange;
@@ -31,6 +39,15 @@ void Settings_loadFromStorage(void) {
     globalSettings.timeColor      = GColorWhite;
     globalSettings.sidebarColor   = GColorLightGray;
   #endif
+  globalSettings.timeBgColor      = GColorBlack;
+  globalSettings.sidebarTextColor = GColorBlack;
+
+  globalSettings.languageId       = LANGUAGE_EN; // English
+  globalSettings.showLeadingZero  = false;
+  globalSettings.clockFontId      = FONT_SETTING_DEFAULT;
+  globalSettings.btVibe           = false;
+  globalSettings.hourlyVibe       = NO_VIBE;
+  globalSettings.sidebarLocation  = RIGHT;
 
   // set the default widgets
   globalSettings.widgets[0] = PBL_IF_HEALTH_ELSE(HEALTH, BATTERY_METER);
@@ -38,60 +55,54 @@ void Settings_loadFromStorage(void) {
   globalSettings.widgets[2] = DATE;
   globalSettings.widgets[3] = EMPTY;
 
-  // set default bar display
-  globalSettings.sidebarLocation = RIGHT;
-
-  // set default disconnect icon activation
-  globalSettings.activateDisconnectIcon = true;
-
+  globalSettings.useLargeFonts          = false;
+  globalSettings.useMetric              = true;
+  globalSettings.showBatteryPct         = true;
+  globalSettings.disableAutobattery     = false;
+  globalSettings.healthActivityDisplay  = STEPS;
+  globalSettings.healthUseRestfulSleep  = false;
+  globalSettings.decimalSeparator       = '.';
   strncpy(globalSettings.altclockName, "ALT", sizeof(globalSettings.altclockName));
-  globalSettings.decimalSeparator = '.';
+  globalSettings.altclockOffset         = 0;
+  globalSettings.activateDisconnectIcon = true;
+}
 
-  globalSettings.showBatteryPct = true;
-
-  int current_settings_version = persist_exists(SETTINGS_VERSION_KEY) ? persist_read_int(SETTINGS_VERSION_KEY) : -1;
-  APP_LOG(APP_LOG_LEVEL_DEBUG,"current_settings_version: %d", current_settings_version);
-  if( current_settings_version > 5 ) {
-    StoredSettings storedSettings;
-    memset(&storedSettings,0,sizeof(StoredSettings));
-    // if previous version settings are used than only first part of settings would be overwritten,
-    // all the other fields will left filled with zeroes
-    persist_read_data(SETTING_VERSION6_AND_HIGHER, &storedSettings, sizeof(StoredSettings));
-    globalSettings.timeColor = storedSettings.timeColor;
-    globalSettings.timeBgColor = storedSettings.timeBgColor;
-    globalSettings.sidebarColor = storedSettings.sidebarColor;
-    globalSettings.sidebarTextColor = storedSettings.sidebarTextColor;
-    globalSettings.languageId = storedSettings.languageId;
-    globalSettings.showLeadingZero = storedSettings.showLeadingZero;
-    globalSettings.clockFontId = storedSettings.clockFontId;
-    globalSettings.btVibe = storedSettings.btVibe;
-    globalSettings.hourlyVibe = storedSettings.hourlyVibe;
-    globalSettings.sidebarLocation = storedSettings.sidebarLocation;
-    globalSettings.widgets[0] = storedSettings.widgets[0];
-    globalSettings.widgets[1] = storedSettings.widgets[1];
-    globalSettings.widgets[2] = storedSettings.widgets[2];
-    if (globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-      globalSettings.widgets[3] = storedSettings.widget4;
-    }
-    globalSettings.useLargeFonts = storedSettings.useLargeFonts;
-    globalSettings.useMetric = storedSettings.useMetric;
-    globalSettings.showBatteryPct = storedSettings.showBatteryPct;
-    globalSettings.disableAutobattery = storedSettings.disableAutobattery;
-    globalSettings.healthUseDistance = storedSettings.healthUseDistance;
-    globalSettings.healthUseRestfulSleep = storedSettings.healthUseRestfulSleep;
-    globalSettings.decimalSeparator = storedSettings.decimalSeparator;
-    memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
-    globalSettings.altclockOffset = storedSettings.altclockOffset;
-    globalSettings.activateDisconnectIcon = storedSettings.activateDisconnectIcon;
-  }
-
-  Settings_updateDynamicSettings();
+/*
+ * Load the saved color settings
+ */
+void Settings_loadFromStorage(void) {
+  StoredSettings storedSettings;
+  memset(&storedSettings,0,sizeof(StoredSettings));
+  // if previous version settings are used than only first part of settings would be overwritten,
+  // all the other fields will left filled with zeroes
+  persist_read_data(SETTING_VERSION6_AND_HIGHER, &storedSettings, sizeof(StoredSettings));
+  globalSettings.timeColor = storedSettings.timeColor;
+  globalSettings.timeBgColor = storedSettings.timeBgColor;
+  globalSettings.sidebarColor = storedSettings.sidebarColor;
+  globalSettings.sidebarTextColor = storedSettings.sidebarTextColor;
+  globalSettings.languageId = storedSettings.languageId;
+  globalSettings.showLeadingZero = storedSettings.showLeadingZero;
+  globalSettings.clockFontId = storedSettings.clockFontId;
+  globalSettings.btVibe = storedSettings.btVibe;
+  globalSettings.hourlyVibe = storedSettings.hourlyVibe;
+  globalSettings.sidebarLocation = storedSettings.sidebarLocation;
+  globalSettings.widgets[0] = storedSettings.widgets[0];
+  globalSettings.widgets[1] = storedSettings.widgets[1];
+  globalSettings.widgets[2] = storedSettings.widgets[2];
+  globalSettings.widgets[3] = storedSettings.widgets[3];
+  globalSettings.useLargeFonts = storedSettings.useLargeFonts;
+  globalSettings.useMetric = storedSettings.useMetric;
+  globalSettings.showBatteryPct = storedSettings.showBatteryPct;
+  globalSettings.disableAutobattery = storedSettings.disableAutobattery;
+  globalSettings.healthActivityDisplay = storedSettings.healthActivityDisplay;
+  globalSettings.healthUseRestfulSleep = storedSettings.healthUseRestfulSleep;
+  globalSettings.decimalSeparator = storedSettings.decimalSeparator;
+  memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
+  globalSettings.altclockOffset = storedSettings.altclockOffset;
+  globalSettings.activateDisconnectIcon = storedSettings.activateDisconnectIcon;
 }
 
 void Settings_saveToStorage(void) {
-  // ensure that the weather disabled setting is accurate before saving it
-  Settings_updateDynamicSettings();
-
   // save settings to compressed structure and to persistent storage
   StoredSettings storedSettings;
   // if previous version settings are used than only first part of settings would be overwrited
@@ -108,7 +119,7 @@ void Settings_saveToStorage(void) {
   storedSettings.widgets[0] = globalSettings.widgets[0];
   storedSettings.widgets[1] = globalSettings.widgets[1];
   storedSettings.widgets[2] = globalSettings.widgets[2];
-  storedSettings.widget4    = globalSettings.widgets[3];
+  storedSettings.widgets[3] = globalSettings.widgets[3];
   storedSettings.useLargeFonts = globalSettings.useLargeFonts;
   storedSettings.useMetric = globalSettings.useMetric;
   storedSettings.showBatteryPct = globalSettings.showBatteryPct;
