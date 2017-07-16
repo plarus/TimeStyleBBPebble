@@ -77,12 +77,7 @@ void Settings_loadFromStorage(void) {
     globalSettings.useMetric = storedSettings.useMetric;
     globalSettings.showBatteryPct = storedSettings.showBatteryPct;
     globalSettings.disableAutobattery = storedSettings.disableAutobattery;
-
-    if (storedSettings.healthUseDistance) {
-      globalSettings.healthActivityDisplay = A_DISTANCE;
-    } else {
-      globalSettings.healthActivityDisplay = A_STEPS;
-    }
+    globalSettings.healthUseDistance = storedSettings.healthUseDistance;
     globalSettings.healthUseRestfulSleep = storedSettings.healthUseRestfulSleep;
     globalSettings.decimalSeparator = storedSettings.decimalSeparator;
     memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
@@ -118,11 +113,7 @@ void Settings_saveToStorage(void) {
   storedSettings.useMetric = globalSettings.useMetric;
   storedSettings.showBatteryPct = globalSettings.showBatteryPct;
   storedSettings.disableAutobattery = globalSettings.disableAutobattery;
-  if (globalSettings.healthActivityDisplay == A_DISTANCE) {
-    storedSettings.healthUseDistance = true;
-  } else {
-    storedSettings.healthUseDistance = false;
-  }
+  storedSettings.healthActivityDisplay = globalSettings.healthActivityDisplay;
   storedSettings.healthUseRestfulSleep = globalSettings.healthUseRestfulSleep;
   storedSettings.decimalSeparator = globalSettings.decimalSeparator;
   memcpy(storedSettings.altclockName, globalSettings.altclockName, 8);

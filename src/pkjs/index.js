@@ -1,7 +1,7 @@
 
 var weather = require('./weather');
 
-var CONFIG_VERSION = 9;
+var CONFIG_VERSION = 10;
 // var BASE_CONFIG_URL = 'http://localhost:4000/';
 var BASE_CONFIG_URL = 'http://plarus.github.io/TimeStylePebble/';
 
@@ -231,10 +231,14 @@ Pebble.addEventListener('webviewclosed', function(e) {
       dict.SettingDecimalSep = configData.decimal_separator;
     }
 
-    if(configData.health_use_distance) {
-      if(configData.health_use_distance == 'yes') {
+    if(configData.health_activity_display) {
+      if(configData.health_activity_display == 'distance') {
         dict.SettingHealthActivityDisplay = 1;
-      } else {
+      } else if(configData.health_activity_display == 'duration') {
+        dict.SettingHealthActivityDisplay = 2;
+      } else if(configData.health_activity_display == 'calories') {
+        dict.SettingHealthActivityDisplay = 3;
+      } else { // steps
         dict.SettingHealthActivityDisplay = 0;
       }
     }

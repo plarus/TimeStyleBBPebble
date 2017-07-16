@@ -24,10 +24,10 @@ typedef enum {
 } VibeIntervalType;
 
 typedef enum {
-  A_STEPS     = 0,
-  A_DISTANCE  = 1,
-  A_SECONDS   = 2,
-  A_KCALORIES = 3
+  STEPS     = 0,
+  DISTANCE  = 1,
+  DURATION  = 2,
+  KCALORIES = 3
 } ActivityDisplayType;
 
 typedef struct {
@@ -111,7 +111,7 @@ typedef struct {
   uint8_t disableAutobattery:1;
 
   // health widget Settings
-  uint8_t healthUseDistance:1;
+  uint8_t spare2:1;
   uint8_t healthUseRestfulSleep:1;
   char decimalSeparator;
 
@@ -127,6 +127,9 @@ typedef struct {
 
   // Fourth widget for bottom display
   uint8_t widget4;
+
+  // health activity widget Settings
+  ActivityDisplayType healthActivityDisplay:2;
 } StoredSettings;
 
 extern Settings globalSettings;

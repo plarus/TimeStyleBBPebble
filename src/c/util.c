@@ -109,15 +109,15 @@ void steps_to_text(HealthValue steps, char * steps_text) {
 void kCalories_to_text(HealthValue kcalories, char * kcalories_text) {
     // format kcalories string
     if(kcalories < 1000) {
-      snprintf(kcalories_text, sizeof(kcalories_text), "%lik", kcalories);
+      snprintf(kcalories_text, sizeof(kcalories_text), "%likc", kcalories);
     } else {
       int kcalories_thousands = kcalories / 1000;
       int kcalories_hundreds  = kcalories / 100 % 10;
 
       if (kcalories < 10000) {
-        snprintf(kcalories_text, sizeof(kcalories_text), "%i%c%iM", kcalories_thousands, globalSettings.decimalSeparator, kcalories_hundreds);
+        snprintf(kcalories_text, sizeof(kcalories_text), "%i%c%iMc", kcalories_thousands, globalSettings.decimalSeparator, kcalories_hundreds);
       } else {
-        snprintf(kcalories_text, sizeof(kcalories_text), "%iM", kcalories_thousands);
+        snprintf(kcalories_text, sizeof(kcalories_text), "%iMc", kcalories_thousands);
       }
     }
 }
