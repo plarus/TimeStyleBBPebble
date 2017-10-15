@@ -86,7 +86,24 @@ static int getReplacableWidget(void) {
 #endif
 
 #ifdef PBL_ROUND
-static void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType widgetType, int widgetXOffset) {
+static SidebarWidget getRoundSidebarWidget(int widgetNumber) {
+  bool showDisconnectIcon = !bluetooth_connection_service_peek();
+  bool showAutoBattery = isAutoBatteryShown();
+
+  SidebarWidgetType displayWidget = globalSettings.widgets[widgetNumber];
+
+  if((showAutoBattery || showDisconnectIcon) && getReplacableWidget() == widgetNumber) {
+    if(showAutoBattery) {
+      displayWidget = BATTERY_METER;
+    } else if(showDisconnectIcon) {
+      displayWidget = BLUETOOTH_DISCONNECT;
+    }
+  }
+
+  return getSidebarWidgetByType(displayWidget);
+}
+
+static void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidget widget, int widgetXPosition, int widgetYPosition, int widgetXOffset) {
   graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
 
   graphics_fill_radial(ctx,
@@ -97,51 +114,66 @@ static void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType wi
                        TRIG_MAX_ANGLE);
 
   SidebarWidgets_xOffset = widgetXOffset;
-  SidebarWidget widget = getSidebarWidgetByType(widgetType);
 
-  // calculate center position of the widget
-  int widgetPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
-
-  widget.draw(ctx, 0, widgetPosition);
+  widget.draw(ctx, widgetXPosition, widgetYPosition);
 }
 
 static void updateRoundSidebarRight(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
   GRect bgBounds = GRect(bounds.origin.x, bounds.size.h / -2, bounds.size.h * 2, bounds.size.h * 2);
 
-  bool showDisconnectIcon = !bluetooth_connection_service_peek();
-  bool showAutoBattery = isAutoBatteryShown();
+  SidebarWidget widget = getRoundSidebarWidget(2);
 
-  SidebarWidgetType displayWidget = globalSettings.widgets[2];
+  // calculate center position of the widget
+  int widgetYPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
 
-  if((showAutoBattery || showDisconnectIcon) && getReplacableWidget() == 2) {
-    if(showAutoBattery) {
-      displayWidget = BATTERY_METER;
-    } else if(showDisconnectIcon) {
-      displayWidget = BLUETOOTH_DISCONNECT;
-    }
+  drawRoundSidebar(ctx, bgBounds, widget, 0, widgetYPosition, 3);
   }
-
-  drawRoundSidebar(ctx, bgBounds, displayWidget, 3);
-}
 
 static void updateRoundSidebarLeft(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
   GRect bgBounds = GRect(bounds.origin.x - bounds.size.h * 2 + bounds.size.w, bounds.size.h / -2, bounds.size.h * 2, bounds.size.h * 2);
 
-  bool showDisconnectIcon = !bluetooth_connection_service_peek();
-  bool showAutoBattery = isAutoBatteryShown();
-  SidebarWidgetType displayWidget = globalSettings.widgets[0];
+  SidebarWidget widget = getRoundSidebarWidget(0);
 
-  if((showAutoBattery || showDisconnectIcon) && getReplacableWidget() == 0) {
-    if(showAutoBattery) {
-      displayWidget = BATTERY_METER;
-    } else if(showDisconnectIcon) {
-      displayWidget = BLUETOOTH_DISCONNECT;
-    }
-  }
+  // calculate center position of the widget
+  int widgetYPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
 
-  drawRoundSidebar(ctx, bgBounds, displayWidget, 7);
+  drawRoundSidebar(ctx, bgBounds, widget, 0, widgetYPosition, 7);
+}
+
+static void updateRoundSidebarBottom(Layer *l, GContext* ctx) {
+  GRect bounds = layer_get_bounds(l);
+  GRect bgBounds = GRect(bounds.size.w / -2, bounds.origin.y, bounds.size.w * 2, bounds.size.w * 2);
+
+  SidebarWidget widget = getRoundSidebarWidget(2);
+
+  // use compact mode and fixed height for bottom and top widget
+  SidebarWidgets_useCompactMode = true;
+  SidebarWidgets_fixedHeight = true;
+
+  // calculate center position of the widget
+  int widgetXPosition = bgBounds.size.w / 4 - ACTION_BAR_WIDTH / 2;
+  int widgetYPosition = (HORIZONTAL_BAR_HEIGHT - widget.getHeight()) / 2;
+
+  drawRoundSidebar(ctx, bgBounds, widget, widgetXPosition, widgetYPosition, 5);
+}
+
+static void updateRoundSidebarTop(Layer *l, GContext* ctx) {
+  GRect bounds = layer_get_bounds(l);
+  GRect bgBounds = GRect(bounds.size.w / -2, bounds.origin.y - bounds.size.w * 2 + bounds.size.h, bounds.size.w * 2, bounds.size.w * 2);
+
+  SidebarWidget widget = getRoundSidebarWidget(0);
+
+  // use compact mode and fixed height for bottom and top widget
+  SidebarWidgets_useCompactMode = true;
+  SidebarWidgets_fixedHeight = true;
+
+  // calculate center position of the widget
+  int widgetXPosition = bgBounds.size.w / 4 - ACTION_BAR_WIDTH / 2;
+  int widgetYPosition = (HORIZONTAL_BAR_HEIGHT - widget.getHeight()) / 2;
+
+  drawRoundSidebar(ctx, bgBounds, widget, widgetXPosition, widgetYPosition, 5);
 }
 
 #else
@@ -305,8 +337,10 @@ void Sidebar_init(Window* window) {
 
   #ifdef PBL_ROUND
     GRect bounds2;
-    bounds = GRect(0, 0, 40, screen_rect.size.h);
-    bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
+    //bounds = GRect(0, 0, 40, screen_rect.size.h);
+    //bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
+    bounds = GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT );
+    bounds2 = GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
   #else
     bounds = getRectSidebarBounds();
   #endif
@@ -318,7 +352,8 @@ void Sidebar_init(Window* window) {
   layer_add_child(window_get_root_layer(window), sidebarLayer);
 
   #ifdef PBL_ROUND
-    layer_set_update_proc(sidebarLayer, updateRoundSidebarLeft);
+    //layer_set_update_proc(sidebarLayer, updateRoundSidebarLeft);
+    layer_set_update_proc(sidebarLayer, updateRoundSidebarTop);
   #else
     layer_set_update_proc(sidebarLayer, updateRectSidebar);
   #endif
@@ -326,7 +361,8 @@ void Sidebar_init(Window* window) {
   #ifdef PBL_ROUND
     sidebarLayer2 = layer_create(bounds2);
     layer_add_child(window_get_root_layer(window), sidebarLayer2);
-    layer_set_update_proc(sidebarLayer2, updateRoundSidebarRight);
+    //layer_set_update_proc(sidebarLayer2, updateRoundSidebarRight);
+    layer_set_update_proc(sidebarLayer2, updateRoundSidebarBottom);
   #endif
 }
 

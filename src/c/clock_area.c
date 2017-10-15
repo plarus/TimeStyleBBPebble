@@ -212,13 +212,83 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   fctx_deinit_context(&fctx);
 }
 
-static void update_clock_area_layer(Layer *l, GContext* ctx) {
+static void update_one_line_clock_area_layer(Layer *l, GContext* ctx) {
+  // check layer bounds
+  GRect fullscreen_bounds = layer_get_bounds(l);
 
+  // initialize FCTX, the fancy 3rd party drawing library that all the cool kids use
+  FContext fctx;
+
+  fctx_init_context(&fctx, ctx);
+  fctx_set_color_bias(&fctx, 0);
+  fctx_set_fill_color(&fctx, globalSettings.timeColor);
+
+  // calculate font size
+  int font_size = fullscreen_bounds.size.h / 3 + 7;
+
+  // avenir + avenir bold metrics
+  int h_adjust = -2;
+
+  // alternate metrics for LECO
+  if(globalSettings.clockFontId == FONT_SETTING_LECO) {
+    h_adjust = -3;
+
+    // leco looks awful with antialiasing
+    #ifdef PBL_COLOR
+      fctx_enable_aa(false);
+    #endif
+  } else {
+    #ifdef PBL_COLOR
+      fctx_enable_aa(true);
+    #endif
+  }
+
+  int h_middle = fullscreen_bounds.size.w / 2;
+  int h_colon_margin = 7;
+
+  FPoint time_pos;
+  fctx_begin_fill(&fctx);
+  fctx_set_text_em_height(&fctx, hours_font, font_size);
+  fctx_set_text_em_height(&fctx, minutes_font, font_size);
+  fctx_set_text_em_height(&fctx, colon_font, font_size);
+
+  graphics_context_set_text_color(ctx, globalSettings.timeColor);
+
+  // draw hours
+  time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
+  time_pos.y = INT_TO_FIXED(fullscreen_bounds.size.h / 2);
+  fctx_set_offset(&fctx, time_pos);
+  fctx_draw_string(&fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorMiddle);
+
+  //draw ":"
+  if(globalSettings.clockFontId == FONT_SETTING_LECO) {
+    time_pos.x = INT_TO_FIXED(h_middle);
+  } else {
+    time_pos.x = INT_TO_FIXED(h_middle - 1);
+  }
+  fctx_set_offset(&fctx, time_pos);
+  fctx_draw_string(&fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorMiddle);
+
+  //draw minutes
+  time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
+  fctx_set_offset(&fctx, time_pos);
+  fctx_draw_string(&fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorMiddle);
+
+  fctx_end_fill(&fctx);
+  fctx_deinit_context(&fctx);
+}
+
+static void update_clock_area_layer(Layer *l, GContext* ctx) {
+#ifdef PBL_ROUND
+    update_one_line_clock_area_layer(l, ctx);
+#else
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
       update_clock_and_date_area_layer(l, ctx);
   } else {
       update_original_clock_area_layer(l, ctx);
   }
+#endif // PBL_ROUND
+
   /* Debug */ Debug_clockAreaUpdate++;
 }
 
