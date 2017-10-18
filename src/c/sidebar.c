@@ -217,11 +217,8 @@ void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidgetType widgetTyp
   int widgetPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
   widget.draw(ctx, widgetPosition);
 }
-#endif
 
-
-
-
+#else
 
 void updateRectSidebar(Layer *l, GContext* ctx) {
   SidebarWidgets_updateFonts();
@@ -271,3 +268,5 @@ void updateRectSidebar(Layer *l, GContext* ctx) {
   displayWidgets[2].draw(ctx, lowerWidgetPos);
 
 }
+
+#endif
