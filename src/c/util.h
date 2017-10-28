@@ -1,27 +1,42 @@
 #pragma once
 #include <pebble.h>
-#include "time.h"
-
 
 /*
- * For the specified GDrawCommandImage, recolors it with
- * the specified fill and stroke colors
+ * Draw image at position with the specified fill and stroke colors
  */
-extern void gdraw_command_image_recolor(GDrawCommandImage *img, GColor fill_color, GColor stroke_color);
+void util_image_draw(GContext* ctx, GDrawCommandImage *img, int xPosition, int yPosition);
 
 /*
- * Returns the current time in Swatch Internet Time "beats"
+ * Draw image at position with the inverted fill and stroke colors
  */
-extern int time_get_beats(const struct tm *tm);
+void util_image_draw_inverted_color(GContext* ctx, GDrawCommandImage *img, int xPosition, int yPosition);
 
-#ifdef PBL_HEALTH
-  /*
-   * Checks if any of the specified health activites exist in the specified time range
-   */
-  extern bool is_health_metric_accessible(HealthMetric metric);
+/*
+ * Convert number of seconds to minutes and hours text
+ */
+void seconds_to_minutes_hours_text(HealthValue seconds, char * hours_text, char * minutes_text);
 
-  /*
-   * Returns true if the user is sleeping, false otherwise
-   */
-  extern bool is_user_sleeping();
-#endif
+/*
+ * Convert number of seconds to one minutes and hours text
+ */
+void seconds_to_text(HealthValue seconds, char * hours_minutes_text);
+
+/*
+ * Convert distance to metric text
+ */
+void distance_to_metric_text(HealthValue distance, char * metric_text);
+
+/*
+ * Convert distance to imperial unit text
+ */
+void distance_to_imperial_text(HealthValue distance, char * imperial_text);
+
+/*
+ * Convert steps to text
+ */
+void steps_to_text(HealthValue steps, char * steps_text);
+
+/*
+ * Convert kCalories to text
+ */
+void kCalories_to_text(HealthValue kcalories, char * kcalories_text);

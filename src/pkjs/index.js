@@ -1,9 +1,9 @@
 
 var weather = require('./weather');
 
-var CONFIG_VERSION = 8;
+var CONFIG_VERSION = 10;
 // var BASE_CONFIG_URL = 'http://localhost:4000/';
-var BASE_CONFIG_URL = 'http://freakified.github.io/TimeStylePebble/';
+var BASE_CONFIG_URL = 'http://plarus.github.io/TimeStyleBBPebble/';
 
 // Listen for when the watchface is opened
 Pebble.addEventListener('ready',
@@ -156,12 +156,19 @@ Pebble.addEventListener('webviewclosed', function(e) {
     dict.SettingWidget0ID = configData.widget_0_id;
     dict.SettingWidget1ID = configData.widget_1_id;
     dict.SettingWidget2ID = configData.widget_2_id;
+    dict.SettingWidget3ID = configData.widget_3_id;
 
     if(configData.sidebar_position) {
-      if(configData.sidebar_position == 'right') {
-        dict.SettingSidebarOnLeft = 0;
+      if(configData.sidebar_position == 'left') {
+        dict.SettingSidebarPosition = 1;
+      } else if(configData.sidebar_position == 'right') {
+        dict.SettingSidebarPosition = 2;
+      } else if(configData.sidebar_position == 'bottom') {
+        dict.SettingSidebarPosition = 3;
+      } else if(configData.sidebar_position == 'top') {
+        dict.SettingSidebarPosition = 4;
       } else {
-        dict.SettingSidebarOnLeft = 1;
+        dict.SettingSidebarPosition = 0;
       }
     }
 
@@ -224,11 +231,15 @@ Pebble.addEventListener('webviewclosed', function(e) {
       dict.SettingDecimalSep = configData.decimal_separator;
     }
 
-    if(configData.health_use_distance) {
-      if(configData.health_use_distance == 'yes') {
-        dict.SettingHealthUseDistance = 1;
+    if(configData.health_activity_display) {
+      if(configData.health_activity_display == 'distance') {
+        dict.SettingHealthActivityDisplay = 1;
+      } else if(configData.health_activity_display == 'duration') {
+        dict.SettingHealthActivityDisplay = 2;
+      } else if(configData.health_activity_display == 'calories') {
+        dict.SettingHealthActivityDisplay = 3;
       } else {
-        dict.SettingHealthUseDistance = 0;
+        dict.SettingHealthActivityDisplay = 0;
       }
     }
 
@@ -244,7 +255,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
     // determine whether or not the weather checking should be enabled
     var disableWeather;
 
-    var widgetIDs = [configData.widget_0_id, configData.widget_1_id, configData.widget_2_id];
+    var widgetIDs = [configData.widget_0_id, configData.widget_1_id, configData.widget_2_id, configData.widget_3_id];
 
     // if there is either a current conditions or a today's forecast widget, enable the weather
     if(widgetIDs.indexOf(7) != -1 || widgetIDs.indexOf(8) != -1) {

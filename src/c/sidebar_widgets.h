@@ -9,6 +9,12 @@
 extern bool SidebarWidgets_useCompactMode;
 
 /*
+ * "Fixed Height" is a global setting shared by all widgets, which force
+ * a fixed height for all widgets. It is used by bottom and top bar
+ */
+extern bool SidebarWidgets_fixedHeight;
+
+/*
  * A global x offset used for nudging the widgets left and right
  * Included for round support
  */
@@ -30,7 +36,9 @@ typedef enum {
   WEATHER_FORECAST_TODAY    = 8,
   TIME_UNUSED               = 9,
   HEALTH                    = 10,
-  BEATS                     = 11
+  BEATS                     = 11,
+  SLEEP                     = 13,
+  STEP                      = 14
 } SidebarWidgetType;
 
 typedef struct {
@@ -43,11 +51,10 @@ typedef struct {
   /*
    * Draws the widget using the provided graphics context
    */
-  void (*draw)(GContext* ctx, int yPosition);
+  void (*draw)(GContext* ctx, int xPosition, int yPosition);
 } SidebarWidget;
 
-void SidebarWidgets_init();
-void SidebarWidgets_deinit();
+void SidebarWidgets_init(void);
+void SidebarWidgets_deinit(void);
 SidebarWidget getSidebarWidgetByType(SidebarWidgetType type);
-void SidebarWidgets_updateFonts();
-void SidebarWidgets_updateTime(struct tm* timeInfo);
+void SidebarWidgets_updateFonts(void);

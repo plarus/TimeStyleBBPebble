@@ -1,6 +1,7 @@
 #include <pebble.h>
+#include <math.h>
+#include "settings.h"
 #include "util.h"
-
 
 bool recolor_iterator_cb(GDrawCommand *command, uint32_t index, void *context) {
   GColor *colors = (GColor *)context;
@@ -11,7 +12,11 @@ bool recolor_iterator_cb(GDrawCommand *command, uint32_t index, void *context) {
   return true;
 }
 
-void gdraw_command_image_recolor(GDrawCommandImage *img, GColor fill_color, GColor stroke_color) {
+/*
+ * For the specified GDrawCommandImage, recolors it with
+ * the specified fill and stroke colors
+ */
+void image_recolor(GDrawCommandImage *img, GColor fill_color, GColor stroke_color) {
   GColor colors[2];
   colors[0] = fill_color;
   colors[1] = stroke_color;
@@ -20,49 +25,92 @@ void gdraw_command_image_recolor(GDrawCommandImage *img, GColor fill_color, GCol
                              recolor_iterator_cb, &colors);
 }
 
-// avoid floating point arithmetic on Aplite, which just doesn't have the RAM for it
-#ifndef PBL_PLATFORM_APLITE
-int time_get_beats(const struct tm *tm) {
-  // code from https://gist.github.com/insom/bf40b91fd25ae1d84764
-
-  time_t t = mktime((struct tm *)tm);
-  t = t + 3600; // Add an hour to make into BMT
-
-  struct tm *bt = gmtime(&t);
-  double sex = (bt->tm_hour * 3600) + (bt->tm_min * 60) + bt->tm_sec;
-  int beats = (int)(10 * (sex / 864)) % 1000;
-
-  return beats;
+void util_image_draw(GContext* ctx, GDrawCommandImage *img, int xPosition, int yPosition) {
+  image_recolor(img, globalSettings.iconFillColor, globalSettings.iconStrokeColor);
+  gdraw_command_image_draw(ctx, img, GPoint(xPosition, yPosition));
 }
-#endif
 
-#ifdef PBL_HEALTH
-   bool is_health_metric_accessible(HealthMetric metric) {
-     time_t start = time_start_of_today();
-     time_t end = time(NULL);
+void util_image_draw_inverted_color(GContext* ctx, GDrawCommandImage *img, int xPosition, int yPosition) {
+  image_recolor(img, globalSettings.iconStrokeColor, globalSettings.iconFillColor);
+  gdraw_command_image_draw(ctx, img, GPoint(xPosition, yPosition));
+}
+
+void seconds_to_minutes_hours_text(HealthValue seconds, char * hours_text, char * minutes_text) {
+
+    // convert to hours/minutes
+    int minutes = seconds / 60;
+    int hours   = minutes / 60;
+
+    // find minutes remainder
+    minutes %= 60;
+
+    snprintf(hours_text, sizeof(hours_text), "%ih", hours);
+    snprintf(minutes_text, sizeof(minutes_text), "%im", minutes);
+}
+
+void seconds_to_text(HealthValue seconds, char * hours_minutes_text) {
 
      // Check step data is available
-     HealthServiceAccessibilityMask mask = health_service_metric_accessible(metric, start, end);
-     bool result = mask & HealthServiceAccessibilityMaskAvailable;
+    int minutes = seconds / 60;
+    int hours   = minutes / 60;
 
-     return result;
+    // find minutes remainder
+    minutes %= 60;
+
+    snprintf(hours_minutes_text, sizeof(hours_minutes_text), "%ih%i", hours, minutes);
    }
 
-   bool is_user_sleeping() {
-     time_t now = time(NULL);
+void distance_to_metric_text(HealthValue distance, char * metric_text) {
+    if(distance < 100) {
+      snprintf(metric_text, sizeof(metric_text), "%lim", distance);
+    } else if(distance < 1000) {
+      distance /= 100; // convert to tenths of km
+      snprintf(metric_text, sizeof(metric_text), "%c%likm", globalSettings.decimalSeparator, distance);
+    } else {
+      distance /= 1000; // convert to km
+      snprintf(metric_text, sizeof(metric_text), "%likm", distance);
+    }
+}
 
-     HealthActivityMask activities = HealthActivitySleep | HealthActivityRestfulSleep;
+void distance_to_imperial_text(HealthValue distance, char * imperial_text) {
+    int miles_tenths = distance * 10 / 1609 % 10;
+    int miles_whole  = (int)roundf(distance / 1609.0f);
 
-     HealthServiceAccessibilityMask mask = health_service_any_activity_accessible(activities, now, now);
-     bool sleep_access_available = mask & HealthServiceAccessibilityMaskAvailable;
+    if(miles_whole > 0) {
+      snprintf(imperial_text, sizeof(imperial_text), "%imi", miles_whole);
+    } else {
+      snprintf(imperial_text, sizeof(imperial_text), "%c%imi", globalSettings.decimalSeparator, miles_tenths);
+    }
+}
 
-     if(sleep_access_available) {
-       uint32_t current_activities = health_service_peek_current_activities();
-       bool sleeping = current_activities & HealthActivitySleep || current_activities & HealthActivityRestfulSleep;
+void steps_to_text(HealthValue steps, char * steps_text) {
 
-       return sleeping;
-     } else {
-       return false;
-     }
+    if(steps < 1000) {
+      snprintf(steps_text, sizeof(steps_text), "%li", steps);
+    } else {
+      int steps_thousands = steps / 1000;
+      int steps_hundreds  = steps / 100 % 10;
+
+      if (steps < 10000) {
+        snprintf(steps_text, sizeof(steps_text), "%i%c%ik", steps_thousands, globalSettings.decimalSeparator, steps_hundreds);
+      } else {
+        snprintf(steps_text, sizeof(steps_text), "%ik", steps_thousands);
+      }
    }
- #endif
+}
+
+void kCalories_to_text(HealthValue kcalories, char * kcalories_text) {
+    // format kcalories string
+    if(kcalories < 1000) {
+      snprintf(kcalories_text, sizeof(kcalories_text), "%likc", kcalories);
+    } else {
+      int kcalories_thousands = kcalories / 1000;
+      int kcalories_hundreds  = kcalories / 100 % 10;
+
+      if (kcalories < 10000) {
+        snprintf(kcalories_text, sizeof(kcalories_text), "%i%c%iMc", kcalories_thousands, globalSettings.decimalSeparator, kcalories_hundreds);
+      } else {
+        snprintf(kcalories_text, sizeof(kcalories_text), "%iMc", kcalories_thousands);
+      }
+    }
+}

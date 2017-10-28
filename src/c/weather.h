@@ -40,6 +40,6 @@ extern GDrawCommandImage* Weather_forecastWeatherIcon;
 
 void Weather_setCurrentCondition(int conditionCode);
 void Weather_setForecastCondition(int conditionCode);
-void Weather_saveData();
-void Weather_init();
-void Weather_deinit();
+void Weather_saveData(void);
+void Weather_init(void);
+void Weather_deinit(void);

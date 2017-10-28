@@ -3,6 +3,6 @@
 
 // "public" functions
 void Sidebar_init(Window* window);
-void Sidebar_deinit();
-void Sidebar_redraw();
-void Sidebar_updateTime(struct tm* timeInfo);
+void Sidebar_deinit(void);
+void Sidebar_set_layer(void);
+void Sidebar_redraw(void);

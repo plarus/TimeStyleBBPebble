@@ -3,34 +3,9 @@
 #include "settings.h"
 #include "messaging.h"
 
-void (*message_processed_callback)(void);
+static MessageProcessedCallback message_processed_callback;
 
-void messaging_requestNewWeatherData() {
-  // just send an empty message for now
-  DictionaryIterator *iter;
-  app_message_outbox_begin(&iter);
-  dict_write_uint32(iter, 0, 0);
-  app_message_outbox_send();
-}
-
-void messaging_init(void (*processed_callback)(void)) {
-  // register my custom callback
-  message_processed_callback = processed_callback;
-
-  // Register callbacks
-  app_message_register_inbox_received(inbox_received_callback);
-  app_message_register_inbox_dropped(inbox_dropped_callback);
-  app_message_register_outbox_failed(outbox_failed_callback);
-  app_message_register_outbox_sent(outbox_sent_callback);
-
-  // Open AppMessage
-  app_message_open(512, 8);
-
-  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Watch messaging is started!");
-  app_message_register_inbox_received(inbox_received_callback);
-}
-
-void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   // does this message contain current weather conditions?
   Tuple *weatherTemp_tuple = dict_find(iterator, MESSAGE_KEY_WeatherTemperature);
   Tuple *weatherConditions_tuple = dict_find(iterator, MESSAGE_KEY_WeatherCondition);
@@ -63,7 +38,7 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   Tuple *timeColor_tuple = dict_find(iterator, MESSAGE_KEY_SettingColorTime);
   Tuple *bgColor_tuple = dict_find(iterator, MESSAGE_KEY_SettingColorBG);
   Tuple *sidebarColor_tuple = dict_find(iterator, MESSAGE_KEY_SettingColorSidebar);
-  Tuple *sidebarPos_tuple = dict_find(iterator, MESSAGE_KEY_SettingSidebarOnLeft);
+  Tuple *sidebarPos_tuple = dict_find(iterator, MESSAGE_KEY_SettingSidebarPosition);
   Tuple *sidebarTextColor_tuple = dict_find(iterator, MESSAGE_KEY_SettingSidebarTextColor);
   Tuple *useMetric_tuple = dict_find(iterator, MESSAGE_KEY_SettingUseMetric);
   Tuple *btVibe_tuple = dict_find(iterator, MESSAGE_KEY_SettingBluetoothVibe);
@@ -78,12 +53,13 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   Tuple *widget0Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget0ID);
   Tuple *widget1Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget1ID);
   Tuple *widget2Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget2ID);
+  Tuple *widget3Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget3ID);
 
   Tuple *altclockName_tuple = dict_find(iterator, MESSAGE_KEY_SettingAltClockName);
   Tuple *altclockOffset_tuple = dict_find(iterator, MESSAGE_KEY_SettingAltClockOffset);
 
   Tuple *decimalSeparator_tuple = dict_find(iterator, MESSAGE_KEY_SettingDecimalSep);
-  Tuple *healthUseDistance_tuple = dict_find(iterator, MESSAGE_KEY_SettingHealthUseDistance);
+  Tuple *healthActivityDisplay_tuple = dict_find(iterator, MESSAGE_KEY_SettingHealthActivityDisplay);
   Tuple *healthUseRestfulSleep_tuple = dict_find(iterator, MESSAGE_KEY_SettingHealthUseRestfulSleep);
 
   Tuple *autobattery_tuple = dict_find(iterator, MESSAGE_KEY_SettingDisableAutobattery);
@@ -109,7 +85,7 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   }
 
   if(sidebarPos_tuple != NULL) {
-    globalSettings.sidebarOnLeft = (bool)sidebarPos_tuple->value->int8;
+    globalSettings.sidebarLocation = (BarLocationType)sidebarPos_tuple->value->int8;
   }
 
   if(useMetric_tuple != NULL) {
@@ -164,6 +140,10 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
     globalSettings.widgets[2] = widget2Id_tuple->value->int8;
   }
 
+  if(widget3Id_tuple != NULL) {
+    globalSettings.widgets[3] = widget3Id_tuple->value->int8;
+  }
+
   if(altclockName_tuple != NULL) {
     strncpy(globalSettings.altclockName, altclockName_tuple->value->cstring, sizeof(globalSettings.altclockName));
   }
@@ -176,8 +156,8 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
     globalSettings.decimalSeparator = (char)decimalSeparator_tuple->value->int8;
   }
 
-  if(healthUseDistance_tuple != NULL) {
-    globalSettings.healthUseDistance = (bool)healthUseDistance_tuple->value->int8;
+  if(healthActivityDisplay_tuple != NULL) {
+    globalSettings.healthActivityDisplay = (ActivityDisplayType)healthActivityDisplay_tuple->value->int8;
   }
 
   if(healthUseRestfulSleep_tuple != NULL) {
@@ -195,15 +175,40 @@ void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   message_processed_callback();
 }
 
-void inbox_dropped_callback(AppMessageResult reason, void *context) {
+static void inbox_dropped_callback(AppMessageResult reason, void *context) {
   // APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
 }
 
-void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
+static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {
   // APP_LOG(APP_LOG_LEVEL_ERROR, "Outbox send failed! %d %d %d", reason, APP_MSG_SEND_TIMEOUT, APP_MSG_SEND_REJECTED);
 
 }
 
-void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
+static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   // APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
+}
+
+void messaging_requestNewWeatherData(void) {
+  // just send an empty message for now
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+  dict_write_uint32(iter, 0, 0);
+  app_message_outbox_send();
+}
+
+void messaging_init(MessageProcessedCallback processed_callback) {
+  // register my custom callback
+  message_processed_callback = processed_callback;
+
+  // Register callbacks
+  app_message_register_inbox_received(inbox_received_callback);
+  app_message_register_inbox_dropped(inbox_dropped_callback);
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
+
+  // Open AppMessage
+  app_message_open(512, 8);
+
+  // APP_LOG(APP_LOG_LEVEL_DEBUG, "Watch messaging is started!");
+  app_message_register_inbox_received(inbox_received_callback);
 }

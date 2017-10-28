@@ -1,15 +1,15 @@
 {
-  "name": "timestyle-pebble",
-  "author": "Freakified",
-  "version": "7.0.0",
+  "name": "timestyle-bb-pebble",
+  "author": "Peyot",
+  "version": "0.8.1",
   "keywords": [
     "pebble-watchface"
   ],
   "private": true,
   "dependencies": {},
   "pebble": {
-    "displayName": "TimeStyle",
-    "uuid": "4368ffa4-f0fb-4823-90be-f754b076bdaa",
+    "displayName": "TimeStyle BB",
+    "uuid": "bc612aa2-61f0-4abf-ad2d-0846efc4afa3",
     "sdkVersion": "3",
     "enableMultiJS": true,
     "targetPlatforms": [
@@ -42,20 +42,21 @@
       "SettingColorTime",
       "SettingDecimalSep",
       "SettingDisableWeather",
-      "SettingHealthUseDistance",
+      "SettingHealthActivityDisplay",
       "SettingHealthUseRestfulSleep",
       "SettingHourlyVibe",
       "SettingLanguageID",
       "SettingShowBatteryPct",
       "SettingShowLeadingZero",
-      "SettingSidebarOnLeft",
+      "SettingSidebarPosition",
       "SettingSidebarTextColor",
       "SettingUseLargeFonts",
       "SettingUseMetric",
       "WeatherUseNightIcon",
       "SettingWidget0ID",
       "SettingWidget1ID",
-      "SettingWidget2ID"
+      "SettingWidget2ID",
+      "SettingWidget3ID"
     ],
     "resources": {
         "media": [
