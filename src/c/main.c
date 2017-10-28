@@ -39,7 +39,7 @@ static void update_clock(void) {
 
   time_date_update(timeInfo);
 
-  if(globalSettings.sidebarLocation != LEFT && globalSettings.sidebarLocation != RIGHT) {
+  if(globalSettings.sidebarLocation != TOP && globalSettings.sidebarLocation != BOTTOM) {
     // DEBUG: use fake time for screenshots
     // timeInfo->tm_hour = 6;
     // timeInfo->tm_min = 23;
