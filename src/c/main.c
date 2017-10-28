@@ -233,10 +233,16 @@ static void main_window_load(Window *window) {
 }
 
 static void main_window_unload(Window *window) {
-  ClockArea_deinit();
+  if(isClockAreaDisplayed) {
+    ClockArea_deinit();
+    isClockAreaDisplayed = false;
+  }
 
-  for(int i = 0; i < 4; i++) {
-    ClockDigit_destruct(&clockDigits[i]);
+  if(isClockDigitDisplayed) {
+    for(int i = 0; i < 4; i++) {
+      ClockDigit_destruct(&clockDigits[i]);
+    }
+    isClockDigitDisplayed = false;
   }
 
   Sidebar_deinit();

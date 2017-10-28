@@ -5,10 +5,8 @@
 #include "time_date.h"
 
 static Layer* clock_area_layer;
+
 // fonts
-static GFont bitham;
-static GFont bitham_bold;
-static GFont leco;
 static GFont date_font;
 
 static GFont hours_font;
@@ -46,13 +44,13 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
   graphics_context_set_text_color(ctx, globalSettings.timeColor);
 
   // draw hours
-  x_pos = h_middle - h_colon_margin + h_adjust;
+  x_pos = 0;
   y_pos = 3 * v_padding + v_adjust;
 
   graphics_draw_text(ctx,
                      time_date_hours,
                      hours_font,
-                     GRect(x_pos, y_pos, h_middle, 44),
+                     GRect(x_pos, y_pos, h_middle - h_colon_margin + h_adjust, 44),
                      GTextOverflowModeFill,
                      GTextAlignmentRight,
                      NULL);
@@ -101,11 +99,6 @@ void ClockArea_init(Window* window) {
   layer_add_child(window_get_root_layer(window), clock_area_layer);
   layer_set_update_proc(clock_area_layer, update_clock_area_layer);
 
-  // load fonts
-  bitham =      fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT);
-  bitham_bold = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
-  leco =        fonts_get_system_font(FONT_KEY_LECO_42_NUMBERS);
-
   date_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
 }
 
@@ -119,6 +112,11 @@ void ClockArea_redraw(void) {
 }
 
 void ClockArea_update_fonts(void) {
+  // load fonts
+  GFont bitham =      fonts_get_system_font(FONT_KEY_BITHAM_42_LIGHT);
+  GFont bitham_bold = fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD);
+  GFont leco =        fonts_get_system_font(FONT_KEY_LECO_42_NUMBERS);
+
   switch(globalSettings.clockFontId) {
     case FONT_SETTING_DEFAULT:
         hours_font = bitham;
