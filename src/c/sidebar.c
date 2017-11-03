@@ -118,6 +118,42 @@ static void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidget widget
   widget.draw(ctx, widgetXPosition, widgetYPosition);
 }
 
+static GRect getRoundSidebarBounds1(void) {
+  if(globalSettings.sidebarLocation == RIGHT || globalSettings.sidebarLocation == LEFT) {
+    return GRect(0, 0, 40, screen_rect.size.h);
+  } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+    return GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT );
+  }else {
+    return GRect(0, 0, 0, 0);
+  }
+}
+
+static GRect getRoundSidebarBounds2(void) {
+  if(globalSettings.sidebarLocation == RIGHT || globalSettings.sidebarLocation == LEFT) {
+    return GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
+  } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+    return GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
+  }else {
+    return GRect(0, 0, 0, 0);
+  }
+}
+
+static void updateRoundSidebar1(Layer *l, GContext* ctx) {
+  if(globalSettings.sidebarLocation == RIGHT || globalSettings.sidebarLocation == LEFT) {
+    updateRoundSidebarLeft(l, ctx);
+  } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+    updateRoundSidebarTop(l, ctx);
+  }
+}
+
+static void updateRoundSidebar2(Layer *l, GContext* ctx) {
+  if(globalSettings.sidebarLocation == RIGHT || globalSettings.sidebarLocation == LEFT) {
+    updateRoundSidebarRight(l, ctx);
+  } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+    updateRoundSidebarBottom(l, ctx);
+  }
+}
+
 static void updateRoundSidebarRight(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
   GRect bgBounds = GRect(bounds.origin.x, bounds.size.h / -2, bounds.size.h * 2, bounds.size.h * 2);
@@ -128,7 +164,7 @@ static void updateRoundSidebarRight(Layer *l, GContext* ctx) {
   int widgetYPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
 
   drawRoundSidebar(ctx, bgBounds, widget, 0, widgetYPosition, 3);
-  }
+}
 
 static void updateRoundSidebarLeft(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
@@ -337,10 +373,9 @@ void Sidebar_init(Window* window) {
 
   #ifdef PBL_ROUND
     GRect bounds2;
-    //bounds = GRect(0, 0, 40, screen_rect.size.h);
-    //bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
-    bounds = GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT );
-    bounds2 = GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
+
+    bounds = getRoundSidebarBounds1();
+    bounds2 = getRoundSidebarBounds2();
   #else
     bounds = getRectSidebarBounds();
   #endif
@@ -352,17 +387,13 @@ void Sidebar_init(Window* window) {
   layer_add_child(window_get_root_layer(window), sidebarLayer);
 
   #ifdef PBL_ROUND
-    //layer_set_update_proc(sidebarLayer, updateRoundSidebarLeft);
-    layer_set_update_proc(sidebarLayer, updateRoundSidebarTop);
-  #else
-    layer_set_update_proc(sidebarLayer, updateRectSidebar);
-  #endif
-
-  #ifdef PBL_ROUND
     sidebarLayer2 = layer_create(bounds2);
     layer_add_child(window_get_root_layer(window), sidebarLayer2);
-    //layer_set_update_proc(sidebarLayer2, updateRoundSidebarRight);
-    layer_set_update_proc(sidebarLayer2, updateRoundSidebarBottom);
+
+    layer_set_update_proc(sidebarLayer, updateRoundSidebar1);
+    layer_set_update_proc(sidebarLayer2, updateRoundSidebar2);
+  #else
+    layer_set_update_proc(sidebarLayer, updateRectSidebar);
   #endif
 }
 
@@ -377,7 +408,19 @@ void Sidebar_deinit(void) {
 }
 
 void Sidebar_set_layer(void) {
-  #ifndef PBL_ROUND
+  #ifdef PBL_ROUND
+    // reposition the sidebar if needed
+    layer_set_frame(sidebarLayer, getRoundSidebarBounds1());
+    layer_set_frame(sidebarLayer2, getRoundSidebarBounds2()));
+
+    if(globalSettings.sidebarLocation == NONE) {
+      layer_set_hidden(sidebarLayer, true);
+      layer_set_hidden(sidebarLayer2, true);
+    } else {
+      layer_set_hidden(sidebarLayer, false);
+      layer_set_hidden(sidebarLayer2, false);
+    }
+  #else
     // reposition the sidebar if needed
     layer_set_frame(sidebarLayer, getRectSidebarBounds());
 
