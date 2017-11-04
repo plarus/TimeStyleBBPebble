@@ -279,15 +279,15 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx) {
 }
 
 static void update_clock_area_layer(Layer *l, GContext* ctx) {
-#ifdef PBL_ROUND
-    update_one_line_clock_area_layer(l, ctx);
-#else
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+#ifdef PBL_ROUND
+      update_one_line_clock_area_layer(l, ctx);
+#else
       update_clock_and_date_area_layer(l, ctx);
+#endif // PBL_ROUND
   } else {
       update_original_clock_area_layer(l, ctx);
   }
-#endif // PBL_ROUND
 
   /* Debug */ Debug_clockAreaUpdate++;
 }

@@ -138,22 +138,6 @@ static GRect getRoundSidebarBounds2(void) {
   }
 }
 
-static void updateRoundSidebar1(Layer *l, GContext* ctx) {
-  if(globalSettings.sidebarLocation == RIGHT || globalSettings.sidebarLocation == LEFT) {
-    updateRoundSidebarLeft(l, ctx);
-  } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-    updateRoundSidebarTop(l, ctx);
-  }
-}
-
-static void updateRoundSidebar2(Layer *l, GContext* ctx) {
-  if(globalSettings.sidebarLocation == RIGHT || globalSettings.sidebarLocation == LEFT) {
-    updateRoundSidebarRight(l, ctx);
-  } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-    updateRoundSidebarBottom(l, ctx);
-  }
-}
-
 static void updateRoundSidebarRight(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
   GRect bgBounds = GRect(bounds.origin.x, bounds.size.h / -2, bounds.size.h * 2, bounds.size.h * 2);
@@ -210,6 +194,22 @@ static void updateRoundSidebarTop(Layer *l, GContext* ctx) {
   int widgetYPosition = (HORIZONTAL_BAR_HEIGHT - widget.getHeight()) / 2;
 
   drawRoundSidebar(ctx, bgBounds, widget, widgetXPosition, widgetYPosition, 5);
+}
+
+static void updateRoundSidebar1(Layer *l, GContext* ctx) {
+  if(globalSettings.sidebarLocation == RIGHT || globalSettings.sidebarLocation == LEFT) {
+    updateRoundSidebarLeft(l, ctx);
+  } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+    updateRoundSidebarTop(l, ctx);
+  }
+}
+
+static void updateRoundSidebar2(Layer *l, GContext* ctx) {
+  if(globalSettings.sidebarLocation == RIGHT || globalSettings.sidebarLocation == LEFT) {
+    updateRoundSidebarRight(l, ctx);
+  } else if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
+    updateRoundSidebarBottom(l, ctx);
+  }
 }
 
 #else
@@ -411,7 +411,7 @@ void Sidebar_set_layer(void) {
   #ifdef PBL_ROUND
     // reposition the sidebar if needed
     layer_set_frame(sidebarLayer, getRoundSidebarBounds1());
-    layer_set_frame(sidebarLayer2, getRoundSidebarBounds2()));
+    layer_set_frame(sidebarLayer2, getRoundSidebarBounds2());
 
     if(globalSettings.sidebarLocation == NONE) {
       layer_set_hidden(sidebarLayer, true);
