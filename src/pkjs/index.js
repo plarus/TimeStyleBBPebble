@@ -3,7 +3,7 @@ var weather = require('./weather');
 
 var CONFIG_VERSION = 10;
 // var BASE_CONFIG_URL = 'http://localhost:4000/';
-var BASE_CONFIG_URL = 'http://plarus.github.io/TimeStylePebble/';
+var BASE_CONFIG_URL = 'http://plarus.github.io/TimeStyleBBPebble/';
 
 // Listen for when the watchface is opened
 Pebble.addEventListener('ready',
