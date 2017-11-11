@@ -31,13 +31,8 @@ void Settings_deinit(void) {
  */
 void Settings_loadDefaultsSettings(void) {
 
-  #ifdef PBL_COLOR
-    globalSettings.timeColor      = GColorOrange;
-    globalSettings.sidebarColor   = GColorOrange;
-  #else
-    globalSettings.timeColor      = GColorWhite;
-    globalSettings.sidebarColor   = GColorLightGray;
-  #endif
+  globalSettings.timeColor        = GColorWhite;
+  globalSettings.sidebarColor     = GColorLightGray;
   globalSettings.timeBgColor      = GColorBlack;
   globalSettings.sidebarTextColor = GColorBlack;
 
@@ -49,7 +44,7 @@ void Settings_loadDefaultsSettings(void) {
   globalSettings.sidebarLocation  = RIGHT;
 
   // set the default widgets
-  globalSettings.widgets[0] = PBL_IF_HEALTH_ELSE(HEALTH, BATTERY_METER);
+  globalSettings.widgets[0] = BATTERY_METER;
   globalSettings.widgets[1] = EMPTY;
   globalSettings.widgets[2] = DATE;
   globalSettings.widgets[3] = EMPTY;
@@ -58,9 +53,6 @@ void Settings_loadDefaultsSettings(void) {
   globalSettings.useMetric              = true;
   globalSettings.showBatteryPct         = true;
   globalSettings.disableAutobattery     = false;
-  globalSettings.healthActivityDisplay  = STEPS;
-  globalSettings.healthUseRestfulSleep  = false;
-  globalSettings.decimalSeparator       = '.';
   strncpy(globalSettings.altclockName, "ALT", sizeof(globalSettings.altclockName));
   globalSettings.altclockOffset         = 0;
   globalSettings.activateDisconnectIcon = false; //TODO: Set to true;
@@ -84,18 +76,15 @@ void Settings_loadFromStorage(void) {
     globalSettings.clockFontId = storedSettings.clockFontId;
     globalSettings.btVibe = storedSettings.btVibe;
     globalSettings.hourlyVibe = storedSettings.hourlyVibe;
-  globalSettings.sidebarLocation = storedSettings.sidebarLocation;
+    globalSettings.sidebarLocation = storedSettings.sidebarLocation;
     globalSettings.widgets[0] = storedSettings.widgets[0];
     globalSettings.widgets[1] = storedSettings.widgets[1];
     globalSettings.widgets[2] = storedSettings.widgets[2];
-  globalSettings.widgets[3] = storedSettings.widgets[3];
+    globalSettings.widgets[3] = storedSettings.widgets[3];
     globalSettings.useLargeFonts = storedSettings.useLargeFonts;
     globalSettings.useMetric = storedSettings.useMetric;
     globalSettings.showBatteryPct = storedSettings.showBatteryPct;
     globalSettings.disableAutobattery = storedSettings.disableAutobattery;
-  globalSettings.healthActivityDisplay = storedSettings.healthActivityDisplay;
-    globalSettings.healthUseRestfulSleep = storedSettings.healthUseRestfulSleep;
-    globalSettings.decimalSeparator = storedSettings.decimalSeparator;
     memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
     globalSettings.altclockOffset = storedSettings.altclockOffset;
     globalSettings.activateDisconnectIcon = storedSettings.activateDisconnectIcon;
@@ -123,9 +112,6 @@ void Settings_saveToStorage(void) {
   storedSettings.useMetric = globalSettings.useMetric;
   storedSettings.showBatteryPct = globalSettings.showBatteryPct;
   storedSettings.disableAutobattery = globalSettings.disableAutobattery;
-  storedSettings.healthActivityDisplay = globalSettings.healthActivityDisplay;
-  storedSettings.healthUseRestfulSleep = globalSettings.healthUseRestfulSleep;
-  storedSettings.decimalSeparator = globalSettings.decimalSeparator;
   memcpy(storedSettings.altclockName, globalSettings.altclockName, 8);
   storedSettings.altclockOffset = globalSettings.altclockOffset;
   storedSettings.sidebarLocation = globalSettings.sidebarLocation;
@@ -139,7 +125,6 @@ void Settings_updateDynamicSettings(void) {
   globalSettings.disableWeather = true;
   globalSettings.updateScreenEverySecond = false;
   globalSettings.enableAutoBatteryWidget = true;
-  globalSettings.enableBeats = false;
   globalSettings.enableAltTimeZone = false;
 
   for(int i = 0; i < 4; i++) {
@@ -158,11 +143,6 @@ void Settings_updateDynamicSettings(void) {
     // if any widget is "battery", disable the automatic battery indication
     if(globalSettings.widgets[i] == BATTERY_METER) {
       globalSettings.enableAutoBatteryWidget = false;
-    }
-
-    // if any widget is "beats", enable the beats calculation
-    if(globalSettings.widgets[i] == BEATS) {
-      globalSettings.enableBeats = true;
     }
 
     // if any widget is "alt_time_zone", enable the alternative time calculation

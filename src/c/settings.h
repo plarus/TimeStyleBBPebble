@@ -23,13 +23,6 @@ typedef enum {
   VIBE_EVERY_HALF_HOUR = 2
 } VibeIntervalType;
 
-typedef enum {
-  STEPS     = 0,
-  DISTANCE  = 1,
-  DURATION  = 2,
-  KCALORIES = 3
-} ActivityDisplayType;
-
 typedef struct {
   // color settings
   GColor timeColor;
@@ -51,7 +44,7 @@ typedef struct {
   BarLocationType sidebarLocation;
   bool useLargeFonts;
   bool activateDisconnectIcon;
-  
+
   // weather widget settings
   bool useMetric;
 
@@ -63,16 +56,10 @@ typedef struct {
   char altclockName[8];
   int altclockOffset;
 
-  // health widget Settings
-  ActivityDisplayType healthActivityDisplay;
-  bool healthUseRestfulSleep;
-  char decimalSeparator;
-
   // dynamic settings (calculated based the currently-selected widgets)
   bool disableWeather;
   bool updateScreenEverySecond;
   bool enableAutoBatteryWidget;
-  bool enableBeats;
   bool enableAltTimeZone;
 
   // TODO: these shouldn't be dynamic
@@ -109,9 +96,7 @@ typedef struct {
   uint8_t showBatteryPct:1;
   uint8_t disableAutobattery:1;
 
-  // health widget Settings
-  ActivityDisplayType healthActivityDisplay:2;
-  uint8_t healthUseRestfulSleep:1;
+  uint8_t spare:3;
   char decimalSeparator;
 
   // alt tz widget settings

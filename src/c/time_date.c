@@ -11,9 +11,6 @@ char time_date_currentMonth[8];
 char time_date_currentWeekNum[5];
 char time_date_currentSecondsNum[5];
 char time_date_altClock[8];
-#ifndef PBL_PLATFORM_APLITE
-char time_date_currentBeats[5];
-#endif
 char time_date_hours[3];
 char time_date_minutes[3];
 char time_date_currentDate[21];
@@ -25,22 +22,6 @@ static int mod(int a, int b) {
     int r = a % b;
     return r < 0 ? r + b : r;
 }
-
-// avoid floating point arithmetic on Aplite, which just doesn't have the RAM for it
-#ifndef PBL_PLATFORM_APLITE
-static int time_date_get_beats(const struct tm *tm) {
-  // code from https://gist.github.com/insom/bf40b91fd25ae1d84764
-
-  time_t t = mktime((struct tm *)tm);
-  t = t + 3600; // Add an hour to make into BMT
-
-  struct tm *bt = gmtime(&t);
-  double sex = (bt->tm_hour * 3600) + (bt->tm_min * 60) + bt->tm_sec;
-  int beats = (int)(10 * (sex / 864)) % 1000;
-
-  return beats;
-}
-#endif
 
 void time_date_update(struct tm* time_info) {
 
@@ -107,18 +88,4 @@ void time_date_update(struct tm* time_info) {
       snprintf(time_date_altClock, sizeof(time_date_altClock), "%i%c", hour, am_pm);
     }
   }
-
-    // note that this is disabled on Aplite, as floating point eats RAM
-#ifndef PBL_PLATFORM_APLITE
-  if(globalSettings.enableBeats) {
-    // this must be last, because time_get_beats screws with the time structure
-    int beats = 0;
-
-    // set the swatch internet time beats
-    beats = time_date_get_beats(time_info);
-  
-    snprintf(time_date_currentBeats, sizeof(time_date_currentBeats), "%i", beats);
-  }
-#endif
 }
-

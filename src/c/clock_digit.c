@@ -77,22 +77,6 @@ void ClockDigit_setColor(ClockDigit* this, GColor fg, GColor bg) {
   this->fgColor = fg;
   this->bgColor = bg;
 
-  // now, determine what the intermediate colors will be (for AA)
-  #ifdef PBL_COLOR
-    int colorIncrementR = (fg.r * 85 - bg.r * 85) / 3;
-    int colorIncrementG = (fg.g * 85 - bg.g * 85) / 3;
-    int colorIncrementB = (fg.b * 85 - bg.b * 85) / 3;
-
-    this->midColor1 = GColorFromRGB(fg.r * 85 - colorIncrementR,
-                                     fg.g * 85 - colorIncrementG,
-                                     fg.b * 85 - colorIncrementB);
-
-    this->midColor2 = GColorFromRGB(bg.r * 85 + colorIncrementR,
-                                     bg.g * 85 + colorIncrementG,
-                                     bg.b * 85 + colorIncrementB);
-
-  #endif
-
   adjustImagePalette(this);
 }
 
@@ -123,19 +107,7 @@ void adjustImagePalette(ClockDigit* this) {
   if(this->currentImage) {
     GColor* pal = gbitmap_get_palette(this->currentImage);
 
-    #ifdef PBL_COLOR
-      if(this->currentFontId == FONT_SETTING_DEFAULT || this->currentFontId == FONT_SETTING_BOLD) {
-        pal[0] = this->fgColor;
-        pal[1] = this->midColor1;
-        pal[2] = this->midColor2;
-        pal[3] = this->bgColor;
-      } else { // LECO only has two colors
-        pal[0] = this->fgColor;
-        pal[1] = this->bgColor;
-      }
-    #else
-      pal[0] = this->fgColor;
-      pal[1] = this->bgColor;
-    #endif
+    pal[0] = this->fgColor;
+    pal[1] = this->bgColor;
   }
 }

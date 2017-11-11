@@ -8,9 +8,6 @@ extern char time_date_currentMonth[8];
 extern char time_date_currentWeekNum[5];
 extern char time_date_currentSecondsNum[5];
 extern char time_date_altClock[8];
-#ifndef PBL_PLATFORM_APLITE
-extern char time_date_currentBeats[5];
-#endif
 extern char time_date_hours[3];
 extern char time_date_minutes[3];
 extern char time_date_currentDate[21];

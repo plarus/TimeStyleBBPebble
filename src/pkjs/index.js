@@ -38,35 +38,13 @@ Pebble.addEventListener('appmessage',
 
 Pebble.addEventListener('showConfiguration', function(e) {
   var bwConfigURL    = BASE_CONFIG_URL + 'config_bw.html';
-  var colorConfigURL = BASE_CONFIG_URL + 'config_color.html';
-  var roundConfigURL = BASE_CONFIG_URL + 'config_color_round.html';
-  var dioriteConfigURL = BASE_CONFIG_URL + 'config_diorite.html';
-
   var versionString = '?appversion=' + CONFIG_VERSION;
 
-  if(Pebble.getActiveWatchInfo) {
-    try {
-      watch = Pebble.getActiveWatchInfo();
-    } catch(err) {
-      watch = {
-        platform: "basalt"
-      };
-    }
-  } else {
-    watch = {
-      platform: "aplite"
-    };
-  }
+  watch = {
+    platform: "aplite"
+  };
 
-  if(watch.platform == "aplite"){
-    Pebble.openURL(bwConfigURL + versionString);
-  } else if(watch.platform == "chalk") {
-    Pebble.openURL(roundConfigURL + versionString);
-  } else if(watch.platform == "diorite") {
-    Pebble.openURL(dioriteConfigURL + versionString);
-  } else {
-    Pebble.openURL(colorConfigURL + versionString);
-  }
+  Pebble.openURL(bwConfigURL + versionString);
 });
 
 Pebble.addEventListener('webviewclosed', function(e) {
@@ -225,31 +203,6 @@ Pebble.addEventListener('webviewclosed', function(e) {
 
     if(configData.altclock_offset !== null) {
       dict.SettingAltClockOffset = parseInt(configData.altclock_offset, 10);
-    }
-
-    if(configData.decimal_separator) {
-      dict.SettingDecimalSep = configData.decimal_separator;
-    }
-
-    if(configData.health_activity_display) {
-      if(configData.health_activity_display == 'distance') {
-        dict.SettingHealthActivityDisplay = 1;
-      } else if(configData.health_activity_display == 'duration') {
-        dict.SettingHealthActivityDisplay = 2;
-      } else if(configData.health_activity_display == 'calories') {
-        dict.SettingHealthActivityDisplay = 3;
-      } else {
-        dict.SettingHealthActivityDisplay = 0;
-      }
-    }
-
-    // heath settings
-    if(configData.health_use_restful_sleep) {
-      if(configData.health_use_restful_sleep == 'yes') {
-        dict.SettingHealthUseRestfulSleep = 1;
-      } else {
-        dict.SettingHealthUseRestfulSleep = 0;
-      }
     }
 
     // determine whether or not the weather checking should be enabled

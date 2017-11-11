@@ -58,10 +58,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *altclockName_tuple = dict_find(iterator, MESSAGE_KEY_SettingAltClockName);
   Tuple *altclockOffset_tuple = dict_find(iterator, MESSAGE_KEY_SettingAltClockOffset);
 
-  Tuple *decimalSeparator_tuple = dict_find(iterator, MESSAGE_KEY_SettingDecimalSep);
-  Tuple *healthActivityDisplay_tuple = dict_find(iterator, MESSAGE_KEY_SettingHealthActivityDisplay);
-  Tuple *healthUseRestfulSleep_tuple = dict_find(iterator, MESSAGE_KEY_SettingHealthUseRestfulSleep);
-
   Tuple *autobattery_tuple = dict_find(iterator, MESSAGE_KEY_SettingDisableAutobattery);
 
   Tuple *activateDisconnectIcon_tuple = dict_find(iterator, MESSAGE_KEY_SettingDisconnectIcon);
@@ -150,18 +146,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
   if(altclockOffset_tuple != NULL) {
     globalSettings.altclockOffset = altclockOffset_tuple->value->int8;
-  }
-
-  if(decimalSeparator_tuple != NULL) {
-    globalSettings.decimalSeparator = (char)decimalSeparator_tuple->value->int8;
-  }
-
-  if(healthActivityDisplay_tuple != NULL) {
-    globalSettings.healthActivityDisplay = (ActivityDisplayType)healthActivityDisplay_tuple->value->int8;
-  }
-
-  if(healthUseRestfulSleep_tuple != NULL) {
-    globalSettings.healthUseRestfulSleep = (bool)healthUseRestfulSleep_tuple->value->int8;
   }
 
   if(activateDisconnectIcon_tuple != NULL) {

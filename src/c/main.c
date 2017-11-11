@@ -5,9 +5,6 @@
 #include "weather.h"
 #include "sidebar.h"
 #include "util.h"
-#ifdef PBL_HEALTH
-#include "health.h"
-#endif
 #include "time_date.h"
 #include "clock_area.h"
 
@@ -112,9 +109,6 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   }
 
   update_clock();
-#ifdef PBL_HEALTH
-  Health_update();
-#endif
 
   // redraw all screen
   if(globalSettings.sidebarLocation != NONE) {
@@ -150,29 +144,15 @@ static void redrawScreen() {
     }
 
     if(!isClockDigitDisplayed) {
-
-      #ifdef PBL_ROUND
-        GPoint digitPoints[4] = {GPoint(40, 17), GPoint(90, 17), GPoint(40, 92), GPoint(90, 92)};
-      #else
-        GPoint digitPoints[4] = {GPoint(7, 7), GPoint(60, 7), GPoint(7, 90), GPoint(60, 90)};
-      #endif
-
-      ClockDigit_construct(&clockDigits[0], digitPoints[0]);
-      ClockDigit_construct(&clockDigits[1], digitPoints[1]);
-      ClockDigit_construct(&clockDigits[2], digitPoints[2]);
-      ClockDigit_construct(&clockDigits[3], digitPoints[3]);
+      ClockDigit_construct(&clockDigits[0], GPoint(7, 7));
+      ClockDigit_construct(&clockDigits[1], GPoint(60, 7));
+      ClockDigit_construct(&clockDigits[2], GPoint(7, 90));
+      ClockDigit_construct(&clockDigits[3], GPoint(60, 90));
 
       for(int i = 0; i < 4; i++) {
-        ClockDigit_setColor(&clockDigits[i], globalSettings.timeColor, globalSettings.timeBgColor);
         layer_add_child(window_get_root_layer(mainWindow), bitmap_layer_get_layer(clockDigits[i].imageLayer));
       }
       isClockDigitDisplayed = true;
-    }
-
-    // maybe the colors changed!
-    for(int i = 0; i < 4; i++) {
-      ClockDigit_setColor(&clockDigits[i], globalSettings.timeColor, globalSettings.timeBgColor);
-      // ClockDigit_setColor(&clockDigits[i], globalSettings.timeColor, GColorWhite);
     }
 
     // or maybe the sidebar position changed!
@@ -188,14 +168,14 @@ static void redrawScreen() {
 
     for(int i = 0; i < 4; i++) {
       ClockDigit_offsetPosition(&clockDigits[i], digitOffset);
+
+      // maybe the colors changed!
+      ClockDigit_setColor(&clockDigits[i], globalSettings.timeColor, globalSettings.timeBgColor);
     }
   }
 
   // maybe the language changed!
   update_clock();
-#ifdef PBL_HEALTH
-  Health_update();
-#endif
 
   // maybe sidebar changed!
   Sidebar_set_layer();

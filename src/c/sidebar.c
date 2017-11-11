@@ -16,10 +16,6 @@
 static GRect screen_rect;
 static Layer* sidebarLayer;
 
-#ifdef PBL_ROUND
-  static Layer* sidebarLayer2;
-#endif
-
 static bool isAutoBatteryShown(void) {
   if(!globalSettings.disableAutobattery) {
     BatteryChargeState chargeState = battery_state_service_peek();
@@ -30,30 +26,8 @@ static bool isAutoBatteryShown(void) {
       }
     }
   }
-
   return false;
 }
-
-#ifdef PBL_ROUND
-
-// returns the best candidate widget for replacement by the auto battery
-static int getReplacableWidget(void) {
-  if(globalSettings.widgets[0] == EMPTY) {
-    return 0;
-  } else if(globalSettings.widgets[2] == EMPTY) {
-    return 2;
-  }
-
-  if(globalSettings.widgets[0] == WEATHER_CURRENT || globalSettings.widgets[0] == WEATHER_FORECAST_TODAY) {
-    return 0;
-  } else if(globalSettings.widgets[2] == WEATHER_CURRENT || globalSettings.widgets[2] == WEATHER_FORECAST_TODAY) {
-    return 2;
-  }
-
-  // if we don't have any of those things, just replace the left widget
-  return 0;
-}
-#else
 
 // returns the best candidate widget for replacement by the auto battery
 static int getReplacableWidget(void) {
@@ -81,100 +55,6 @@ static int getReplacableWidget(void) {
   // if we don't have any of those things, just replace the middle widget
   return 1;
 }
-#endif
-
-#ifdef PBL_ROUND
-static SidebarWidget getRoundSidebarWidget(int widgetNumber) {
-  bool showDisconnectIcon = !bluetooth_connection_service_peek();
-  bool showAutoBattery = isAutoBatteryShown();
-
-  SidebarWidgetType displayWidget = globalSettings.widgets[widgetNumber];
-
-  if((showAutoBattery || showDisconnectIcon) && getReplacableWidget() == widgetNumber) {
-    if(showAutoBattery) {
-      displayWidget = BATTERY_METER;
-    } else if(showDisconnectIcon) {
-      displayWidget = BLUETOOTH_DISCONNECT;
-    }
-  }
-
-  return getSidebarWidgetByType(displayWidget);
-}
-
-static void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidget widget, int widgetXPosition, int widgetYPosition, int widgetXOffset) {
-  graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
-
-  graphics_fill_radial(ctx,
-                       bgBounds,
-                       GOvalScaleModeFillCircle,
-                       100,
-                       DEG_TO_TRIGANGLE(0),
-                       TRIG_MAX_ANGLE);
-
-  SidebarWidgets_xOffset = widgetXOffset;
-
-  widget.draw(ctx, widgetXPosition, widgetYPosition);
-}
-
-static void updateRoundSidebarRight(Layer *l, GContext* ctx) {
-  GRect bounds = layer_get_bounds(l);
-  GRect bgBounds = GRect(bounds.origin.x, bounds.size.h / -2, bounds.size.h * 2, bounds.size.h * 2);
-
-  SidebarWidget widget = getRoundSidebarWidget(2);
-
-  // calculate center position of the widget
-  int widgetYPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
-
-  drawRoundSidebar(ctx, bgBounds, widget, 0, widgetYPosition, 3);
-  }
-
-static void updateRoundSidebarLeft(Layer *l, GContext* ctx) {
-  GRect bounds = layer_get_bounds(l);
-  GRect bgBounds = GRect(bounds.origin.x - bounds.size.h * 2 + bounds.size.w, bounds.size.h / -2, bounds.size.h * 2, bounds.size.h * 2);
-
-  SidebarWidget widget = getRoundSidebarWidget(0);
-
-  // calculate center position of the widget
-  int widgetYPosition = bgBounds.size.h / 4 - widget.getHeight() / 2;
-
-  drawRoundSidebar(ctx, bgBounds, widget, 0, widgetYPosition, 7);
-  }
-
-static void updateRoundSidebarBottom(Layer *l, GContext* ctx) {
-  GRect bounds = layer_get_bounds(l);
-  GRect bgBounds = GRect(bounds.size.w / -2, bounds.origin.y, bounds.size.w * 2, bounds.size.w * 2);
-
-  SidebarWidget widget = getRoundSidebarWidget(2);
-
-  // use compact mode and fixed height for bottom and top widget
-  SidebarWidgets_useCompactMode = true;
-  SidebarWidgets_fixedHeight = true;
-
-  // calculate center position of the widget
-  int widgetXPosition = bgBounds.size.w / 4 - ACTION_BAR_WIDTH / 2;
-  int widgetYPosition = (HORIZONTAL_BAR_HEIGHT - widget.getHeight()) / 2;
-
-  drawRoundSidebar(ctx, bgBounds, widget, widgetXPosition, widgetYPosition, 5);
-}
-
-static void updateRoundSidebarTop(Layer *l, GContext* ctx) {
-  GRect bounds = layer_get_bounds(l);
-  GRect bgBounds = GRect(bounds.size.w / -2, bounds.origin.y - bounds.size.w * 2 + bounds.size.h, bounds.size.w * 2, bounds.size.w * 2);
-
-  SidebarWidget widget = getRoundSidebarWidget(0);
-
-  // use compact mode and fixed height for bottom and top widget
-  SidebarWidgets_useCompactMode = true;
-  SidebarWidgets_fixedHeight = true;
-
-  // calculate center position of the widget
-  int widgetXPosition = bgBounds.size.w / 4 - ACTION_BAR_WIDTH / 2;
-  int widgetYPosition = (HORIZONTAL_BAR_HEIGHT - widget.getHeight()) / 2;
-
-  drawRoundSidebar(ctx, bgBounds, widget, widgetXPosition, widgetYPosition, 5);
-}
-
-#else
 
 static GRect getRectSidebarBounds(void) {
   if(globalSettings.sidebarLocation == RIGHT) {
@@ -276,22 +156,13 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     displayWidgets[2].draw(ctx, 0, lowerWidgetPos);
   }
 }
-#endif
 
 void Sidebar_init(Window* window) {
   // init the sidebar layer
   screen_rect = layer_get_bounds(window_get_root_layer(window));
   GRect bounds;
 
-  #ifdef PBL_ROUND
-    GRect bounds2;
-    //bounds = GRect(0, 0, 40, screen_rect.size.h);
-    //bounds2 = GRect(screen_rect.size.w - 40, 0, 40, screen_rect.size.h);
-    bounds = GRect(0, 0, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT );
-    bounds2 = GRect(0, screen_rect.size.h - HORIZONTAL_BAR_HEIGHT, screen_rect.size.w, HORIZONTAL_BAR_HEIGHT);
-  #else
-    bounds = getRectSidebarBounds();
-  #endif
+  bounds = getRectSidebarBounds();
 
   // init the widgets
   SidebarWidgets_init();
@@ -299,36 +170,18 @@ void Sidebar_init(Window* window) {
   sidebarLayer = layer_create(bounds);
   layer_add_child(window_get_root_layer(window), sidebarLayer);
 
-  #ifdef PBL_ROUND
-    //layer_set_update_proc(sidebarLayer, updateRoundSidebarLeft);
-    layer_set_update_proc(sidebarLayer, updateRoundSidebarTop);
-  #else
-    layer_set_update_proc(sidebarLayer, updateRectSidebar);
-  #endif
-
-  #ifdef PBL_ROUND
-    sidebarLayer2 = layer_create(bounds2);
-    layer_add_child(window_get_root_layer(window), sidebarLayer2);
-    //layer_set_update_proc(sidebarLayer2, updateRoundSidebarRight);
-    layer_set_update_proc(sidebarLayer2, updateRoundSidebarBottom);
-  #endif
+  layer_set_update_proc(sidebarLayer, updateRectSidebar);
 }
 
 void Sidebar_deinit(void) {
   layer_destroy(sidebarLayer);
 
-  #ifdef PBL_ROUND
-    layer_destroy(sidebarLayer2);
-  #endif
-
   SidebarWidgets_deinit();
 }
 
 void Sidebar_set_layer(void) {
-  #ifndef PBL_ROUND
-    // reposition the sidebar if needed
-    layer_set_frame(sidebarLayer, getRectSidebarBounds());
-  #endif
+  // reposition the sidebar if needed
+  layer_set_frame(sidebarLayer, getRectSidebarBounds());
 
   SidebarWidgets_updateFonts();
 }
@@ -336,9 +189,4 @@ void Sidebar_set_layer(void) {
 void Sidebar_redraw() {
   // redraw the layer
   layer_mark_dirty(sidebarLayer);
-
-  #ifdef PBL_ROUND
-    layer_mark_dirty(sidebarLayer2);
-  #endif
 }
-

@@ -20,23 +20,3 @@ void seconds_to_minutes_hours_text(HealthValue seconds, char * hours_text, char 
  * Convert number of seconds to one minutes and hours text
  */
 void seconds_to_text(HealthValue seconds, char * hours_minutes_text);
-
-/*
- * Convert distance to metric text
- */
-void distance_to_metric_text(HealthValue distance, char * metric_text);
-
-/*
- * Convert distance to imperial unit text
- */
-void distance_to_imperial_text(HealthValue distance, char * imperial_text);
-
-/*
- * Convert steps to text
- */
-void steps_to_text(HealthValue steps, char * steps_text);
-
-/*
- * Convert kCalories to text
- */
-void kCalories_to_text(HealthValue kcalories, char * kcalories_text);

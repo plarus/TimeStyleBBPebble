@@ -295,16 +295,6 @@
                 "file": "data/BATTERY_BG.pdc",
                 "name": "BATTERY_BG",
                 "type": "raw"
-            },
-            {
-                "file": "data/HEALTH_SLEEP.pdc",
-                "name": "HEALTH_SLEEP",
-                "type": "raw"
-            },
-            {
-                "file": "data/HEALTH_STEPS.pdc",
-                "name": "HEALTH_STEPS",
-                "type": "raw"
             }
         ]
     }
