@@ -58,7 +58,7 @@ def main():
 
     combine_zips(args.out, {
         args.legacypbw: ['aplite'],
-        args.modernpbw: ['basalt','chalk','diorite']
+        args.modernpbw: ['basalt','chalk','diorite','emery']
     }, args.modernpbw)
 
 if __name__ == '__main__':
