@@ -54,6 +54,20 @@
     border-top: 0 none;
     border-bottom: 20px solid #FFFFFF;
   }
+
+  &.sidebar_left_right {
+    border-right: 7px solid #FFFFFF;
+    border-left: 7px solid #FFFFFF;
+    border-top: 0 none;
+    border-bottom: 0 none;
+  }
+
+  &.sidebar_top_bottom {
+    border-right: 0 none;
+    border-left: 0 none;
+    border-top: 12px solid #FFFFFF;
+    border-bottom: 12px solid #FFFFFF;
+  }
 }
 
 .example_img {
