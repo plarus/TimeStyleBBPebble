@@ -168,6 +168,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     globalSettings.activateDisconnectIcon = (bool)activateDisconnectIcon_tuple->value->int8;
   }
 
+  Settings_updateDynamicSettings();
+
   // save the new settings to persistent storage
   Settings_saveToStorage();
 

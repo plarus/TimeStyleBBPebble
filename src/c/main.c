@@ -120,6 +120,7 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
+
   if(globalSettings.sidebarLocation == TOP || globalSettings.sidebarLocation == BOTTOM) {
     ClockArea_redraw();
   }
@@ -205,6 +206,7 @@ static void redrawScreen() {
   if(globalSettings.sidebarLocation == TOP || globalSettings.sidebarLocation == BOTTOM) {
     if(isClockDigitDisplayed) {
       for(int i = 0; i < 4; i++) {
+        layer_remove_from_parent(bitmap_layer_get_layer(clockDigits[i].imageLayer));
         ClockDigit_destruct(&clockDigits[i]);
       }
       isClockDigitDisplayed = false;
@@ -223,6 +225,10 @@ static void redrawScreen() {
 }
 
 static void main_window_load(Window *window) {
+
+  isClockAreaDisplayed = false;
+  isClockDigitDisplayed = false;
+
   window_set_background_color(window, globalSettings.timeBgColor);
 
   // create the sidebar
@@ -243,6 +249,10 @@ static void main_window_unload(Window *window) {
       ClockDigit_destruct(&clockDigits[i]);
     }
     isClockDigitDisplayed = false;
+  }
+
+  for(int i = 0; i < 4; i++) {
+    ClockDigit_destruct2(&clockDigits[i]);
   }
 
   Sidebar_deinit();
@@ -288,9 +298,6 @@ static void app_focus_changed(bool focused) {
 }
 
 static void init(void) {
-
-  isClockAreaDisplayed = false;
-  isClockDigitDisplayed = false;
 
   setlocale(LC_ALL, "");
 

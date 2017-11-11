@@ -112,7 +112,9 @@ void ClockDigit_construct(ClockDigit* this, GPoint pos) {
 void ClockDigit_destruct(ClockDigit* this) {
   // destroy the background layer
   bitmap_layer_destroy(this->imageLayer);
+}
 
+void ClockDigit_destruct2(ClockDigit* this) {
   // deallocate the background image
   gbitmap_destroy(this->currentImage);
 }

@@ -32,10 +32,8 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
   }
 
   // for rectangular watches, adjust X position based on sidebar position
-  if(globalSettings.sidebarLocation == BOTTOM) {
-    v_adjust -= 3;
-  } else {
-    v_adjust += FIXED_WIDGET_HEIGHT - 3;
+  if(globalSettings.sidebarLocation == TOP) {
+    v_adjust += FIXED_WIDGET_HEIGHT;
   }
 
   int h_middle = fullscreen_bounds.size.w / 2;
@@ -45,7 +43,7 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
 
   // draw hours
   x_pos = 0;
-  y_pos = 3 * v_padding + v_adjust;
+  y_pos = 3 * v_padding + v_adjust - 15;
 
   graphics_draw_text(ctx,
                      time_date_hours,
@@ -57,14 +55,14 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
 
   //draw ":"
   if(globalSettings.clockFontId == FONT_SETTING_LECO) {
-    x_pos = h_middle;
+    x_pos = h_middle - h_colon_margin - 1;
   } else {
-    x_pos = h_middle - 1;
+    x_pos = h_middle - h_colon_margin - 4;
   }
   graphics_draw_text(ctx,
                      ":",
                      colon_font,
-                     GRect(x_pos, y_pos, h_colon_margin + h_adjust, 44),
+                     GRect(x_pos, y_pos, 2 * h_colon_margin, 44),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);

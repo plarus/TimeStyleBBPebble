@@ -34,3 +34,4 @@ void ClockDigit_offsetPosition(ClockDigit* this, int posOffset);
 
 void ClockDigit_construct(ClockDigit* this, GPoint pos);
 void ClockDigit_destruct(ClockDigit* this);
+void ClockDigit_destruct2(ClockDigit* this);
