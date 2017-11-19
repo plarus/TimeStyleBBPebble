@@ -4,7 +4,7 @@ A stylish, modern watchface for the Pebble and Pebble Time watches.
 This project is a fork of [freakified/TimeStylePebble](https://github.com/freakified/TimeStylePebble).
 In addition to the original version this version add various corrections and a bottom/top bar possibility that can display up to four widgets.
 
-<img src="project_banner.gif" width="400" height="300">  <img src="pebble_round_ani.gif">
+<img src="project_banner.gif" width="400" height="300">
 
 Inspired by the visual language of the Timeline found on the Pebble Time, TimeStyle is designed as the “present” to complement the Timeline’s “past” and “future”.
 
@@ -23,6 +23,5 @@ You have found an issue? You can report it here: https://github.com/plarus/TimeS
 ## Contributing
 Want to contribute to TimeStyle? Have a look at [the various feature requests that are still outstanding](https://github.com/freakified/TimeStylePebble/issues?q=is%3Aopen+is%3Aissue) -- just comment on one if you're interested in working on it!
 
-
-
-
+## Gallery
+<img src="pebble_basalt_ani.gif">  <img src="pebble_round_ani.gif">
