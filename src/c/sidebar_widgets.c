@@ -701,7 +701,7 @@ static void Sleep_draw(GContext* ctx, int xPosition, int yPosition) {
   graphics_draw_text(ctx,
                      hours_text,
                      mdSidebarFont,
-                     GRect(-2 + SidebarWidgets_xOffset, yPosition + 14, 34, 20),
+                     GRect(xPosition - 2 + SidebarWidgets_xOffset, yPosition + 14, 34, 20),
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
