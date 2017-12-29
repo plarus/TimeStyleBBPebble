@@ -112,6 +112,7 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   fctx_deinit_context(&fctx);
 }
 
+#ifndef PBL_ROUND
 static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
   GRect fullscreen_bounds = layer_get_bounds(l);
@@ -212,6 +213,8 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   fctx_deinit_context(&fctx);
 }
 
+#else
+
 static void update_one_line_clock_area_layer(Layer *l, GContext* ctx) {
   // check layer bounds
   GRect fullscreen_bounds = layer_get_bounds(l);
@@ -277,6 +280,7 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx) {
   fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
 }
+#endif
 
 static void update_clock_area_layer(Layer *l, GContext* ctx) {
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
