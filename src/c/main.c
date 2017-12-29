@@ -249,6 +249,7 @@ static void deinit(void) {
   tick_timer_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
   unobstructed_area_service_unsubscribe();
+  app_focus_service_unsubscribe();
 
   /* Debug */ Debug_display();
 }
