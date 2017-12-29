@@ -269,12 +269,13 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     }
   }
 
+  int v_padding;
+  int middleWidgetPos;
+
   if(globalSettings.sidebarLocation == BOTTOM || (globalSettings.sidebarLocation == TOP && obstruction_height == 0)) {
     // calculate the three horizontal widget positions
-    int leftWidgetPos = H_PADDING_DEFAULT;
-    int middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
+    middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
     int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - ACTION_BAR_WIDTH;
-    int v_padding;
 
     // use compact mode and fixed height for bottom and top widget
     SidebarWidgets_useCompactMode = true;
@@ -282,7 +283,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
 
     // draw the widgets
     v_padding= (HORIZONTAL_BAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
-    displayWidgets[0].draw(ctx, leftWidgetPos, v_padding);
+    displayWidgets[0].draw(ctx, H_PADDING_DEFAULT, v_padding);
 
     if(globalSettings.widgets[3] == EMPTY) {
       v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
@@ -322,7 +323,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
 
     // if the widgets are too tall, enable "compact mode"
     int compact_mode_threshold = unobstructed_bounds.size.h - V_PADDING_DEFAULT * 2 - 3;
-    int v_padding = V_PADDING_DEFAULT;
+    v_padding = V_PADDING_DEFAULT;
 
     SidebarWidgets_useCompactMode = false; // ensure that we compare the non-compacted heights
     SidebarWidgets_fixedHeight = false;
@@ -347,16 +348,12 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
       v_padding = V_PADDING_COMPACT;
     }
 
-    // calculate the three widget positions
-    int topWidgetPos = v_padding;
-    int lowerWidgetPos = unobstructed_bounds.size.h - v_padding - displayWidgets[2].getHeight();
-
-    // vertically center the middle widget using MATH
-    int middleWidgetPos = ((lowerWidgetPos - displayWidgets[1].getHeight()) + (topWidgetPos + displayWidgets[0].getHeight())) / 2;
-
     // draw the widgets
-    displayWidgets[0].draw(ctx, 0, topWidgetPos);
+    int lowerWidgetPos = unobstructed_bounds.size.h - v_padding - displayWidgets[2].getHeight();
+    displayWidgets[0].draw(ctx, 0, v_padding);
     if(!hide_middle_widget) {
+      // vertically center the middle widget using MATH
+      middleWidgetPos = ((lowerWidgetPos - displayWidgets[1].getHeight()) + (v_padding + displayWidgets[0].getHeight())) / 2;
       displayWidgets[1].draw(ctx, 0, middleWidgetPos);
     }
     displayWidgets[2].draw(ctx, 0, lowerWidgetPos);
