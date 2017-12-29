@@ -7,7 +7,7 @@
   ],
   "private": true,
   "dependencies": {
-    "pebble-fctx": "^1.4.0"
+    "pebble-fctx": "^1.6.2"
   },
   "pebble": {
     "displayName": "TimeStyle BB",
@@ -186,6 +186,6 @@
     }
   },
   "devDependencies": {
-    "pebble-fctx-compiler": "^1.1.0"
+    "pebble-fctx-compiler": "^1.2.0"
   }
 }
