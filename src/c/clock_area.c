@@ -27,7 +27,7 @@ static FFont* leco;
 static GRect screen_rect;
 
 // "private" functions
-static void update_original_clock_area_layer(Layer *l, GContext* ctx) {
+static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* fctx) {
   // check layer bounds
   GRect bounds;
 
@@ -40,14 +40,6 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   #else
     bounds = GRect(0, ROUND_VERTICAL_PADDING, screen_rect.size.w, screen_rect.size.h - ROUND_VERTICAL_PADDING * 2);
   #endif
-
-  // initialize FCTX, the fancy 3rd party drawing library that all the cool kids use
-  FContext fctx;
-
-  fctx_init_context(&fctx, ctx);
-  fctx_set_color_bias(&fctx, 0);
-  fctx_set_fill_color(&fctx, globalSettings.timeColor);
-
 
   // calculate font size
   int font_size = 4 * bounds.size.h / 7;
@@ -67,9 +59,7 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx) {
     // leco looks awful with antialiasing
     #ifdef PBL_COLOR
       fctx_enable_aa(false);
-    #endif
   } else {
-    #ifdef PBL_COLOR
       fctx_enable_aa(true);
     #endif
   }
@@ -93,39 +83,29 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx) {
   #endif
 
   FPoint time_pos;
-  fctx_begin_fill(&fctx);
-  fctx_set_text_em_height(&fctx, hours_font, font_size);
-  fctx_set_text_em_height(&fctx, minutes_font, font_size);
+  fctx_begin_fill(fctx);
+  fctx_set_text_em_height(fctx, hours_font, font_size);
+  fctx_set_text_em_height(fctx, minutes_font, font_size);
 
   // draw hours
   time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + h_adjust);
   time_pos.y = INT_TO_FIXED(v_padding + v_adjust);
-  fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_date_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
+  fctx_set_offset(fctx, time_pos);
+  fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
 
   //draw minutes
   time_pos.y = INT_TO_FIXED(bounds.size.h - v_padding + v_adjust);
-  fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_date_minutes, minutes_font, GTextAlignmentCenter, FTextAnchorBaseline);
-
-  fctx_end_fill(&fctx);
-  fctx_deinit_context(&fctx);
+  fctx_set_offset(fctx, time_pos);
+  fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentCenter, FTextAnchorBaseline);
 }
 
 #ifndef PBL_ROUND
-static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
+static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* fctx) {
   // check layer bounds
   GRect fullscreen_bounds = layer_get_bounds(l);
   GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
 
   int16_t obstruction_height = fullscreen_bounds.size.h - unobstructed_bounds.size.h;
-
-  // initialize FCTX, the fancy 3rd party drawing library that all the cool kids use
-  FContext fctx;
-
-  fctx_init_context(&fctx, ctx);
-  fctx_set_color_bias(&fctx, 0);
-  fctx_set_fill_color(&fctx, globalSettings.timeColor);
 
   // calculate font size
   int font_size = fullscreen_bounds.size.h / 3;
@@ -144,9 +124,7 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
     // leco looks awful with antialiasing
     #ifdef PBL_COLOR
       fctx_enable_aa(false);
-    #endif
   } else {
-    #ifdef PBL_COLOR
       fctx_enable_aa(true);
     #endif
   }
@@ -162,10 +140,10 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   int h_colon_margin = 7;
 
   FPoint time_pos;
-  fctx_begin_fill(&fctx);
-  fctx_set_text_em_height(&fctx, hours_font, font_size);
-  fctx_set_text_em_height(&fctx, minutes_font, font_size);
-  fctx_set_text_em_height(&fctx, colon_font, font_size);
+  fctx_begin_fill(fctx);
+  fctx_set_text_em_height(fctx, hours_font, font_size);
+  fctx_set_text_em_height(fctx, minutes_font, font_size);
+  fctx_set_text_em_height(fctx, colon_font, font_size);
 
   graphics_context_set_text_color(ctx, globalSettings.timeColor);
 
@@ -183,8 +161,8 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   // draw hours
   time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
   time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
-  fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
+  fctx_set_offset(fctx, time_pos);
+  fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
 
   //draw ":"
   if(globalSettings.clockFontId == FONT_SETTING_LECO) {
@@ -192,13 +170,13 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
   } else {
     time_pos.x = INT_TO_FIXED(h_middle - 1);
   }
-  fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
+  fctx_set_offset(fctx, time_pos);
+  fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
 
   //draw minutes
   time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
-  fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
+  fctx_set_offset(fctx, time_pos);
+  fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
 
   // draw date
   graphics_draw_text(ctx,
@@ -208,23 +186,13 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx) {
                      GTextOverflowModeFill,
                      GTextAlignmentCenter,
                      NULL);
-
-  fctx_end_fill(&fctx);
-  fctx_deinit_context(&fctx);
 }
 
 #else
 
-static void update_one_line_clock_area_layer(Layer *l, GContext* ctx) {
+static void update_one_line_clock_area_layer(Layer *l, GContext* ctx, FContext* fctx) {
   // check layer bounds
   GRect fullscreen_bounds = layer_get_bounds(l);
-
-  // initialize FCTX, the fancy 3rd party drawing library that all the cool kids use
-  FContext fctx;
-
-  fctx_init_context(&fctx, ctx);
-  fctx_set_color_bias(&fctx, 0);
-  fctx_set_fill_color(&fctx, globalSettings.timeColor);
 
   // calculate font size
   int font_size = fullscreen_bounds.size.h / 3 + 7;
@@ -239,9 +207,7 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx) {
     // leco looks awful with antialiasing
     #ifdef PBL_COLOR
       fctx_enable_aa(false);
-    #endif
   } else {
-    #ifdef PBL_COLOR
       fctx_enable_aa(true);
     #endif
   }
@@ -250,18 +216,18 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx) {
   int h_colon_margin = 7;
 
   FPoint time_pos;
-  fctx_begin_fill(&fctx);
-  fctx_set_text_em_height(&fctx, hours_font, font_size);
-  fctx_set_text_em_height(&fctx, minutes_font, font_size);
-  fctx_set_text_em_height(&fctx, colon_font, font_size);
+  fctx_begin_fill(fctx);
+  fctx_set_text_em_height(fctx, hours_font, font_size);
+  fctx_set_text_em_height(fctx, minutes_font, font_size);
+  fctx_set_text_em_height(fctx, colon_font, font_size);
 
   graphics_context_set_text_color(ctx, globalSettings.timeColor);
 
   // draw hours
   time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
   time_pos.y = INT_TO_FIXED(fullscreen_bounds.size.h / 2);
-  fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorMiddle);
+  fctx_set_offset(fctx, time_pos);
+  fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorMiddle);
 
   //draw ":"
   if(globalSettings.clockFontId == FONT_SETTING_LECO) {
@@ -269,29 +235,36 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx) {
   } else {
     time_pos.x = INT_TO_FIXED(h_middle - 1);
   }
-  fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorMiddle);
+  fctx_set_offset(fctx, time_pos);
+  fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorMiddle);
 
   //draw minutes
   time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
-  fctx_set_offset(&fctx, time_pos);
-  fctx_draw_string(&fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorMiddle);
-
-  fctx_end_fill(&fctx);
-  fctx_deinit_context(&fctx);
+  fctx_set_offset(fctx, time_pos);
+  fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorMiddle);
 }
 #endif
 
 static void update_clock_area_layer(Layer *l, GContext* ctx) {
+  // initialize FCTX, the fancy 3rd party drawing library that all the cool kids use
+  FContext fctx;
+
+  fctx_init_context(&fctx, ctx);
+  fctx_set_color_bias(&fctx, 0);
+  fctx_set_fill_color(&fctx, globalSettings.timeColor);
+
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
 #ifdef PBL_ROUND
-      update_one_line_clock_area_layer(l, ctx);
+      update_one_line_clock_area_layer(l, ctx, &fctx);
 #else
-      update_clock_and_date_area_layer(l, ctx);
+      update_clock_and_date_area_layer(l, ctx, &fctx);
 #endif // PBL_ROUND
   } else {
-      update_original_clock_area_layer(l, ctx);
+      update_original_clock_area_layer(l, ctx, &fctx);
   }
+
+  fctx_end_fill(&fctx);
+  fctx_deinit_context(&fctx);
 
   /* Debug */ Debug_clockAreaUpdate++;
 }
