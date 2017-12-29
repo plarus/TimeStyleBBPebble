@@ -7,7 +7,9 @@
 #include "sidebar_widgets.h"
 #include "util.h"
 
-#define V_PADDING 8
+#define V_PADDING_DEFAULT 8
+#define V_PADDING_COMPACT 4
+#define COMPACT_MODE_THRESHOLD 142
 #define SCREEN_HEIGHT 168
 
 #define H_PADDING_DEFAULT 4
@@ -109,12 +111,13 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     }
   }
 
+  int v_padding;
+  int middleWidgetPos;
+
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
     // calculate the three horizontal widget positions
-    int leftWidgetPos = H_PADDING_DEFAULT;
-    int middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
+    middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
     int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - ACTION_BAR_WIDTH;
-    int v_padding;
 
     // use compact mode and fixed height for bottom and top widget
     SidebarWidgets_useCompactMode = true;
@@ -122,37 +125,73 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
 
     // draw the widgets
     v_padding= (HORIZONTAL_BAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
-    displayWidgets[0].draw(ctx, leftWidgetPos, v_padding);
+    displayWidgets[0].draw(ctx, H_PADDING_DEFAULT, v_padding);
 
-    // middle position 1
-    middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 4 + 2 * H_PADDING_DEFAULT;
-    v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
-    displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
+    if(globalSettings.widgets[3] == EMPTY) {
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
-    // middle position 2
-    middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 2 + 3 * H_PADDING_DEFAULT;
-    v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
-    displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      displayWidgets[2].draw(ctx, rightWidgetPos, v_padding);
+    }else if(globalSettings.widgets[2] == EMPTY) {
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
-    v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
-    displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
+    }else if(globalSettings.widgets[1] == EMPTY) {
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
+
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
+    } else { // we have 4 widgets
+
+      // middle position 1
+      middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 4 + 2 * H_PADDING_DEFAULT;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
+      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
+
+      // middle position 2
+      middleWidgetPos = (bounds.size.w - 5 * H_PADDING_DEFAULT) / 2 + 3 * H_PADDING_DEFAULT;
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
+      displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
+
+      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
+      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
+    }
   } else if(globalSettings.sidebarLocation == LEFT || globalSettings.sidebarLocation == RIGHT) {
+    v_padding = V_PADDING_DEFAULT;
     // if the widgets are too tall, enable "compact mode"
     SidebarWidgets_useCompactMode = false; // ensure that we compare the non-compacted heights
     SidebarWidgets_fixedHeight = false;
     int totalHeight = displayWidgets[0].getHeight() + displayWidgets[1].getHeight() + displayWidgets[2].getHeight();
-    SidebarWidgets_useCompactMode = (totalHeight > 142) ? true : false;
+    SidebarWidgets_useCompactMode = (totalHeight > COMPACT_MODE_THRESHOLD);
 
-    // calculate the three widget positions
-    int topWidgetPos = V_PADDING;
-    int lowerWidgetPos = SCREEN_HEIGHT - V_PADDING - displayWidgets[2].getHeight();
+    // now that they have been compacted, check if they fit a second time,
+    // if they still don't fit, our only choice is MURDER (of the middle widget)
+    totalHeight = displayWidgets[0].getHeight() + displayWidgets[1].getHeight() + displayWidgets[2].getHeight();
+    bool hide_middle_widget = (totalHeight > COMPACT_MODE_THRESHOLD);
 
-    // vertically center the middle widget using MATH
-    int middleWidgetPos = ((lowerWidgetPos - displayWidgets[1].getHeight()) + (topWidgetPos + displayWidgets[0].getHeight())) / 2;
+    // do not use compact mode if middle widget is hidden (biggest widget height is smaller than 168/2)
+    if(hide_middle_widget) {
+      SidebarWidgets_useCompactMode = false;
+    }
+
+    // still doesn't fit? try compacting the vertical padding
+    totalHeight = displayWidgets[0].getHeight() + displayWidgets[2].getHeight();
+    if(totalHeight > COMPACT_MODE_THRESHOLD) {
+      v_padding = V_PADDING_COMPACT;
+    }
 
     // draw the widgets
-    displayWidgets[0].draw(ctx, 0, topWidgetPos);
-    displayWidgets[1].draw(ctx, 0, middleWidgetPos);
+    int lowerWidgetPos = SCREEN_HEIGHT - v_padding - displayWidgets[2].getHeight();
+    displayWidgets[0].draw(ctx, 0, v_padding);
+    if(!hide_middle_widget) {
+      // vertically center the middle widget using MATH
+      middleWidgetPos = ((lowerWidgetPos - displayWidgets[1].getHeight()) + (v_padding + displayWidgets[0].getHeight())) / 2;
+      displayWidgets[1].draw(ctx, 0, middleWidgetPos);
+    }
     displayWidgets[2].draw(ctx, 0, lowerWidgetPos);
   }
 }
