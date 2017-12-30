@@ -41,6 +41,7 @@ typedef struct {
   uint8_t languageId;
   bool showLeadingZero;
   uint8_t clockFontId;
+  uint8_t prev_clockFontId;
 
   // vibration settings
   bool btVibe;
