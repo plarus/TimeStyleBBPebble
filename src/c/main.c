@@ -1,12 +1,11 @@
 #include <pebble.h>
-#include "clock_digit.h"
+#include "clock_area.h"
 #include "messaging.h"
 #include "settings.h"
 #include "weather.h"
 #include "sidebar.h"
 #include "util.h"
 #include "time_date.h"
-#include "clock_area.h"
 
 // windows and layers
 static Window* mainWindow;
@@ -17,12 +16,6 @@ static bool isPhoneConnected;
 
 // current time service subscription
 static bool updatingEverySecond;
-
-// the four digits on the clock, ordered h1 h2, m1 m2
-static ClockDigit clockDigits[4];
-
-static bool isClockAreaDisplayed;
-static bool isClockDigitDisplayed;
 
 // try to randomize when watches call the weather API
 static uint8_t weatherRefreshMinute;
@@ -35,54 +28,6 @@ static void update_clock(void) {
   timeInfo = localtime(&rawTime);
 
   time_date_update(timeInfo);
-
-  if(globalSettings.sidebarLocation != TOP && globalSettings.sidebarLocation != BOTTOM) {
-    // DEBUG: use fake time for screenshots
-    // timeInfo->tm_hour = 6;
-    // timeInfo->tm_min = 23;
-
-    // debug: set fake condition for screenshots
-    // Weather_setConditions(44, false, 44);
-    // Weather_weatherInfo.currentTemp = 21;
-    // Weather_weatherForecast.highTemp = 22;
-    // Weather_weatherForecast.lowTemp = 16;
-
-    int hour = timeInfo->tm_hour;
-
-    if (!clock_is_24h_style()) {
-      if(hour > 12) {
-        hour %= 12;
-      } else if(timeInfo->tm_hour == 0) {
-        hour = 12;
-      }
-    }
-
-    uint8_t current_font = globalSettings.clockFontId;
-
-    if(globalSettings.clockFontId == FONT_SETTING_BOLD_H) {
-      current_font = FONT_SETTING_BOLD;
-    } else if(globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
-      current_font = FONT_SETTING_DEFAULT;
-    }
-
-    // use the blank image for the leading hour digit if needed
-    if(globalSettings.showLeadingZero || hour / 10 != 0) {
-      ClockDigit_setNumber(&clockDigits[0], hour / 10, current_font);
-    } else {
-      ClockDigit_setBlank(&clockDigits[0]);
-    }
-
-    ClockDigit_setNumber(&clockDigits[1], hour % 10, current_font);
-
-    if(globalSettings.clockFontId == FONT_SETTING_BOLD_H) {
-      current_font = FONT_SETTING_DEFAULT;
-    } else if(globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
-      current_font = FONT_SETTING_BOLD;
-    }
-
-    ClockDigit_setNumber(&clockDigits[2], timeInfo->tm_min  / 10, current_font);
-    ClockDigit_setNumber(&clockDigits[3], timeInfo->tm_min  % 10, current_font);
-  }
 }
 
 void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -137,43 +82,6 @@ static void redrawScreen() {
   }
   window_set_background_color(mainWindow, globalSettings.timeBgColor);
 
-  if(globalSettings.sidebarLocation != TOP && globalSettings.sidebarLocation != BOTTOM) {
-    if(isClockAreaDisplayed) {
-      ClockArea_deinit();
-      isClockAreaDisplayed = false;
-    }
-
-    if(!isClockDigitDisplayed) {
-      ClockDigit_construct(&clockDigits[0], GPoint(7, 7));
-      ClockDigit_construct(&clockDigits[1], GPoint(60, 7));
-      ClockDigit_construct(&clockDigits[2], GPoint(7, 90));
-      ClockDigit_construct(&clockDigits[3], GPoint(60, 90));
-
-      for(int i = 0; i < 4; i++) {
-        layer_add_child(window_get_root_layer(mainWindow), bitmap_layer_get_layer(clockDigits[i].imageLayer));
-      }
-      isClockDigitDisplayed = true;
-    }
-
-    // or maybe the sidebar position changed!
-    int digitOffset;
-
-    if(globalSettings.sidebarLocation == RIGHT) {
-      digitOffset = 0;
-    } else if(globalSettings.sidebarLocation == LEFT) {
-      digitOffset = 30;
-    } else {
-      digitOffset = 15;
-    }
-
-    for(int i = 0; i < 4; i++) {
-      ClockDigit_offsetPosition(&clockDigits[i], digitOffset);
-
-      // maybe the colors changed!
-      ClockDigit_setColor(&clockDigits[i], globalSettings.timeColor, globalSettings.timeBgColor);
-    }
-  }
-
   // maybe the language changed!
   update_clock();
 
@@ -183,58 +91,26 @@ static void redrawScreen() {
   // update the sidebar
   Sidebar_redraw();
 
-  if(globalSettings.sidebarLocation == TOP || globalSettings.sidebarLocation == BOTTOM) {
-    if(isClockDigitDisplayed) {
-      for(int i = 0; i < 4; i++) {
-        layer_remove_from_parent(bitmap_layer_get_layer(clockDigits[i].imageLayer));
-        ClockDigit_destruct(&clockDigits[i]);
-      }
-      isClockDigitDisplayed = false;
-    }
+  // check if the fonts need to be switched
+  ClockArea_update_fonts();
 
-    if(!isClockAreaDisplayed) {
-      ClockArea_init(mainWindow);
-      isClockAreaDisplayed = true;
-    }
-
-    // check if the fonts need to be switched
-    ClockArea_update_fonts();
-
-    ClockArea_redraw();
-  }
+  ClockArea_redraw();
 }
 
 static void main_window_load(Window *window) {
-
-  isClockAreaDisplayed = false;
-  isClockDigitDisplayed = false;
-
   window_set_background_color(window, globalSettings.timeBgColor);
 
   // create the sidebar
   Sidebar_init(window);
+
+  ClockArea_init(window);
 
   // Make sure the time is displayed from the start
   redrawScreen();
 }
 
 static void main_window_unload(Window *window) {
-  if(isClockAreaDisplayed) {
-    ClockArea_deinit();
-    isClockAreaDisplayed = false;
-  }
-
-  if(isClockDigitDisplayed) {
-    for(int i = 0; i < 4; i++) {
-      ClockDigit_destruct(&clockDigits[i]);
-    }
-    isClockDigitDisplayed = false;
-  }
-
-  for(int i = 0; i < 4; i++) {
-    ClockDigit_destruct2(&clockDigits[i]);
-  }
-
+  ClockArea_deinit();
   Sidebar_deinit();
 }
 
@@ -278,7 +154,6 @@ static void app_focus_changed(bool focused) {
 }
 
 static void init(void) {
-
   setlocale(LC_ALL, "");
 
   srand(time(NULL));

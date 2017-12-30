@@ -20,3 +20,4 @@ void seconds_to_minutes_hours_text(HealthValue seconds, char * hours_text, char 
  * Convert number of seconds to one minutes and hours text
  */
 void seconds_to_text(HealthValue seconds, char * hours_minutes_text);
+
