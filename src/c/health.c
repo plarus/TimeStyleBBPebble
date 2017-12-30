@@ -39,11 +39,11 @@ void Health_update(void) {
 
     if(s_sleeping) {
         s_endSleepTime = time(NULL);
-/* Debug */ Debug_healthSleepCall++;
+/* Debug */ //Debug_healthSleepCall++;
     }
-/* Debug */     if(s_restfulSleeping) {
-/* Debug */         Debug_restfulSleeping++;
-/* Debug */     }
+/* Debug */   //  if(s_restfulSleeping) {
+/* Debug */   //      Debug_restfulSleeping++;
+/* Debug */   //  }
 
     // Steps
     s_distance_walked = get_health_value_sum_today(HealthMetricWalkedDistanceMeters);

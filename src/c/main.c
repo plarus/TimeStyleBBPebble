@@ -72,13 +72,13 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 static void unobstructed_area_change_handler(AnimationProgress progress, void *context) {
   // update the sidebar
   Sidebar_redraw();
-  /* Debug */ Debug_unobstructedAreaChange++;
+  /* Debug */ //Debug_unobstructedAreaChange++;
 }
 
 static void unobstructed_area_did_change_handler(void *context) {
   // update the sidebar
   Sidebar_redraw();
-  /* Debug */ Debug_unobstructedAreaChange++;
+  /* Debug */ //Debug_unobstructedAreaChange++;
 }
 
 /* forces everything on screen to be redrawn -- perfect for keeping track of settings! */
@@ -126,7 +126,7 @@ static void redrawScreen() {
 
   ClockArea_redraw();
 
-  /* Debug */ Debug_RedrawFunction++;
+  /* Debug */ //Debug_RedrawFunction++;
 }
 
 static void main_window_load(Window *window) {
@@ -168,7 +168,7 @@ static void bluetoothStateChanged(bool newConnectionState) {
   if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
-  /* Debug */ Debug_bluetoothStateChange++;
+  /* Debug */ //Debug_bluetoothStateChange++;
 }
 
 // fixes for disappearing elements after notifications
@@ -176,7 +176,7 @@ static void bluetoothStateChanged(bool newConnectionState) {
 static void app_focus_changing(bool focusing) {
   if (focusing) {
      layer_set_hidden(windowLayer, true);
-     /* Debug */ Debug_focusChange++;
+     /* Debug */ //Debug_focusChange++;
   }
 }
 
@@ -184,7 +184,7 @@ static void app_focus_changed(bool focused) {
   if (focused) {
      layer_set_hidden(windowLayer, false);
      layer_mark_dirty(windowLayer);
-     /* Debug */ Debug_focusChange++;
+     /* Debug */ //Debug_focusChange++;
   }
 }
 

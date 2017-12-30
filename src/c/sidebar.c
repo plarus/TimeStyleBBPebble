@@ -358,7 +358,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     }
     displayWidgets[2].draw(ctx, 0, lowerWidgetPos);
   }
-  /* Debug */ Debug_sidebarUpdate++;
+  /* Debug */ //Debug_sidebarUpdate++;
 }
 #endif
 
