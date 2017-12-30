@@ -193,7 +193,7 @@ void messaging_init(MessageProcessedCallback processed_callback) {
   //app_message_register_outbox_sent(outbox_sent_callback);
 
   // Open AppMessage
-  app_message_open(512, 8);
+  app_message_open(256, 8);
 
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "Watch messaging is started!");
 }
