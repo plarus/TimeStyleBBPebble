@@ -33,10 +33,6 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* 
 
   #ifndef PBL_ROUND
     bounds = layer_get_unobstructed_bounds(l);
-
-    if (globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP){
-      bounds.size.h -= FIXED_WIDGET_HEIGHT;
-    }
   #else
     bounds = GRect(0, ROUND_VERTICAL_PADDING, screen_rect.size.w, screen_rect.size.h - ROUND_VERTICAL_PADDING * 2);
   #endif
@@ -77,8 +73,6 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* 
       h_adjust -= ACTION_BAR_WIDTH / 2 + 1;
     } else if(globalSettings.sidebarLocation == LEFT) {
       h_adjust += ACTION_BAR_WIDTH / 2;
-    }else if(globalSettings.sidebarLocation == TOP) {
-      v_adjust += FIXED_WIDGET_HEIGHT;
     }
   #endif
 
