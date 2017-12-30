@@ -83,20 +83,23 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* 
   #endif
 
   FPoint time_pos;
-  fctx_begin_fill(fctx);
-  fctx_set_text_em_height(fctx, hours_font, font_size);
-  fctx_set_text_em_height(fctx, minutes_font, font_size);
 
   // draw hours
   time_pos.x = INT_TO_FIXED(bounds.size.w / 2 + h_adjust);
   time_pos.y = INT_TO_FIXED(v_padding + v_adjust);
+  fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
+  fctx_set_text_em_height(fctx, hours_font, font_size);
   fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
+  fctx_end_fill(fctx);
 
   //draw minutes
   time_pos.y = INT_TO_FIXED(bounds.size.h - v_padding + v_adjust);
+  fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
+  fctx_set_text_em_height(fctx, minutes_font, font_size);
   fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentCenter, FTextAnchorBaseline);
+  fctx_end_fill(fctx);
 }
 
 #ifndef PBL_ROUND
@@ -140,10 +143,6 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
   int h_colon_margin = 7;
 
   FPoint time_pos;
-  fctx_begin_fill(fctx);
-  fctx_set_text_em_height(fctx, hours_font, font_size);
-  fctx_set_text_em_height(fctx, minutes_font, font_size);
-  fctx_set_text_em_height(fctx, colon_font, font_size);
 
   graphics_context_set_text_color(ctx, globalSettings.timeColor);
 
@@ -161,8 +160,11 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
   // draw hours
   time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
   time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
+  fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
+  fctx_set_text_em_height(fctx, hours_font, font_size);
   fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
+  fctx_end_fill(fctx);
 
   //draw ":"
   if(globalSettings.clockFontId == FONT_SETTING_LECO) {
@@ -170,13 +172,19 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
   } else {
     time_pos.x = INT_TO_FIXED(h_middle - 1);
   }
+  fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
+  fctx_set_text_em_height(fctx, colon_font, font_size);
   fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
+  fctx_end_fill(fctx);
 
   //draw minutes
   time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
+  fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
+  fctx_set_text_em_height(fctx, minutes_font, font_size);
   fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
+  fctx_end_fill(fctx);
 
   // draw date
   graphics_draw_text(ctx,
@@ -216,18 +224,15 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx, FContext* 
   int h_colon_margin = 7;
 
   FPoint time_pos;
-  fctx_begin_fill(fctx);
-  fctx_set_text_em_height(fctx, hours_font, font_size);
-  fctx_set_text_em_height(fctx, minutes_font, font_size);
-  fctx_set_text_em_height(fctx, colon_font, font_size);
-
-  graphics_context_set_text_color(ctx, globalSettings.timeColor);
 
   // draw hours
   time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
   time_pos.y = INT_TO_FIXED(fullscreen_bounds.size.h / 2);
+  fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
+  fctx_set_text_em_height(fctx, hours_font, font_size);
   fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorMiddle);
+  fctx_end_fill(fctx);
 
   //draw ":"
   if(globalSettings.clockFontId == FONT_SETTING_LECO) {
@@ -235,13 +240,19 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx, FContext* 
   } else {
     time_pos.x = INT_TO_FIXED(h_middle - 1);
   }
+  fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
+  fctx_set_text_em_height(fctx, colon_font, font_size);
   fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorMiddle);
+  fctx_end_fill(fctx);
 
   //draw minutes
   time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
+  fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
+  fctx_set_text_em_height(fctx, minutes_font, font_size);
   fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorMiddle);
+  fctx_end_fill(fctx);
 }
 #endif
 
@@ -263,7 +274,6 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
       update_original_clock_area_layer(l, ctx, &fctx);
   }
 
-  fctx_end_fill(&fctx);
   fctx_deinit_context(&fctx);
 
   /* Debug */ Debug_clockAreaUpdate++;
