@@ -14,8 +14,10 @@ char time_date_altClock[8];
 char time_date_currentBeats[5];
 char time_date_hours[3];
 char time_date_minutes[3];
+#ifndef PBL_ROUND
 char time_date_currentDate[21];
 bool time_date_isAmHour;
+#endif
 
 // c can't do true modulus on negative numbers, apparently
 // from http://stackoverflow.com/questions/11720656/modulo-operation-with-negative-numbers
@@ -64,6 +66,7 @@ void time_date_update(struct tm* time_info) {
   strncpy(time_date_currentDayName, dayNames[globalSettings.languageId][time_info->tm_wday], sizeof(time_date_currentDayName));
   strncpy(time_date_currentMonth, monthNames[globalSettings.languageId][time_info->tm_mon], sizeof(time_date_currentMonth));
 
+#ifndef PBL_ROUND
   // full time
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
     strncpy(time_date_currentDate, time_date_currentDayName, sizeof(time_date_currentDayName));
@@ -74,6 +77,7 @@ void time_date_update(struct tm* time_info) {
 
     time_date_isAmHour = time_info->tm_hour < 12;
   }
+#endif // PBL_ROUND
 
   if(globalSettings.enableAltTimeZone) {
     // set the alternate time zone string
@@ -109,7 +113,7 @@ void time_date_update(struct tm* time_info) {
 
     // set the swatch internet time beats
     beats = time_date_get_beats(time_info);
-  
+
     snprintf(time_date_currentBeats, sizeof(time_date_currentBeats), "%i", beats);
   }
 }
