@@ -142,7 +142,6 @@ void Settings_updateDynamicSettings(void) {
   globalSettings.enableAutoBatteryWidget = true;
   globalSettings.enableBeats = false;
   globalSettings.enableAltTimeZone = false;
-  globalSettings.prev_clockFontId = FONT_SETTING_UNSET;
 
   for(int i = 0; i < 4; i++) {
     // if there are any weather widgets, enable weather checking

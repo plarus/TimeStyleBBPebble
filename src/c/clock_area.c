@@ -25,6 +25,8 @@ static GFont am_pm_font;
 static GRect screen_rect;
 #endif
 
+static uint8_t prev_clockFontId;
+
 // "private" functions
 static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* fctx) {
   // check layer bounds
@@ -287,10 +289,12 @@ void ClockArea_init(Window* window) {
   clock_area_layer = layer_create(bounds);
   layer_add_child(window_get_root_layer(window), clock_area_layer);
   layer_set_update_proc(clock_area_layer, update_clock_area_layer);
+
+  prev_clockFontId = FONT_SETTING_UNSET;
 }
 
 void ClockArea_ffont_destroy(void) {
-  switch(globalSettings.prev_clockFontId) {
+  switch(prev_clockFontId) {
     case FONT_SETTING_DEFAULT:
     case FONT_SETTING_BOLD:
     case FONT_SETTING_LECO:
@@ -324,8 +328,8 @@ void ClockArea_update_fonts(void) {
   }
 #endif
 
-  if(globalSettings.prev_clockFontId != globalSettings.clockFontId) {
-    if(globalSettings.prev_clockFontId != FONT_SETTING_UNSET) {
+  if(prev_clockFontId != globalSettings.clockFontId) {
+    if(prev_clockFontId != FONT_SETTING_UNSET) {
       ClockArea_ffont_destroy();
     }
 
@@ -372,6 +376,6 @@ void ClockArea_update_fonts(void) {
           colon_font = leco;
         break;
     }
-    globalSettings.prev_clockFontId = globalSettings.clockFontId;
+    prev_clockFontId = globalSettings.clockFontId;
   }
 }
