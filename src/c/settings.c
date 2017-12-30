@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include "languages.h"
 #include "settings.h"
+#include "clock_area.h"
 
 Settings globalSettings;
 
@@ -38,7 +39,7 @@ void Settings_loadDefaultsSettings(void) {
 
   globalSettings.languageId       = LANGUAGE_EN; // English
   globalSettings.showLeadingZero  = false;
-  globalSettings.clockFontId      = 0;
+  globalSettings.clockFontId      = FONT_SETTING_DEFAULT;
   globalSettings.btVibe           = false;
   globalSettings.hourlyVibe       = NO_VIBE;
   globalSettings.sidebarLocation  = RIGHT;
@@ -126,6 +127,7 @@ void Settings_updateDynamicSettings(void) {
   globalSettings.updateScreenEverySecond = false;
   globalSettings.enableAutoBatteryWidget = true;
   globalSettings.enableAltTimeZone = false;
+  globalSettings.prev_clockFontId = FONT_SETTING_UNSET;
 
   for(int i = 0; i < 4; i++) {
     // if there are any weather widgets, enable weather checking

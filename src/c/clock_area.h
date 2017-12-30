@@ -6,6 +6,7 @@
 #define FONT_SETTING_BOLD    2
 #define FONT_SETTING_BOLD_H  3
 #define FONT_SETTING_BOLD_M  4
+#define FONT_SETTING_UNSET   5
 
 // "public" functions
 void ClockArea_init(Window* window);
