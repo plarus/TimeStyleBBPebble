@@ -23,8 +23,7 @@ function checkVersion() {
   appVersion = getQueryParam('appversion');
 
   // if the app version is not present, or is less than the current version show the warning
-//  if(!appVersion || parseInt(appVersion, 10) < CURRENT_SETTINGS_VERSION) {
-  if(!appVersion || parseInt(appVersion, 10) < CURRENT_SETTINGS_VERSION - 1) { // TMP
+  if(!appVersion || parseInt(appVersion, 10) < CURRENT_SETTINGS_VERSION) {
     $('#version_warning').removeClass('hidden');
   }
 }
