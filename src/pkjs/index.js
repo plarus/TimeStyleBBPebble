@@ -227,28 +227,30 @@ Pebble.addEventListener('webviewclosed', function(e) {
       dict.SettingAltClockOffset = parseInt(configData.altclock_offset, 10);
     }
 
-    if(configData.decimal_separator) {
-      dict.SettingDecimalSep = configData.decimal_separator;
-    }
-
-    if(configData.health_activity_display) {
-      if(configData.health_activity_display == 'distance') {
-        dict.SettingHealthActivityDisplay = 1;
-      } else if(configData.health_activity_display == 'duration') {
-        dict.SettingHealthActivityDisplay = 2;
-      } else if(configData.health_activity_display == 'calories') {
-        dict.SettingHealthActivityDisplay = 3;
-      } else { // steps
-        dict.SettingHealthActivityDisplay = 0;
+    if(watch.platform != "aplite"){
+      if(configData.decimal_separator) {
+        dict.SettingDecimalSep = configData.decimal_separator;
       }
-    }
 
-    // heath settings
-    if(configData.health_use_restful_sleep) {
-      if(configData.health_use_restful_sleep == 'yes') {
-        dict.SettingHealthUseRestfulSleep = 1;
-      } else {
-        dict.SettingHealthUseRestfulSleep = 0;
+      if(configData.health_activity_display) {
+        if(configData.health_activity_display == 'distance') {
+          dict.SettingHealthActivityDisplay = 1;
+        } else if(configData.health_activity_display == 'duration') {
+          dict.SettingHealthActivityDisplay = 2;
+        } else if(configData.health_activity_display == 'calories') {
+          dict.SettingHealthActivityDisplay = 3;
+        } else { // steps
+          dict.SettingHealthActivityDisplay = 0;
+        }
+      }
+
+      // heath settings
+      if(configData.health_use_restful_sleep) {
+        if(configData.health_use_restful_sleep == 'yes') {
+          dict.SettingHealthUseRestfulSleep = 1;
+        } else {
+          dict.SettingHealthUseRestfulSleep = 0;
+        }
       }
     }
 
