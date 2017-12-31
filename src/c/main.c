@@ -85,7 +85,7 @@ static void update_clock(void) {
   }
 }
 
-void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   // every 30 minutes, request new weather data
   if(!globalSettings.disableWeather) {
     if(tick_time->tm_min == weatherRefreshMinute && tick_time->tm_sec == 0) {
@@ -114,10 +114,7 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
-
-  if(globalSettings.sidebarLocation == TOP || globalSettings.sidebarLocation == BOTTOM) {
-    ClockArea_redraw();
-  }
+  ClockArea_redraw();
 }
 
 /* forces everything on screen to be redrawn -- perfect for keeping track of settings! */

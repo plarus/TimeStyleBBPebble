@@ -222,6 +222,12 @@ void Sidebar_set_layer(void) {
   // reposition the sidebar if needed
   layer_set_frame(sidebarLayer, getRectSidebarBounds());
 
+  if(globalSettings.sidebarLocation == NONE) {
+    layer_set_hidden(sidebarLayer, true);
+  } else {
+    layer_set_hidden(sidebarLayer, false);
+  }
+
   SidebarWidgets_updateFonts();
 }
 
