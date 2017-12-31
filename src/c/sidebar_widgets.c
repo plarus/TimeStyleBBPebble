@@ -24,7 +24,6 @@ static GFont mdSidebarFont;
 static GFont lgSidebarFont;
 static GFont currentSidebarFont;
 static GFont currentSidebarSmallFont;
-static GFont batteryFont;
 
 // the widgets
 static SidebarWidget batteryMeterWidget;
@@ -116,11 +115,9 @@ void SidebarWidgets_updateFonts(void) {
   if(globalSettings.useLargeFonts) {
     currentSidebarFont = lgSidebarFont;
     currentSidebarSmallFont = mdSidebarFont;
-    batteryFont = lgSidebarFont;
   } else {
     currentSidebarFont = mdSidebarFont;
     currentSidebarSmallFont = smSidebarFont;
-    batteryFont = smSidebarFont;
   }
 }
 
@@ -222,8 +219,10 @@ static void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
   // https://github.com/freakified/TimeStylePebble/issues/11
   if(globalSettings.showBatteryPct && !chargeState.is_charging) {
     int textOffsetY;
+    GFont batteryFont;
 
     if(!globalSettings.useLargeFonts) {
+      batteryFont = smSidebarFont;
       if(SidebarWidgets_fixedHeight) {
         textOffsetY = 25;
       } else {
@@ -235,6 +234,7 @@ static void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
                (globalSettings.languageId == LANGUAGE_TR) ? "%%%d" : "%d%%",
                battery_percent);
     } else {
+      batteryFont = lgSidebarFont;
       if(SidebarWidgets_fixedHeight) {
         textOffsetY = 18;
       } else {
