@@ -14,7 +14,6 @@ char time_date_altClock[8];
 char time_date_hours[3];
 char time_date_minutes[3];
 char time_date_currentDate[21];
-bool time_date_isAmHour;
 
 // c can't do true modulus on negative numbers, apparently
 // from http://stackoverflow.com/questions/11720656/modulo-operation-with-negative-numbers
@@ -57,8 +56,6 @@ void time_date_update(struct tm* time_info) {
     strncat(time_date_currentDate, time_date_currentDayNum, sizeof(time_date_currentDayNum));
     strncat(time_date_currentDate, " " , 2);
     strncat(time_date_currentDate, time_date_currentMonth, sizeof(time_date_currentMonth));
-
-    time_date_isAmHour = time_info->tm_hour < 12;
   }
 
   if(globalSettings.enableAltTimeZone) {
