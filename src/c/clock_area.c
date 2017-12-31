@@ -162,7 +162,7 @@ void ClockArea_init(Window* window) {
 }
 
 void ClockArea_ffont_destroy(void) {
-  switch(globalSettings.prev_clockFontId) {
+  switch(prev_clockFontId) {
     case FONT_SETTING_DEFAULT:
     case FONT_SETTING_BOLD:
     case FONT_SETTING_LECO:
@@ -191,8 +191,8 @@ void ClockArea_update_fonts(void) {
     date_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
   }
 
-  if(globalSettings.prev_clockFontId != globalSettings.clockFontId) {
-    if(globalSettings.prev_clockFontId != FONT_SETTING_UNSET) {
+  if(prev_clockFontId != globalSettings.clockFontId) {
+    if(prev_clockFontId != FONT_SETTING_UNSET) {
       ClockArea_ffont_destroy();
     }
 
@@ -239,6 +239,6 @@ void ClockArea_update_fonts(void) {
           colon_font = leco;
         break;
     }
-    globalSettings.prev_clockFontId = globalSettings.clockFontId;
+    prev_clockFontId = globalSettings.clockFontId;
   }
 }

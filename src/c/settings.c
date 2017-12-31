@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include "languages.h"
-#include "settings.h"
 #include "clock_area.h"
+#include "settings.h"
 
 Settings globalSettings;
 
@@ -127,7 +127,6 @@ void Settings_updateDynamicSettings(void) {
   globalSettings.updateScreenEverySecond = false;
   globalSettings.enableAutoBatteryWidget = true;
   globalSettings.enableAltTimeZone = false;
-  globalSettings.prev_clockFontId = FONT_SETTING_UNSET;
 
   for(int i = 0; i < 4; i++) {
     // if there are any weather widgets, enable weather checking
