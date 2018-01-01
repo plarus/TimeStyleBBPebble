@@ -15,7 +15,8 @@ Inspired by the visual language of the Timeline found on the Pebble Time, TimeSt
 * Works in 30 different languages, more than any other Pebble face: English, French, German, Spanish, Italian, Dutch, Turkish, Czech, Slovak, Portuguese, Greek, Swedish, Polish, Romanian, Vietnamese, Catalan, Norwegian, Russian, Estonian, Basque, Finnish, Danish, Lithuanian, Slovenian, Hungarian, Croatian, Serbian, Irish, Latviann, and Ukrainian.
 
 ## Want to try it?
-Download the lastest PBW package here: https://github.com/plarus/TimeStyleBBPebble/releases
+* Download on the Pebble store at the link : https://apps.getpebble.com/en_US/application/5a48b54f0dfc32823d0041d5
+* Or download the lastest PBW package here: https://github.com/plarus/TimeStyleBBPebble/releases
 
 ## Issues
 You have found an issue? You can report it here: https://github.com/plarus/TimeStyleBBPebble/issues/new
