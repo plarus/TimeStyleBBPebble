@@ -294,17 +294,9 @@ void ClockArea_init(Window* window) {
 }
 
 void ClockArea_ffont_destroy(void) {
-  switch(prev_clockFontId) {
-    case FONT_SETTING_DEFAULT:
-    case FONT_SETTING_BOLD:
-    case FONT_SETTING_LECO:
-        ffont_destroy(hours_font);
-      break;
-    case FONT_SETTING_BOLD_H:
-    case FONT_SETTING_BOLD_M:
-        ffont_destroy(hours_font);
-        ffont_destroy(minutes_font);
-      break;
+  ffont_destroy(hours_font);
+  if(prev_clockFontId == FONT_SETTING_BOLD_H || prev_clockFontId == FONT_SETTING_BOLD_M) {
+    ffont_destroy(minutes_font);
   }
 }
 
