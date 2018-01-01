@@ -33,8 +33,8 @@ void Settings_deinit(void) {
 void Settings_loadDefaultsSettings(void) {
   // load the default colors
   #ifdef PBL_COLOR
-    globalSettings.timeColor      = GColorOrange;
-    globalSettings.sidebarColor   = GColorOrange;
+    globalSettings.timeColor      = GColorWhite;
+    globalSettings.sidebarColor   = GColorVividCerulean;
   #else
     globalSettings.timeColor      = GColorWhite;
     globalSettings.sidebarColor   = GColorLightGray;
@@ -47,13 +47,13 @@ void Settings_loadDefaultsSettings(void) {
   globalSettings.clockFontId      = FONT_SETTING_DEFAULT;
   globalSettings.btVibe           = false;
   globalSettings.hourlyVibe       = NO_VIBE;
-  globalSettings.sidebarLocation  = RIGHT;
+  globalSettings.sidebarLocation  = BOTTOM;
 
   // set the default widgets
-  globalSettings.widgets[0] = PBL_IF_HEALTH_ELSE(HEALTH, BATTERY_METER);
-  globalSettings.widgets[1] = EMPTY;
-  globalSettings.widgets[2] = DATE;
-  globalSettings.widgets[3] = EMPTY;
+  globalSettings.widgets[0] = BATTERY_METER;
+  globalSettings.widgets[1] = WEATHER_CURRENT;
+  globalSettings.widgets[2] = PBL_IF_HEALTH_ELSE(HEALTH, BLUETOOTH_DISCONNECT);
+  globalSettings.widgets[3] = WEEK_NUMBER;
 
   globalSettings.useLargeFonts          = false;
   globalSettings.useMetric              = true;
