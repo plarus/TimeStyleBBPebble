@@ -48,7 +48,7 @@ function loadPreviousSettings() {
 //  }
 
   // health is the default except on BW watches, which have battery
-  var top_widget = (has_health) ? '10' : '2';
+  var health_widget = (has_health) ? '10' : '2';
 
   if(!savedSettings) {
     // if there are no settings set, load the default settings
@@ -72,15 +72,15 @@ function loadPreviousSettings() {
       hourly_vibe_setting: 'no',
 
       // sidebar settings
-      widget_0_id: top_widget, // current weather
-      widget_1_id: '0', // empty
-      widget_2_id: '4', // today's date
-      widget_3_id: '0', // empty
-      sidebar_position: 'right',
+      widget_0_id: '2', // mattery 
+      widget_1_id: '7', // current weather
+      widget_2_id: health_widget, // Health
+      widget_3_id: '6', // week number
+      sidebar_position: 'bottom',
       use_large_sidebar_font_setting: 'no',
 
       // weather widget settings
-      units: 'f',
+      units: 'c',
       weather_loc: '',
       weather_setting: 'auto',
       weather_datasource: 'owm',
