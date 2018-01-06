@@ -152,34 +152,47 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
                        NULL);
   }
 
-  // draw hours
-  time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
-  time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, hours_font, font_size);
-  fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
-  fctx_end_fill(fctx);
+  if(globalSettings.clockFontId == FONT_SETTING_BOLD_H || globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
+    // draw hours
+    time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
+    time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, hours_font, font_size);
+    fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
+    fctx_end_fill(fctx);
 
-  //draw ":"
-  if(globalSettings.clockFontId == FONT_SETTING_LECO) {
-    time_pos.x = INT_TO_FIXED(h_middle);
-  } else {
+    //draw ":"
     time_pos.x = INT_TO_FIXED(h_middle - 1);
-  }
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, colon_font, font_size);
-  fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
-  fctx_end_fill(fctx);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, colon_font, font_size);
+    fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_end_fill(fctx);
 
-  //draw minutes
-  time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, minutes_font, font_size);
-  fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
-  fctx_end_fill(fctx);
+    //draw minutes
+    time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, minutes_font, font_size);
+    fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
+    fctx_end_fill(fctx);
+  } else {
+    // if only one font center all
+    char time[6];
+
+    strncpy(time, time_date_hours, sizeof(time_date_hours));
+    strncat(time, ":" , 2);
+    strncat(time, time_date_minutes, sizeof(time_date_minutes));
+
+    time_pos.x = INT_TO_FIXED(h_middle - 2);
+    time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, colon_font, font_size);
+    fctx_draw_string(fctx, time, colon_font, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_end_fill(fctx);
+  }
 
   // draw date
   graphics_draw_text(ctx,
@@ -220,34 +233,47 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx, FContext* 
 
   FPoint time_pos;
 
-  // draw hours
-  time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
-  time_pos.y = INT_TO_FIXED(fullscreen_bounds.size.h / 2);
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, hours_font, font_size);
-  fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorMiddle);
-  fctx_end_fill(fctx);
+  if(globalSettings.clockFontId == FONT_SETTING_BOLD_H || globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
+    // draw hours
+    time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
+    time_pos.y = INT_TO_FIXED(fullscreen_bounds.size.h / 2);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, hours_font, font_size);
+    fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorMiddle);
+    fctx_end_fill(fctx);
 
-  //draw ":"
-  if(globalSettings.clockFontId == FONT_SETTING_LECO) {
-    time_pos.x = INT_TO_FIXED(h_middle);
-  } else {
+    //draw ":"
     time_pos.x = INT_TO_FIXED(h_middle - 1);
-  }
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, colon_font, font_size);
-  fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorMiddle);
-  fctx_end_fill(fctx);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, colon_font, font_size);
+    fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorMiddle);
+    fctx_end_fill(fctx);
 
-  //draw minutes
-  time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, minutes_font, font_size);
-  fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorMiddle);
-  fctx_end_fill(fctx);
+    //draw minutes
+    time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, minutes_font, font_size);
+    fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorMiddle);
+    fctx_end_fill(fctx);
+  } else {
+    // if only one font center all
+    char time[6];
+
+    strncpy(time, time_date_hours, sizeof(time_date_hours));
+    strncat(time, ":" , 2);
+    strncat(time, time_date_minutes, sizeof(time_date_minutes));
+
+    time_pos.x = INT_TO_FIXED(h_middle - 2);
+    time_pos.y = INT_TO_FIXED(fullscreen_bounds.size.h / 2);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, colon_font, font_size);
+    fctx_draw_string(fctx, time, colon_font, GTextAlignmentCenter, FTextAnchorMiddle);
+    fctx_end_fill(fctx);
+  }
 }
 #endif
 
