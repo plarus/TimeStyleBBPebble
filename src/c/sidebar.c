@@ -242,6 +242,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
 
   bool showDisconnectIcon = false;
   bool showAutoBattery = isAutoBatteryShown();
+  int widget_to_replace = -1;
 
   // if the pebble is disconnected and activated, show the disconnect icon
   if(globalSettings.activateDisconnectIcon) {
@@ -260,11 +261,11 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
   // do we need to replace a widget?
   // if so, determine which widget should be replaced
   if(showAutoBattery || showDisconnectIcon) {
-    int widget_to_replace = getReplacableWidget();
+    widget_to_replace = getReplacableWidget();
 
     if(showAutoBattery) {
       displayWidgets[widget_to_replace] = getSidebarWidgetByType(BATTERY_METER);
-    } else if(showDisconnectIcon) {
+    } else { // showDisconnectIcon
       displayWidgets[widget_to_replace] = getSidebarWidgetByType(BLUETOOTH_DISCONNECT);
     }
   }
@@ -285,7 +286,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     v_padding= (HORIZONTAL_BAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
     displayWidgets[0].draw(ctx, H_PADDING_DEFAULT, v_padding);
 
-    if(globalSettings.widgets[3] == EMPTY) {
+    if(globalSettings.widgets[3] == EMPTY && widget_to_replace != 3) {
       v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
       displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
