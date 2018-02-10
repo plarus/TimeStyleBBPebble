@@ -6,9 +6,6 @@
     "pebble-watchface"
   ],
   "private": true,
-  "dependencies": {
-    "pebble-fctx": "^1.6.2"
-  },
   "pebble": {
     "displayName": "TimeStyle BB",
     "uuid": "bc612aa2-61f0-4abf-ad2d-0846efc4afa3",

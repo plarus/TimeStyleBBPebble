@@ -1,7 +1,6 @@
 ﻿#include <pebble.h>
-#include <pebble-fctx/fctx.h>
-#include <pebble-fctx/fpath.h>
-#include <pebble-fctx/ffont.h>
+#include "fctx.h"
+#include "ffont.h"
 #include "clock_area.h"
 #include "settings.h"
 #include "languages.h"
@@ -282,7 +281,6 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
   FContext fctx;
 
   fctx_init_context(&fctx, ctx);
-  fctx_set_color_bias(&fctx, 0);
   fctx_set_fill_color(&fctx, globalSettings.timeColor);
 
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
