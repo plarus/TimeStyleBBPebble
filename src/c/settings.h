@@ -40,6 +40,7 @@ typedef struct {
   // general settings
   uint8_t languageId;
   bool showLeadingZero;
+  bool centerTime;
   uint8_t clockFontId;
 
   // vibration settings
@@ -123,6 +124,8 @@ typedef struct {
 
   // bluetooth disconnection icon
   int8_t activateDisconnectIcon:1;
+
+  int8_t centerTime:1;
 } StoredSettings;
 
 extern Settings globalSettings;

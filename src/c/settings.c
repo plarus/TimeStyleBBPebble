@@ -65,6 +65,7 @@ void Settings_loadDefaultsSettings(void) {
   strncpy(globalSettings.altclockName, "ALT", sizeof(globalSettings.altclockName));
   globalSettings.altclockOffset         = 0;
   globalSettings.activateDisconnectIcon = true;
+  globalSettings.centerTime             = false;
 }
 
 /*
@@ -100,6 +101,7 @@ void Settings_loadFromStorage(void) {
   memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
   globalSettings.altclockOffset = storedSettings.altclockOffset;
   globalSettings.activateDisconnectIcon = storedSettings.activateDisconnectIcon;
+  globalSettings.centerTime = storedSettings.centerTime;
 }
 
 void Settings_saveToStorage(void) {
@@ -131,6 +133,7 @@ void Settings_saveToStorage(void) {
   storedSettings.altclockOffset = globalSettings.altclockOffset;
   storedSettings.sidebarLocation = globalSettings.sidebarLocation;
   storedSettings.activateDisconnectIcon = globalSettings.activateDisconnectIcon;
+  storedSettings.centerTime = globalSettings.centerTime;
 
   persist_write_data(SETTING_VERSION6_AND_HIGHER, &storedSettings, sizeof(StoredSettings));
   persist_write_int(SETTINGS_VERSION_KEY, CURRENT_SETTINGS_VERSION);

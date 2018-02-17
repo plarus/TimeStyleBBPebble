@@ -151,7 +151,7 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
                        NULL);
   }
 
-  if(globalSettings.clockFontId == FONT_SETTING_BOLD_H || globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
+  if(globalSettings.centerTime == false || globalSettings.clockFontId == FONT_SETTING_BOLD_H || globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
     // draw hours
     time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
     time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
@@ -232,7 +232,7 @@ static void update_one_line_clock_area_layer(Layer *l, GContext* ctx, FContext* 
 
   FPoint time_pos;
 
-  if(globalSettings.clockFontId == FONT_SETTING_BOLD_H || globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
+  if(globalSettings.centerTime == false || globalSettings.clockFontId == FONT_SETTING_BOLD_H || globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
     // draw hours
     time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
     time_pos.y = INT_TO_FIXED(fullscreen_bounds.size.h / 2);

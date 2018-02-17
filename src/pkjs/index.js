@@ -1,7 +1,7 @@
 
 var weather = require('./weather');
 
-var CONFIG_VERSION = 10;
+var CONFIG_VERSION = 11;
 // var BASE_CONFIG_URL = 'http://localhost:4000/';
 var BASE_CONFIG_URL = 'http://plarus.github.io/TimeStyleBBPebble/';
 
@@ -107,6 +107,14 @@ Pebble.addEventListener('webviewclosed', function(e) {
         dict.SettingShowLeadingZero = 1;
       } else {
         dict.SettingShowLeadingZero = 0;
+      }
+    }
+
+    if(configData.center_time_setting) {
+      if(configData.center_time_setting == 'yes') {
+        dict.SettingCenterTime = 1;
+      } else {
+        dict.SettingCenterTime = 0;
       }
     }
 

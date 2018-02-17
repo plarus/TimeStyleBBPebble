@@ -47,7 +47,7 @@ void time_date_update(struct tm* time_info) {
     strftime(time_date_hours, sizeof(time_date_hours), (globalSettings.showLeadingZero) ? "%I" : "%l", time_info);
   }
 
-  if(time_date_hours[0] == ' ') {
+  if(time_date_hours[0] == ' ' && globalSettings.centerTime) {
     time_date_hours[0] = time_date_hours[1];
     time_date_hours[1] = '\0';
   }
