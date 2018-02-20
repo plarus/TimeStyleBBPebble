@@ -13,6 +13,7 @@
 
 #define H_PADDING_DEFAULT 4
 #define HORIZONTAL_BAR_HEIGHT FIXED_WIDGET_HEIGHT
+#define RECT_WIDGETS_XOFFSET ((ACTION_BAR_WIDTH - 30) / 2)
 
 static GRect screen_rect;
 static Layer* screen_rect_layer;
@@ -233,7 +234,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
   int obstruction_height = get_obstruction_height(screen_rect_layer);
 
   // this ends up being zero on every rectangular platform besides emery
-  SidebarWidgets_xOffset = (ACTION_BAR_WIDTH - 30) / 2;
+  SidebarWidgets_xOffset = RECT_WIDGETS_XOFFSET;
 
   graphics_context_set_fill_color(ctx, globalSettings.sidebarColor);
   graphics_fill_rect(ctx, bounds, 0, GCornerNone);

@@ -100,9 +100,6 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* 
 static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* fctx) {
   // check layer bounds
   GRect fullscreen_bounds = layer_get_bounds(l);
-  GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
-
-  int16_t obstruction_height = fullscreen_bounds.size.h - unobstructed_bounds.size.h;
 
   // calculate font size
   int font_size = fullscreen_bounds.size.h / 3;
@@ -130,6 +127,8 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
   if(globalSettings.sidebarLocation == BOTTOM) {
     v_adjust -= 3;
   } else {
+    GRect unobstructed_bounds = layer_get_unobstructed_bounds(l);
+    int16_t obstruction_height = fullscreen_bounds.size.h - unobstructed_bounds.size.h;
     v_adjust += FIXED_WIDGET_HEIGHT - obstruction_height - 3;
   }
 
