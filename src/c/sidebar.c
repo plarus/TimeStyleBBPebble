@@ -231,7 +231,6 @@ static GRect getRectSidebarBounds(void) {
 
 static void updateRectSidebar(Layer *l, GContext* ctx) {
   GRect bounds = layer_get_bounds(l);
-  int obstruction_height = get_obstruction_height(screen_rect_layer);
 
   // this ends up being zero on every rectangular platform besides emery
   SidebarWidgets_xOffset = RECT_WIDGETS_XOFFSET;
@@ -274,7 +273,8 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
   int v_padding;
   int middleWidgetPos;
 
-  if(globalSettings.sidebarLocation == BOTTOM || (globalSettings.sidebarLocation == TOP && obstruction_height == 0)) {
+
+  if(globalSettings.sidebarLocation == BOTTOM || (globalSettings.sidebarLocation == TOP)) {
     // calculate the three horizontal widget positions
     middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
     int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - ACTION_BAR_WIDTH;
@@ -441,3 +441,9 @@ void Sidebar_redraw(void) {
     layer_mark_dirty(sidebarLayer2);
   #endif
 }
+
+#ifndef PBL_ROUND
+void Sidebar_set_hidden(bool hide) {
+  layer_set_hidden(sidebarLayer, hide);
+}
+#endif

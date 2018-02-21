@@ -69,17 +69,25 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   /* Debug */ //Debug_display();
 }
 
-static void unobstructed_area_change_handler(AnimationProgress progress, void *context) {
-  // update the sidebar
-  Sidebar_redraw();
-  /* Debug */ //Debug_unobstructedAreaChange++;
+#ifndef PBL_ROUND
+static void unobstructed_area_will_change_handler(GRect final_unobstructed_screen_area, void *context) {
+  // Get the full size of the screen
+  GRect full_bounds = layer_get_bounds(windowLayer);
+  if (!grect_equal(&full_bounds, &final_unobstructed_screen_area) && globalSettings.sidebarLocation == TOP) {
+    // Screen is about to become obstructed, hide the bottom/top bar
+    Sidebar_set_hidden(true);
+  }
 }
 
 static void unobstructed_area_did_change_handler(void *context) {
-  // update the sidebar
-  Sidebar_redraw();
+  int obstruction_height = get_obstruction_height(windowLayer);
+
+  if (obstruction_height == 0 && globalSettings.sidebarLocation == TOP) {
+    Sidebar_set_hidden(false);
+  }
   /* Debug */ //Debug_unobstructedAreaChange++;
 }
+#endif
 
 /* forces everything on screen to be redrawn -- perfect for keeping track of settings! */
 static void redrawScreen() {
@@ -98,16 +106,18 @@ static void redrawScreen() {
 
   }
 
+#ifndef PBL_ROUND
   unobstructed_area_service_unsubscribe();
 
   if(globalSettings.sidebarLocation == TOP) {
     UnobstructedAreaHandlers unobstructed_area_handlers = {
-      .change = unobstructed_area_change_handler,
+      .will_change = unobstructed_area_will_change_handler,
       .did_change = unobstructed_area_did_change_handler
     };
 
     unobstructed_area_service_subscribe(unobstructed_area_handlers, NULL);
   }
+#endif
 
   window_set_background_color(mainWindow, globalSettings.timeBgColor);
 
@@ -248,7 +258,9 @@ static void deinit(void) {
 
   tick_timer_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
+#ifndef PBL_ROUND
   unobstructed_area_service_unsubscribe();
+#endif
   app_focus_service_unsubscribe();
 
   /* Debug */ Debug_display();
