@@ -2,7 +2,6 @@
 #include <math.h>
 #include "settings.h"
 #include "weather.h"
-#include "languages.h"
 #include "util.h"
 #ifdef PBL_HEALTH
 #include "health.h"
@@ -493,7 +492,7 @@ static void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
   // note that it draws "above" the y position to correct for
   // the vertical padding
   graphics_draw_text(ctx,
-                     wordForWeek[globalSettings.languageId],
+                     globalSettings.languageWordForWeek,
                      currentSidebarSmallFont,
                      GRect(xPosition - 4 + SidebarWidgets_xOffset, yTextPosition, 38, 20),
                      GTextOverflowModeFill,

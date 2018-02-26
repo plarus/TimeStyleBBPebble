@@ -1,7 +1,6 @@
 #include <pebble.h>
 #include "time.h"
 #include "settings.h"
-#include "languages.h"
 #include "time_date.h"
 
 // the date and time strings
@@ -68,8 +67,8 @@ void time_date_update(struct tm* time_info) {
   // set the seconds string
   strftime(time_date_currentSecondsNum, 4, ":%S", time_info);
 
-  strncpy(time_date_currentDayName, dayNames[globalSettings.languageId][time_info->tm_wday], sizeof(time_date_currentDayName));
-  strncpy(time_date_currentMonth, monthNames[globalSettings.languageId][time_info->tm_mon], sizeof(time_date_currentMonth));
+  strncpy(time_date_currentDayName, globalSettings.languageDayNames[time_info->tm_wday], sizeof(time_date_currentDayName));
+  strncpy(time_date_currentMonth, globalSettings.languageMonthNames[time_info->tm_mon], sizeof(time_date_currentMonth));
 
 #ifndef PBL_ROUND
   // full time

@@ -173,6 +173,29 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     globalSettings.activateDisconnectIcon = (bool)activateDisconnectIcon_tuple->value->int8;
   }
 
+  // does this message contain new language information?
+  Tuple *languageDayNames_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageDayNames);
+  Tuple *languageMonthNames_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageMonthNames);
+  Tuple *languageWordForWeek_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageWordForWeek);
+
+  if(languageDayNames_tuple != NULL) {
+    for(int i = 0;i<7;i++){
+      strncpy(globalSettings.languageDayNames[i], languageDayNames_tuple->value->cstring, sizeof(globalSettings.languageDayNames[i]));
+      languageDayNames_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageDayNames + i + 1);
+    }
+  }
+
+  if(languageMonthNames_tuple != NULL) {
+    for(int i = 0;i<12;i++){
+      strncpy(globalSettings.languageMonthNames[i], languageMonthNames_tuple->value->cstring, sizeof(globalSettings.languageMonthNames[i]));
+      languageMonthNames_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageMonthNames + i + 1);
+    }
+  }
+
+  if(languageWordForWeek_tuple != NULL) {
+    strncpy(globalSettings.languageWordForWeek, languageWordForWeek_tuple->value->cstring, sizeof(globalSettings.languageWordForWeek));
+  }
+
   Settings_updateDynamicSettings();
 
   // save the new settings to persistent storage

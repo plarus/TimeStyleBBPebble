@@ -2,7 +2,6 @@
 #include <ctype.h>
 #include "settings.h"
 #include "weather.h"
-#include "languages.h"
 #include "sidebar.h"
 #include "sidebar_widgets.h"
 #include "util.h"

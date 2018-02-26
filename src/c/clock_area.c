@@ -3,7 +3,6 @@
 #include "ffont.h"
 #include "clock_area.h"
 #include "settings.h"
-#include "languages.h"
 #include "time_date.h"
 #include "debug.h"
 
