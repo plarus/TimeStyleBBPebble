@@ -46,6 +46,7 @@
 #define LANGUAGE_JP 34 // japanese
 #define LANGUAGE_KR 35 // korean
 #define LANGUAGE_IW 36 // hebrew
+#define LANGUAGE_BG 37 // bulgarian
 
 typedef enum {
   NONE     = 0,
