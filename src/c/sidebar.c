@@ -15,7 +15,6 @@
 #define RECT_WIDGETS_XOFFSET ((ACTION_BAR_WIDTH - 30) / 2)
 
 static GRect screen_rect;
-static Layer* screen_rect_layer;
 static Layer* sidebarLayer;
 
 #ifdef PBL_ROUND
@@ -32,7 +31,6 @@ static bool isAutoBatteryShown(void) {
       }
     }
   }
-
   return false;
 }
 
@@ -239,6 +237,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
 
   graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
 
+  // if the pebble is disconnected, show the disconnect icon
   bool showDisconnectIcon = false;
   bool showAutoBattery = isAutoBatteryShown();
   int widget_to_replace = -1;
@@ -272,8 +271,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
   int v_padding;
   int middleWidgetPos;
 
-
-  if(globalSettings.sidebarLocation == BOTTOM || (globalSettings.sidebarLocation == TOP)) {
+  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
     // calculate the three horizontal widget positions
     middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
     int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - ACTION_BAR_WIDTH;
@@ -365,8 +363,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
 
 void Sidebar_init(Window* window) {
   // init the sidebar layer
-  screen_rect_layer = window_get_root_layer(window);
-  screen_rect = layer_get_bounds(screen_rect_layer);
+  screen_rect = layer_get_bounds(window_get_root_layer(window));
   GRect bounds;
 
   #ifdef PBL_ROUND
