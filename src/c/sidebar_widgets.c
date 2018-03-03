@@ -248,8 +248,6 @@ static void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
   BatteryChargeState chargeState = battery_state_service_peek();
   uint8_t battery_percent = (chargeState.charge_percent > 0) ? chargeState.charge_percent : 5;
 
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   char batteryString[6];
   int batteryPositionY = yPosition;
 
@@ -337,8 +335,6 @@ static int DateWidget_getHeight(void) {
 }
 
 static void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   // compensate for extra space that appears on the top of the date widget
   yPosition -= (globalSettings.useLargeFonts) ? 10 : 7;
 
@@ -410,8 +406,6 @@ static int CurrentWeather_getHeight(void) {
 }
 
 static void CurrentWeather_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   if (Weather_currentWeatherIcon) {
     util_image_draw(ctx, Weather_currentWeatherIcon, xPosition + 3 + SidebarWidgets_xOffset, yPosition);
   }
@@ -484,8 +478,6 @@ static int WeekNumber_getHeight(void) {
 }
 
 static void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   int yTextPosition = SidebarWidgets_fixedHeight ? yPosition + 6 : yPosition - 4;
   yTextPosition = globalSettings.useLargeFonts ? yTextPosition - 2 : yTextPosition;
 
@@ -518,8 +510,6 @@ static int Seconds_getHeight(void) {
 }
 
 static void Seconds_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   graphics_draw_text(ctx,
                      time_date_currentSecondsNum,
                      lgSidebarFont,
@@ -540,8 +530,6 @@ static int WeatherForecast_getHeight(void) {
 }
 
 static void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   //srand(time(NULL));
   //Weather_setForecastCondition(rand() % 12);
 
@@ -633,8 +621,6 @@ static int AltTime_getHeight(void) {
 }
 
 static void AltTime_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   int yMod = SidebarWidgets_fixedHeight ? 6 : - 5;
   yMod = globalSettings.useLargeFonts ? yMod - 2 : yMod;
 
@@ -696,7 +682,6 @@ static void Sleep_draw(GContext* ctx, int xPosition, int yPosition) {
 
   seconds_to_minutes_hours_text(sleep_seconds, hours_text, minutes_text);
 
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
   graphics_draw_text(ctx,
                      hours_text,
                      mdSidebarFont,
@@ -761,8 +746,6 @@ static void Steps_draw(GContext* ctx, int xPosition, int yPosition) {
     kCalories_to_text(active_kcalories, steps_text);
   }
 
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   int yTextPosition = yPosition;
 
   if(SidebarWidgets_fixedHeight) {
@@ -812,7 +795,6 @@ static void HeartRate_draw(GContext* ctx, int xPosition, int yPosition) {
 
   snprintf(heart_rate_text, sizeof(heart_rate_text), "%li", heart_rate);
 
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
   graphics_draw_text(ctx,
                      heart_rate_text,
                      currentSidebarFont,
@@ -835,8 +817,6 @@ static int Beats_getHeight(void) {
 }
 
 static void Beats_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   int yMod = SidebarWidgets_fixedHeight ? 6 : - 5;
   yMod = globalSettings.useLargeFonts ? yMod - 2 : yMod;
   graphics_draw_text(ctx,

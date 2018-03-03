@@ -111,6 +111,7 @@ static void drawRoundSidebar(GContext* ctx, GRect bgBounds, SidebarWidget widget
                        DEG_TO_TRIGANGLE(0),
                        TRIG_MAX_ANGLE);
 
+  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
   SidebarWidgets_xOffset = widgetXOffset;
 
   widget.draw(ctx, widgetXPosition, widgetYPosition);
