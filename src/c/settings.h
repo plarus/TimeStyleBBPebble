@@ -5,9 +5,48 @@
 #define SETTINGS_VERSION_KEY 4
 
 // settings "version" for app version 4.0
-#define CURRENT_SETTINGS_VERSION 7
+#define CURRENT_SETTINGS_VERSION 8
 
 #define FIXED_WIDGET_HEIGHT 51
+
+#define LANGUAGE_EN 0
+#define LANGUAGE_FR 1
+#define LANGUAGE_DE 2
+#define LANGUAGE_ES 3
+#define LANGUAGE_IT 4
+#define LANGUAGE_NL 5
+#define LANGUAGE_TR 6
+#define LANGUAGE_CZ 7
+#define LANGUAGE_PT 8
+#define LANGUAGE_GK 9
+#define LANGUAGE_SE 10
+#define LANGUAGE_PL 11
+#define LANGUAGE_SK 12
+#define LANGUAGE_VN 13
+#define LANGUAGE_RO 14
+#define LANGUAGE_CA 15
+#define LANGUAGE_NO 16
+#define LANGUAGE_RU 17
+#define LANGUAGE_EE 18
+#define LANGUAGE_EU 19
+#define LANGUAGE_FI 20
+#define LANGUAGE_DA 21
+#define LANGUAGE_LT 22
+#define LANGUAGE_SL 23
+#define LANGUAGE_HU 24
+#define LANGUAGE_HR 25
+#define LANGUAGE_GA 26
+#define LANGUAGE_LV 27
+#define LANGUAGE_SR 28
+#define LANGUAGE_CN 29
+#define LANGUAGE_ID 30
+#define LANGUAGE_UK 31
+#define LANGUAGE_CY 32 // welsh
+#define LANGUAGE_GL 33 // gallacian
+#define LANGUAGE_JP 34 // japanese
+#define LANGUAGE_KR 35 // korean
+#define LANGUAGE_IW 36 // hebrew
+#define LANGUAGE_BG 37 // bulgarian
 
 typedef enum {
   NONE     = 0,
@@ -32,7 +71,12 @@ typedef struct {
 
   // general settings
   uint8_t languageId;
+  char languageDayNames[7][8];
+  char languageMonthNames[12][8];
+  char languageWordForWeek[12];
+
   bool showLeadingZero;
+  bool centerTime;
   uint8_t clockFontId;
 
   // vibration settings
@@ -108,6 +152,12 @@ typedef struct {
 
   // bluetooth disconnection icon
   int8_t activateDisconnectIcon:1;
+
+  int8_t centerTime:1;
+
+  char languageDayNames[7][8];
+  char languageMonthNames[12][8];
+  char languageWordForWeek[12];
 } StoredSettings;
 
 extern Settings globalSettings;

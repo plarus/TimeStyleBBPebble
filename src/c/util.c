@@ -59,3 +59,4 @@ void seconds_to_text(HealthValue seconds, char * hours_minutes_text) {
 
     snprintf(hours_minutes_text, sizeof(hours_minutes_text), "%ih%i", hours, minutes);
    }
+

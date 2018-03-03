@@ -1,7 +1,11 @@
 
 var weather = require('./weather');
+var languages = require('./languages');
 
-var CONFIG_VERSION = 10;
+// Require the keys' numeric values.
+var keys = require('message_keys');
+
+var CONFIG_VERSION = 11;
 // var BASE_CONFIG_URL = 'http://localhost:4000/';
 var BASE_CONFIG_URL = 'http://plarus.github.io/TimeStyleBBPebble/';
 
@@ -28,7 +32,7 @@ Pebble.addEventListener('ready',
 // when one is received, we simply assume that it is a request for new weather data
 Pebble.addEventListener('appmessage',
   function(msg) {
-    console.log('Recieved message: ' + JSON.stringify(msg.payload));
+    console.log('Received message: ' + JSON.stringify(msg.payload));
 
     // in the case of recieving this, we assume the watch does, in fact, need weather data
     window.localStorage.setItem('disable_weather', 'no');
@@ -53,7 +57,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
   if(configData) {
     configData = JSON.parse(decodeURIComponent(e.response));
 
-    console.log("Config data recieved!" + JSON.stringify(configData));
+    console.log("Config data received!" + JSON.stringify(configData));
 
     // prepare a structure to hold everything we'll send to the watch
     var dict = {};
@@ -85,6 +89,14 @@ Pebble.addEventListener('webviewclosed', function(e) {
         dict.SettingShowLeadingZero = 1;
       } else {
         dict.SettingShowLeadingZero = 0;
+      }
+    }
+
+    if(configData.center_time_setting) {
+      if(configData.center_time_setting == 'yes') {
+        dict.SettingCenterTime = 1;
+      } else {
+        dict.SettingCenterTime = 0;
       }
     }
 
@@ -231,10 +243,36 @@ Pebble.addEventListener('webviewclosed', function(e) {
 
     // Send settings to Pebble watchapp
     Pebble.sendAppMessage(dict, function(){
-      console.log('Sent config data to Pebble, now trying to get weather');
+      // Second part of data (send datas in 2 part in order to reduce buffer size on Pebble watch)
+      if(configData.language_id !== undefined) {
+        // reset the structure
+        dict = {};
 
-      // after sending config data, force a weather refresh in case that changed
-      weather.updateWeather(true);
+        for (i = 0; i < 7; i++) {
+          dict[keys.SettingLanguageDayNames + i] = languages.dayNames[configData.language_id][i];
+        }
+        for (i = 0; i < 12; i++) {
+          dict[keys.SettingLanguageMonthNames + i] = languages.monthNames[configData.language_id][i];
+        }
+        dict.SettingLanguageWordForWeek = languages.wordForWeek[configData.language_id];
+
+        console.log('Preparing language message: ', JSON.stringify(dict));
+
+        // Send language information to Pebble watchapp
+        Pebble.sendAppMessage(dict, function(){
+          console.log('Sent language data to Pebble, now trying to get weather');
+
+          // after sending config data, force a weather refresh in case that changed
+          weather.updateWeather(true);
+        }, function() {
+            console.log('Failed to send language data!');
+        });
+      } else {
+        console.log('Sent config data to Pebble, now trying to get weather');
+
+        // after sending config data, force a weather refresh in case that changed
+        weather.updateWeather(true);
+      }
     }, function() {
         console.log('Failed to send config data!');
     });

@@ -1,7 +1,6 @@
 ﻿#include <pebble.h>
 #include "clock_area.h"
 #include "settings.h"
-#include "languages.h"
 #include "time_date.h"
 
 static Layer* clock_area_layer;
@@ -41,41 +40,61 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
 
   graphics_context_set_text_color(ctx, globalSettings.timeColor);
 
-  // draw hours
-  x_pos = 0;
-  y_pos = 3 * v_padding + v_adjust - 15;
 
-  graphics_draw_text(ctx,
-                     time_date_hours,
-                     hours_font,
-                     GRect(x_pos, y_pos, h_middle - h_colon_margin + h_adjust, 44),
-                     GTextOverflowModeFill,
-                     GTextAlignmentRight,
-                     NULL);
+  if(globalSettings.centerTime == false || globalSettings.clockFontId == FONT_SETTING_BOLD_H || globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
+    // draw hours
+    x_pos = 0;
+    y_pos = 3 * v_padding + v_adjust - 15;
 
-  //draw ":"
-  if(globalSettings.clockFontId == FONT_SETTING_LECO) {
-    x_pos = h_middle - h_colon_margin - 1;
+    graphics_draw_text(ctx,
+                       time_date_hours,
+                       hours_font,
+                       GRect(x_pos, y_pos, h_middle - h_colon_margin + h_adjust, 44),
+                       GTextOverflowModeFill,
+                       GTextAlignmentRight,
+                       NULL);
+
+    //draw ":"
+    if(globalSettings.clockFontId == FONT_SETTING_LECO) {
+      x_pos = h_middle - h_colon_margin - 1;
+    } else {
+      x_pos = h_middle - h_colon_margin - 4;
+    }
+    graphics_draw_text(ctx,
+                       ":",
+                       colon_font,
+                       GRect(x_pos, y_pos, 2 * h_colon_margin, 44),
+                       GTextOverflowModeFill,
+                       GTextAlignmentCenter,
+                       NULL);
+
+    //draw minutes
+    x_pos = h_middle + h_colon_margin + h_adjust;
+    graphics_draw_text(ctx,
+                       time_date_minutes,
+                       minutes_font,
+                       GRect(x_pos, y_pos, fullscreen_bounds.size.w - x_pos, 44),
+                       GTextOverflowModeFill,
+                       GTextAlignmentLeft,
+                       NULL);
   } else {
-    x_pos = h_middle - h_colon_margin - 4;
-  }
-  graphics_draw_text(ctx,
-                     ":",
-                     colon_font,
-                     GRect(x_pos, y_pos, 2 * h_colon_margin, 44),
-                     GTextOverflowModeFill,
-                     GTextAlignmentCenter,
-                     NULL);
+    // if only one font center all
+    char time[6];
 
-  //draw minutes
-  x_pos = h_middle + h_colon_margin + h_adjust;
-  graphics_draw_text(ctx,
-                     time_date_minutes,
-                     minutes_font,
-                     GRect(x_pos, y_pos, fullscreen_bounds.size.w - x_pos, 44),
-                     GTextOverflowModeFill,
-                     GTextAlignmentLeft,
-                     NULL);
+    strncpy(time, time_date_hours, sizeof(time_date_hours));
+    strncat(time, ":" , 2);
+    strncat(time, time_date_minutes, sizeof(time_date_minutes));
+
+    x_pos = h_middle - 2;
+    y_pos = 3 * v_padding + v_adjust - 15;
+    graphics_draw_text(ctx,
+                       time,
+                       colon_font,
+                       GRect(x_pos, y_pos, fullscreen_bounds.size.w, 44),
+                       GTextOverflowModeFill,
+                       GTextAlignmentCenter,
+                       NULL);
+  }
 
   // draw date
   graphics_draw_text(ctx,

@@ -44,6 +44,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *btVibe_tuple = dict_find(iterator, MESSAGE_KEY_SettingBluetoothVibe);
   Tuple *language_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageID);
   Tuple *leadingZero_tuple = dict_find(iterator, MESSAGE_KEY_SettingShowLeadingZero);
+  Tuple *centerTime_tuple = dict_find(iterator, MESSAGE_KEY_SettingCenterTime);
   Tuple *batteryPct_tuple = dict_find(iterator, MESSAGE_KEY_SettingShowBatteryPct);
   Tuple *disableWeather_tuple = dict_find(iterator, MESSAGE_KEY_SettingDisableWeather);
   Tuple *clockFont_tuple = dict_find(iterator, MESSAGE_KEY_SettingClockFontId);
@@ -94,6 +95,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
   if(leadingZero_tuple != NULL) {
     globalSettings.showLeadingZero = (bool)leadingZero_tuple->value->int8;
+  }
+
+  if(centerTime_tuple != NULL) {
+    globalSettings.centerTime = (bool)centerTime_tuple->value->int8;
   }
 
   if(batteryPct_tuple != NULL) {
@@ -152,6 +157,29 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     globalSettings.activateDisconnectIcon = (bool)activateDisconnectIcon_tuple->value->int8;
   }
 
+  // does this message contain new language information?
+  Tuple *languageDayNames_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageDayNames);
+  Tuple *languageMonthNames_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageMonthNames);
+  Tuple *languageWordForWeek_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageWordForWeek);
+
+  if(languageDayNames_tuple != NULL) {
+    for(int i = 0;i<7;i++){
+      strncpy(globalSettings.languageDayNames[i], languageDayNames_tuple->value->cstring, sizeof(globalSettings.languageDayNames[i]));
+      languageDayNames_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageDayNames + i + 1);
+    }
+  }
+
+  if(languageMonthNames_tuple != NULL) {
+    for(int i = 0;i<12;i++){
+      strncpy(globalSettings.languageMonthNames[i], languageMonthNames_tuple->value->cstring, sizeof(globalSettings.languageMonthNames[i]));
+      languageMonthNames_tuple = dict_find(iterator, MESSAGE_KEY_SettingLanguageMonthNames + i + 1);
+    }
+  }
+
+  if(languageWordForWeek_tuple != NULL) {
+    strncpy(globalSettings.languageWordForWeek, languageWordForWeek_tuple->value->cstring, sizeof(globalSettings.languageWordForWeek));
+  }
+
   Settings_updateDynamicSettings();
 
   // save the new settings to persistent storage
@@ -193,7 +221,7 @@ void messaging_init(MessageProcessedCallback processed_callback) {
   //app_message_register_outbox_sent(outbox_sent_callback);
 
   // Open AppMessage
-  app_message_open(256, 8);
+  app_message_open(384, 8);
 
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "Watch messaging is started!");
 }
