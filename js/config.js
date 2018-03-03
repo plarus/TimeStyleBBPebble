@@ -1,4 +1,4 @@
-var CURRENT_SETTINGS_VERSION = 10;
+var CURRENT_SETTINGS_VERSION = 11;
 var appVersion;
 
 // if we have any persistent data saved, load it in
