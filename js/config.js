@@ -63,6 +63,7 @@ function loadPreviousSettings() {
       language_id: 0, // english
       leading_zero_setting: 'no',
       clock_font_setting: 'default',
+      center_time_setting: 'no',
 
       // bluetooth settings
       disconnect_icon_setting: 'no',
@@ -135,6 +136,7 @@ function loadPreviousSettings() {
   loadSettingCheckbox('autobattery_setting', savedSettings.autobattery_setting);
   loadSettingCheckbox('time_leading_zero_setting', savedSettings.leading_zero_setting);
   loadSettingCheckbox('clock_font_setting', savedSettings.clock_font_setting);
+  loadSettingCheckbox('center_time_setting', savedSettings.center_time_setting);
   loadSettingCheckbox('use_large_sidebar_font_setting', savedSettings.use_large_sidebar_font_setting);
   loadSettingCheckbox('weather_setting', savedSettings.weather_setting);
   loadSettingCheckbox('decimal_separator', savedSettings.decimal_separator);
@@ -541,6 +543,10 @@ function sendSettingsToWatch() {
 
   if($('#clock_font_setting .btn.active')) {
     config.clock_font_setting = $('#clock_font_setting .btn.active').data('setting');
+  }
+
+  if($('#center_time_setting .btn.active')) {
+    config.center_time_setting = $('#center_time_setting .btn.active').data('setting');
   }
 
   // bluetooth settings
