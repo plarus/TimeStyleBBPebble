@@ -136,7 +136,15 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
 
   FPoint time_pos;
 
-  graphics_context_set_text_color(ctx, globalSettings.timeColor);
+#ifndef PBL_COLOR
+  if(globalSettings.timeColor.argb == GColorLightGrayARGB8 && globalSettings.timeBgColor.argb == GColorWhiteARGB8) {
+    graphics_context_set_text_color(ctx, GColorBlack);
+  } else {
+#endif
+    graphics_context_set_text_color(ctx, globalSettings.timeColor);
+#ifndef PBL_COLOR
+  }
+#endif
 
   if(!clock_is_24h_style()) {
     // draw am/pm
