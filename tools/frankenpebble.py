@@ -1,4 +1,8 @@
 #!/usr/bin/env python
+#
+# Command line example: python ./frankenpebble.py "./aplite.pbw" "./modern.pbw" "out.pbw"
+
+
 import zipfile
 import os
 import argparse
