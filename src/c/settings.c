@@ -189,4 +189,9 @@ void Settings_updateDynamicSettings(void) {
     globalSettings.iconFillColor = GColorWhite;
     globalSettings.iconStrokeColor = GColorBlack;
   }
+
+  if(globalSettings.timeColor.argb == GColorLightGrayARGB8 && globalSettings.timeBgColor.argb == GColorWhiteARGB8 &&
+     (globalSettings.sidebarLocation == TOP || globalSettings.sidebarLocation == BOTTOM)) {
+    globalSettings.timeColor = GColorBlack;
+  }
 }
