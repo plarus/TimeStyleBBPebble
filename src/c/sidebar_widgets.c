@@ -70,7 +70,12 @@ void SidebarWidgets_init(void) {
 
   // load the sidebar graphics
   dateImage = gdraw_command_image_create_with_resource(RESOURCE_ID_DATE_BG);
-  disconnectImage = gdraw_command_image_create_with_resource(RESOURCE_ID_DISCONNECTED);
+  if(globalSettings.activateDisconnectIcon) {
+    disconnectImage = gdraw_command_image_create_with_resource(RESOURCE_ID_DISCONNECTED);
+  }else{
+    disconnectImage = NULL;
+  }
+
   batteryImage = gdraw_command_image_create_with_resource(RESOURCE_ID_BATTERY_BG);
   batteryChargeImage = gdraw_command_image_create_with_resource(RESOURCE_ID_BATTERY_CHARGE);
 
