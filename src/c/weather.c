@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "weather.h"
+#include "settings.h"
 
 WeatherInfo Weather_weatherInfo;
 WeatherForecastInfo Weather_weatherForecast;
