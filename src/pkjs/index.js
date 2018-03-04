@@ -262,16 +262,20 @@ Pebble.addEventListener('webviewclosed', function(e) {
         Pebble.sendAppMessage(dict, function(){
           console.log('Sent language data to Pebble, now trying to get weather');
 
-          // after sending config data, force a weather refresh in case that changed
-          weather.updateWeather(true);
+          if(window.localStorage.getItem('disable_weather') != 'yes') {
+            // after sending config data, force a weather refresh in case that changed
+            weather.updateWeather(true);
+          }
         }, function() {
             console.log('Failed to send language data!');
         });
       } else {
         console.log('Sent config data to Pebble, now trying to get weather');
 
-        // after sending config data, force a weather refresh in case that changed
-        weather.updateWeather(true);
+        if(window.localStorage.getItem('disable_weather') != 'yes') {
+          // after sending config data, force a weather refresh in case that changed
+          weather.updateWeather(true);
+        }
       }
     }, function() {
         console.log('Failed to send config data!');
