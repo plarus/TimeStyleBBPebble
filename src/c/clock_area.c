@@ -1,10 +1,8 @@
 ﻿#include <pebble.h>
-#include <pebble-fctx/fctx.h>
-#include <pebble-fctx/fpath.h>
-#include <pebble-fctx/ffont.h>
+#include "fctx.h"
+#include "ffont.h"
 #include "clock_area.h"
 #include "settings.h"
-#include "languages.h"
 #include "time_date.h"
 
 static Layer* clock_area_layer;
@@ -16,6 +14,8 @@ static FFont* minutes_font;
 static FFont* colon_font;
 
 static GFont date_font;
+
+static uint8_t prev_clockFontId;
 
 // "private" functions
 static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* fctx) {
@@ -93,34 +93,47 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
 
   FPoint time_pos;
 
-  // draw hours
-  time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
-  time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, hours_font, font_size);
-  fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
-  fctx_end_fill(fctx);
+  if(globalSettings.centerTime == false || globalSettings.clockFontId == FONT_SETTING_BOLD_H || globalSettings.clockFontId == FONT_SETTING_BOLD_M) {
+    // draw hours
+    time_pos.x = INT_TO_FIXED(h_middle - h_colon_margin + h_adjust);
+    time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, hours_font, font_size);
+    fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
+    fctx_end_fill(fctx);
 
-  //draw ":"
-  if(globalSettings.clockFontId == FONT_SETTING_LECO) {
-    time_pos.x = INT_TO_FIXED(h_middle);
-  } else {
+    //draw ":"
     time_pos.x = INT_TO_FIXED(h_middle - 1);
-  }
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, colon_font, font_size);
-  fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
-  fctx_end_fill(fctx);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, colon_font, font_size);
+    fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_end_fill(fctx);
 
-  //draw minutes
-  time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
-  fctx_begin_fill(fctx);
-  fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, minutes_font, font_size);
-  fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
-  fctx_end_fill(fctx);
+    //draw minutes
+    time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, minutes_font, font_size);
+    fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
+    fctx_end_fill(fctx);
+  } else {
+    // if only one font center all
+    char time[6];
+
+    strncpy(time, time_date_hours, sizeof(time_date_hours));
+    strncat(time, ":" , 2);
+    strncat(time, time_date_minutes, sizeof(time_date_minutes));
+
+    time_pos.x = INT_TO_FIXED(h_middle - 2);
+    time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
+    fctx_begin_fill(fctx);
+    fctx_set_offset(fctx, time_pos);
+    fctx_set_text_em_height(fctx, colon_font, font_size);
+    fctx_draw_string(fctx, time, colon_font, GTextAlignmentCenter, FTextAnchorTop);
+    fctx_end_fill(fctx);
+  }
 
   // draw date
   graphics_context_set_text_color(ctx, globalSettings.timeColor);
@@ -139,7 +152,6 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
   FContext fctx;
 
   fctx_init_context(&fctx, ctx);
-  fctx_set_color_bias(&fctx, 0);
   fctx_set_fill_color(&fctx, globalSettings.timeColor);
 
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
@@ -162,17 +174,9 @@ void ClockArea_init(Window* window) {
 }
 
 void ClockArea_ffont_destroy(void) {
-  switch(prev_clockFontId) {
-    case FONT_SETTING_DEFAULT:
-    case FONT_SETTING_BOLD:
-    case FONT_SETTING_LECO:
-        ffont_destroy(hours_font);
-      break;
-    case FONT_SETTING_BOLD_H:
-    case FONT_SETTING_BOLD_M:
-        ffont_destroy(hours_font);
-        ffont_destroy(minutes_font);
-      break;
+  ffont_destroy(hours_font);
+  if(prev_clockFontId == FONT_SETTING_BOLD_H || prev_clockFontId == FONT_SETTING_BOLD_M) {
+    ffont_destroy(minutes_font);
   }
 }
 

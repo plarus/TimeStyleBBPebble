@@ -2,7 +2,6 @@
 #include <math.h>
 #include "settings.h"
 #include "weather.h"
-#include "languages.h"
 #include "util.h"
 #include "time_date.h"
 #include "sidebar_widgets.h"
@@ -181,8 +180,6 @@ static void BatteryMeter_draw(GContext* ctx, int xPosition, int yPosition) {
   BatteryChargeState chargeState = battery_state_service_peek();
   uint8_t battery_percent = (chargeState.charge_percent > 0) ? chargeState.charge_percent : 5;
 
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   char batteryString[6];
   int batteryPositionY = yPosition;
 
@@ -264,8 +261,6 @@ static int DateWidget_getHeight(void) {
 }
 
 static void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   // compensate for extra space that appears on the top of the date widget
   yPosition -= (globalSettings.useLargeFonts) ? 10 : 7;
 
@@ -337,8 +332,6 @@ static int CurrentWeather_getHeight(void) {
 }
 
 static void CurrentWeather_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   if (Weather_currentWeatherIcon) {
     util_image_draw(ctx, Weather_currentWeatherIcon, xPosition + 3 + SidebarWidgets_xOffset, yPosition);
   }
@@ -411,15 +404,13 @@ static int WeekNumber_getHeight(void) {
 }
 
 static void WeekNumber_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   int yTextPosition = SidebarWidgets_fixedHeight ? yPosition + 6 : yPosition - 4;
   yTextPosition = globalSettings.useLargeFonts ? yTextPosition - 2 : yTextPosition;
 
   // note that it draws "above" the y position to correct for
   // the vertical padding
   graphics_draw_text(ctx,
-                     wordForWeek[globalSettings.languageId],
+                     globalSettings.languageWordForWeek,
                      currentSidebarSmallFont,
                      GRect(xPosition - 4 + SidebarWidgets_xOffset, yTextPosition, 38, 20),
                      GTextOverflowModeFill,
@@ -445,8 +436,6 @@ static int Seconds_getHeight(void) {
 }
 
 static void Seconds_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   graphics_draw_text(ctx,
                      time_date_currentSecondsNum,
                      lgSidebarFont,
@@ -467,8 +456,6 @@ static int WeatherForecast_getHeight(void) {
 }
 
 static void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   if(Weather_forecastWeatherIcon) {
     util_image_draw(ctx, Weather_forecastWeatherIcon, xPosition + 3 + SidebarWidgets_xOffset, yPosition + 1);
   }
@@ -557,8 +544,6 @@ static int AltTime_getHeight(void) {
 }
 
 static void AltTime_draw(GContext* ctx, int xPosition, int yPosition) {
-  graphics_context_set_text_color(ctx, globalSettings.sidebarTextColor);
-
   int yMod = SidebarWidgets_fixedHeight ? 6 : - 5;
   yMod = globalSettings.useLargeFonts ? yMod - 2 : yMod;
 

@@ -1,14 +1,11 @@
 {
   "name": "timestyle-bb-pebble",
   "author": "Peyot",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "keywords": [
     "pebble-watchface"
   ],
   "private": true,
-  "dependencies": {
-    "pebble-fctx": "^1.6.2"
-  },
   "pebble": {
     "displayName": "TimeStyle BB",
     "uuid": "bc612aa2-61f0-4abf-ad2d-0846efc4afa3",
@@ -44,8 +41,12 @@
       "SettingDisableWeather",
       "SettingHourlyVibe",
       "SettingLanguageID",
+      "SettingLanguageDayNames[7]",
+      "SettingLanguageMonthNames[12]",
+      "SettingLanguageWordForWeek",
       "SettingShowBatteryPct",
       "SettingShowLeadingZero",
+      "SettingCenterTime",
       "SettingSidebarPosition",
       "SettingSidebarTextColor",
       "SettingUseLargeFonts",
@@ -55,6 +56,7 @@
       "SettingWidget2ID",
       "SettingWidget3ID"
     ],
+
     "resources": {
         "media": [
             {

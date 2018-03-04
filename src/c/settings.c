@@ -1,5 +1,4 @@
 #include <pebble.h>
-#include "languages.h"
 #include "clock_area.h"
 #include "settings.h"
 
@@ -38,17 +37,38 @@ void Settings_loadDefaultsSettings(void) {
   globalSettings.sidebarTextColor = GColorBlack;
 
   globalSettings.languageId       = LANGUAGE_EN; // English
+  strncpy(globalSettings.languageDayNames[0], "SUN", sizeof(globalSettings.languageDayNames[0]));
+  strncpy(globalSettings.languageDayNames[1], "MON", sizeof(globalSettings.languageDayNames[0]));
+  strncpy(globalSettings.languageDayNames[2], "TUE", sizeof(globalSettings.languageDayNames[0]));
+  strncpy(globalSettings.languageDayNames[3], "WED", sizeof(globalSettings.languageDayNames[0]));
+  strncpy(globalSettings.languageDayNames[4], "THU", sizeof(globalSettings.languageDayNames[0]));
+  strncpy(globalSettings.languageDayNames[5], "FRI", sizeof(globalSettings.languageDayNames[0]));
+  strncpy(globalSettings.languageDayNames[6], "SAT", sizeof(globalSettings.languageDayNames[0]));
+  strncpy(globalSettings.languageMonthNames[0], "JAN", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[1], "FEB", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[2], "MAR", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[3], "APR", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[4], "MAY", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[5], "JUN", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[6], "JUL", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[7], "AUG", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[8], "SEP", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[9], "OCT", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[10], "NOV", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageMonthNames[11], "DEC", sizeof(globalSettings.languageMonthNames[0]));
+  strncpy(globalSettings.languageWordForWeek, "Wk", sizeof(globalSettings.languageWordForWeek));
+
   globalSettings.showLeadingZero  = false;
   globalSettings.clockFontId      = FONT_SETTING_DEFAULT;
   globalSettings.btVibe           = false;
   globalSettings.hourlyVibe       = NO_VIBE;
-  globalSettings.sidebarLocation  = RIGHT;
+  globalSettings.sidebarLocation  = BOTTOM;
 
   // set the default widgets
   globalSettings.widgets[0] = BATTERY_METER;
-  globalSettings.widgets[1] = EMPTY;
-  globalSettings.widgets[2] = DATE;
-  globalSettings.widgets[3] = EMPTY;
+  globalSettings.widgets[1] = WEATHER_CURRENT;
+  globalSettings.widgets[2] = PBL_IF_HEALTH_ELSE(HEALTH, BLUETOOTH_DISCONNECT);
+  globalSettings.widgets[3] = WEEK_NUMBER;
 
   globalSettings.useLargeFonts          = false;
   globalSettings.useMetric              = true;
@@ -56,7 +76,8 @@ void Settings_loadDefaultsSettings(void) {
   globalSettings.disableAutobattery     = false;
   strncpy(globalSettings.altclockName, "ALT", sizeof(globalSettings.altclockName));
   globalSettings.altclockOffset         = 0;
-  globalSettings.activateDisconnectIcon = false; //TODO: Set to true;
+  globalSettings.activateDisconnectIcon = true;
+  globalSettings.centerTime             = false;
 }
 
 /*
@@ -73,6 +94,9 @@ void Settings_loadFromStorage(void) {
     globalSettings.sidebarColor = storedSettings.sidebarColor;
     globalSettings.sidebarTextColor = storedSettings.sidebarTextColor;
     globalSettings.languageId = storedSettings.languageId;
+  memcpy(globalSettings.languageDayNames, storedSettings.languageDayNames, sizeof(globalSettings.languageDayNames));
+  memcpy(globalSettings.languageMonthNames, storedSettings.languageMonthNames, sizeof(globalSettings.languageMonthNames));
+  memcpy(globalSettings.languageWordForWeek, storedSettings.languageWordForWeek, sizeof(globalSettings.languageWordForWeek));
     globalSettings.showLeadingZero = storedSettings.showLeadingZero;
     globalSettings.clockFontId = storedSettings.clockFontId;
     globalSettings.btVibe = storedSettings.btVibe;
@@ -89,6 +113,7 @@ void Settings_loadFromStorage(void) {
     memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
     globalSettings.altclockOffset = storedSettings.altclockOffset;
     globalSettings.activateDisconnectIcon = storedSettings.activateDisconnectIcon;
+  globalSettings.centerTime = storedSettings.centerTime;
 }
 
 void Settings_saveToStorage(void) {
@@ -101,6 +126,9 @@ void Settings_saveToStorage(void) {
   storedSettings.sidebarColor = globalSettings.sidebarColor;
   storedSettings.sidebarTextColor = globalSettings.sidebarTextColor;
   storedSettings.languageId = globalSettings.languageId;
+  memcpy(storedSettings.languageDayNames, globalSettings.languageDayNames, sizeof(globalSettings.languageDayNames));
+  memcpy(storedSettings.languageMonthNames, globalSettings.languageMonthNames, sizeof(globalSettings.languageMonthNames));
+  memcpy(storedSettings.languageWordForWeek, globalSettings.languageWordForWeek, sizeof(globalSettings.languageWordForWeek));
   storedSettings.showLeadingZero = globalSettings.showLeadingZero;
   storedSettings.clockFontId = globalSettings.clockFontId;
   storedSettings.btVibe = globalSettings.btVibe;
@@ -117,6 +145,7 @@ void Settings_saveToStorage(void) {
   storedSettings.altclockOffset = globalSettings.altclockOffset;
   storedSettings.sidebarLocation = globalSettings.sidebarLocation;
   storedSettings.activateDisconnectIcon = globalSettings.activateDisconnectIcon;
+  storedSettings.centerTime = globalSettings.centerTime;
 
   persist_write_data(SETTING_VERSION6_AND_HIGHER, &storedSettings, sizeof(StoredSettings));
   persist_write_int(SETTINGS_VERSION_KEY, CURRENT_SETTINGS_VERSION);
