@@ -56,7 +56,6 @@
       "SettingWidget2ID",
       "SettingWidget3ID"
     ],
-
     "resources": {
         "media": [
             {
@@ -66,19 +65,184 @@
                 "type": "bitmap"
             },
             {
-          "file": "fonts/LECO1976-Regular.ffont",
-          "name": "LECO_REGULAR_FFONT",
-          "type": "raw"
+                "file": "fonts/digit_leco_9.ffont",
+                "name": "CLOCK_DIGIT_LECO_9",
+                "type": "raw"
             },
             {
-          "file": "fonts/AvenirNextRegular.ffont",
-          "name": "AVENIR_REGULAR_FFONT",
-          "type": "raw"
+                "file": "fonts/digit_leco_8.ffont",
+                "name": "CLOCK_DIGIT_LECO_8",
+                "type": "raw"
             },
             {
-          "file": "fonts/AvenirNextDemiBold.ffont",
-          "name": "AVENIR_BOLD_FFONT",
-          "type": "raw"
+                "file": "fonts/digit_leco_7.ffont",
+                "name": "CLOCK_DIGIT_LECO_7",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_6.ffont",
+                "name": "CLOCK_DIGIT_LECO_6",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_5.ffont",
+                "name": "CLOCK_DIGIT_LECO_5",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_4.ffont",
+                "name": "CLOCK_DIGIT_LECO_4",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_3.ffont",
+                "name": "CLOCK_DIGIT_LECO_3",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_2.ffont",
+                "name": "CLOCK_DIGIT_LECO_2",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_1.ffont",
+                "name": "CLOCK_DIGIT_LECO_1",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_0.ffont",
+                "name": "CLOCK_DIGIT_LECO_0",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_colon.ffont",
+                "name": "CLOCK_DIGIT_LECO_COLON",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_leco_space.ffont",
+                "name": "CLOCK_DIGIT_LECO_SPACE",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_9.ffont",
+                "name": "CLOCK_DIGIT_9",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_8.ffont",
+                "name": "CLOCK_DIGIT_8",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_7.ffont",
+                "name": "CLOCK_DIGIT_7",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_6.ffont",
+                "name": "CLOCK_DIGIT_6",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_5.ffont",
+                "name": "CLOCK_DIGIT_5",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_4.ffont",
+                "name": "CLOCK_DIGIT_4",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_3.ffont",
+                "name": "CLOCK_DIGIT_3",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_2.ffont",
+                "name": "CLOCK_DIGIT_2",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_1.ffont",
+                "name": "CLOCK_DIGIT_1",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_0.ffont",
+                "name": "CLOCK_DIGIT_0",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_colon.ffont",
+                "name": "CLOCK_DIGIT_COLON",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_space.ffont",
+                "name": "CLOCK_DIGIT_SPACE",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_9.ffont",
+                "name": "CLOCK_DIGIT_BOLD_9",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_8.ffont",
+                "name": "CLOCK_DIGIT_BOLD_8",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_7.ffont",
+                "name": "CLOCK_DIGIT_BOLD_7",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_6.ffont",
+                "name": "CLOCK_DIGIT_BOLD_6",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_5.ffont",
+                "name": "CLOCK_DIGIT_BOLD_5",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_4.ffont",
+                "name": "CLOCK_DIGIT_BOLD_4",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_3.ffont",
+                "name": "CLOCK_DIGIT_BOLD_3",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_2.ffont",
+                "name": "CLOCK_DIGIT_BOLD_2",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_1.ffont",
+                "name": "CLOCK_DIGIT_BOLD_1",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_0.ffont",
+                "name": "CLOCK_DIGIT_BOLD_0",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_colon.ffont",
+                "name": "CLOCK_DIGIT_BOLD_COLON",
+                "type": "raw"
+            },
+            {
+                "file": "fonts/digit_bold_space.ffont",
+                "name": "CLOCK_DIGIT_BOLD_SPACE",
+                "type": "raw"
             },
             {
                 "file": "data/WEATHER_GENERIC.pdc",

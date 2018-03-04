@@ -2,20 +2,17 @@
 #include "fctx.h"
 #include "ffont.h"
 #include "clock_area.h"
+#include "clock_digit.h"
 #include "settings.h"
 #include "time_date.h"
 
 static Layer* clock_area_layer;
 
-// just allocate all the fonts at startup because i don't feel like
-// dealing with allocating and deallocating things
-static FFont* hours_font;
-static FFont* minutes_font;
-static FFont* colon_font;
+static uint8_t hours_font;
+static uint8_t minutes_font;
+static uint8_t colon_font;
 
 static GFont date_font;
-
-static uint8_t prev_clockFontId;
 
 // "private" functions
 static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* fctx) {
@@ -52,16 +49,14 @@ static void update_original_clock_area_layer(Layer *l, GContext* ctx, FContext* 
   time_pos.y = INT_TO_FIXED(v_padding + v_adjust);
   fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, hours_font, font_size);
-  fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentCenter, FTextAnchorTop);
+  ClockDigit_draw_string(fctx, time_date_hours, hours_font, font_size, GTextAlignmentCenter, FTextAnchorTop);
   fctx_end_fill(fctx);
 
   //draw minutes
   time_pos.y = INT_TO_FIXED(bounds.size.h - v_padding + v_adjust);
   fctx_begin_fill(fctx);
   fctx_set_offset(fctx, time_pos);
-  fctx_set_text_em_height(fctx, minutes_font, font_size);
-  fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentCenter, FTextAnchorBaseline);
+  ClockDigit_draw_string(fctx, time_date_minutes, minutes_font, font_size, GTextAlignmentCenter, FTextAnchorBaseline);
   fctx_end_fill(fctx);
 }
 
@@ -99,24 +94,21 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
     time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
     fctx_begin_fill(fctx);
     fctx_set_offset(fctx, time_pos);
-    fctx_set_text_em_height(fctx, hours_font, font_size);
-    fctx_draw_string(fctx, time_date_hours, hours_font, GTextAlignmentRight, FTextAnchorTop);
+    ClockDigit_draw_string(fctx, time_date_hours, hours_font, font_size, GTextAlignmentRight, FTextAnchorTop);
     fctx_end_fill(fctx);
 
     //draw ":"
     time_pos.x = INT_TO_FIXED(h_middle - 1);
     fctx_begin_fill(fctx);
     fctx_set_offset(fctx, time_pos);
-    fctx_set_text_em_height(fctx, colon_font, font_size);
-    fctx_draw_string(fctx, ":", colon_font, GTextAlignmentCenter, FTextAnchorTop);
+    ClockDigit_draw_string(fctx, ":", colon_font, font_size, GTextAlignmentCenter, FTextAnchorTop);
     fctx_end_fill(fctx);
 
     //draw minutes
     time_pos.x = INT_TO_FIXED(h_middle + h_colon_margin + h_adjust);
     fctx_begin_fill(fctx);
     fctx_set_offset(fctx, time_pos);
-    fctx_set_text_em_height(fctx, minutes_font, font_size);
-    fctx_draw_string(fctx, time_date_minutes, minutes_font, GTextAlignmentLeft, FTextAnchorTop);
+    ClockDigit_draw_string(fctx, time_date_minutes, minutes_font, font_size, GTextAlignmentLeft, FTextAnchorTop);
     fctx_end_fill(fctx);
   } else {
     // if only one font center all
@@ -130,8 +122,7 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
     time_pos.y = INT_TO_FIXED(3 * v_padding + v_adjust);
     fctx_begin_fill(fctx);
     fctx_set_offset(fctx, time_pos);
-    fctx_set_text_em_height(fctx, colon_font, font_size);
-    fctx_draw_string(fctx, time, colon_font, GTextAlignmentCenter, FTextAnchorTop);
+    ClockDigit_draw_string(fctx, time, colon_font, font_size, GTextAlignmentCenter, FTextAnchorTop);
     fctx_end_fill(fctx);
   }
 
@@ -173,17 +164,8 @@ void ClockArea_init(Window* window) {
   layer_set_update_proc(clock_area_layer, update_clock_area_layer);
 }
 
-void ClockArea_ffont_destroy(void) {
-  ffont_destroy(hours_font);
-  if(prev_clockFontId == FONT_SETTING_BOLD_H || prev_clockFontId == FONT_SETTING_BOLD_M) {
-    ffont_destroy(minutes_font);
-  }
-}
-
 void ClockArea_deinit(void) {
   layer_destroy(clock_area_layer);
-
-  ClockArea_ffont_destroy();
 }
 
 void ClockArea_redraw(void) {
@@ -195,54 +177,31 @@ void ClockArea_update_fonts(void) {
     date_font = fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD);
   }
 
-  if(prev_clockFontId != globalSettings.clockFontId) {
-    if(prev_clockFontId != FONT_SETTING_UNSET) {
-      ClockArea_ffont_destroy();
-    }
-
-    FFont* avenir;
-    FFont* avenir_bold;
-    FFont* leco;
-
-    switch(globalSettings.clockFontId) {
-      case FONT_SETTING_DEFAULT:
-          avenir = ffont_create_from_resource(RESOURCE_ID_AVENIR_REGULAR_FFONT);
-
-          hours_font = avenir;
-          minutes_font = avenir;
-          colon_font = avenir;
-        break;
-      case FONT_SETTING_BOLD:
-          avenir_bold = ffont_create_from_resource(RESOURCE_ID_AVENIR_BOLD_FFONT);
-
-          hours_font = avenir_bold;
-          minutes_font = avenir_bold;
-          colon_font = avenir_bold;
-        break;
-      case FONT_SETTING_BOLD_H:
-          avenir =      ffont_create_from_resource(RESOURCE_ID_AVENIR_REGULAR_FFONT);
-          avenir_bold = ffont_create_from_resource(RESOURCE_ID_AVENIR_BOLD_FFONT);
-
-          hours_font = avenir_bold;
-          minutes_font = avenir;
-          colon_font = avenir;
-        break;
-      case FONT_SETTING_BOLD_M:
-          avenir =      ffont_create_from_resource(RESOURCE_ID_AVENIR_REGULAR_FFONT);
-          avenir_bold = ffont_create_from_resource(RESOURCE_ID_AVENIR_BOLD_FFONT);
-
-          hours_font = avenir;
-          minutes_font = avenir_bold;
-          colon_font = avenir;
-        break;
-      case FONT_SETTING_LECO:
-          leco = ffont_create_from_resource(RESOURCE_ID_LECO_REGULAR_FFONT);
-
-          hours_font = leco;
-          minutes_font = leco;
-          colon_font = leco;
-        break;
-    }
-    prev_clockFontId = globalSettings.clockFontId;
+  switch(globalSettings.clockFontId) {
+    case FONT_SETTING_DEFAULT:
+        hours_font = FONT_SETTING_DEFAULT;
+        minutes_font = FONT_SETTING_DEFAULT;
+        colon_font = FONT_SETTING_DEFAULT;
+      break;
+    case FONT_SETTING_BOLD:
+        hours_font = FONT_SETTING_BOLD;
+        minutes_font = FONT_SETTING_BOLD;
+        colon_font = FONT_SETTING_BOLD;
+      break;
+    case FONT_SETTING_BOLD_H:
+        hours_font = FONT_SETTING_BOLD;
+        minutes_font = FONT_SETTING_DEFAULT;
+        colon_font = FONT_SETTING_DEFAULT;
+      break;
+    case FONT_SETTING_BOLD_M:
+        hours_font = FONT_SETTING_DEFAULT;
+        minutes_font = FONT_SETTING_BOLD;
+        colon_font = FONT_SETTING_DEFAULT;
+      break;
+    case FONT_SETTING_LECO:
+        hours_font = FONT_SETTING_LECO;
+        minutes_font = FONT_SETTING_LECO;
+        colon_font = FONT_SETTING_LECO;
+      break;
   }
 }

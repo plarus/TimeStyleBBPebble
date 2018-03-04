@@ -723,23 +723,25 @@ void fctx_set_text_em_height(FContext* fctx, FFont* font, int16_t pixels) {
     fctx->transform_scale_to.y = pixels;
 }
 
-void fctx_draw_string(FContext* fctx, const char* text, FFont* font, GTextAlignment alignment, FTextAnchor anchor) {
+void fctx_draw_string(FContext* fctx, const char* text, FFont** font, GTextAlignment alignment, FTextAnchor anchor) {
 
     FPoint advance = FPointZero;
     uint16_t code_point;
     uint16_t decode_state;
     const char* p;
+    uint8_t index = 0;
 
     if (alignment != GTextAlignmentLeft) {
         fixed_t width = 0;
         decode_state = 0;
         for (p = text; *p; ++p) {
             if (0 == utf8_decode_byte(*p, &decode_state, &code_point)) {
-                FGlyph* glyph = ffont_glyph_info(font, code_point);
+                FGlyph* glyph = ffont_glyph_info(font[index], code_point);
                 if (glyph) {
                     width += glyph->horiz_adv_x;
                 }
             }
+            index++;
         }
         if (alignment == GTextAlignmentRight) {
             advance.x = -width;
@@ -749,24 +751,26 @@ void fctx_draw_string(FContext* fctx, const char* text, FFont* font, GTextAlignm
     }
 
     if (anchor == FTextAnchorBottom) {
-        advance.y = -font->descent;
+        advance.y = -font[0]->descent;
     } else if (anchor == FTextAnchorMiddle) {
-        advance.y = -font->ascent / 2;
+        advance.y = -font[0]->ascent / 2;
     } else if (anchor == FTextAnchorTop) {
-        advance.y = -font->ascent;
+        advance.y = -font[0]->ascent;
     } else /* anchor == FTextAnchorBaseline) */ {
         advance.y = 0;
     }
 
     decode_state = 0;
+    index = 0;
     for (p = text; *p; ++p) {
         if (0 == utf8_decode_byte(*p, &decode_state, &code_point)) {
-            FGlyph* glyph = ffont_glyph_info(font, code_point);
+            FGlyph* glyph = ffont_glyph_info(font[index], code_point);
             if (glyph) {
-                void* path_data = ffont_glyph_outline(font, glyph);
+                void* path_data = ffont_glyph_outline(font[index], glyph);
                 fctx_draw_commands(fctx, advance, path_data, glyph->path_data_length);
                 advance.x += glyph->horiz_adv_x;
             }
         }
+        index++;
     }
 }

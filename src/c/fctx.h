@@ -90,4 +90,4 @@ typedef enum {
 } FTextAnchor;
 
 void fctx_set_text_em_height(FContext* fctx, FFont* font, int16_t pixels);
-void fctx_draw_string(FContext* fctx, const char* text, FFont* font, GTextAlignment alignment, FTextAnchor anchor);
+void fctx_draw_string(FContext* fctx, const char* text, FFont** font, GTextAlignment alignment, FTextAnchor anchor);
