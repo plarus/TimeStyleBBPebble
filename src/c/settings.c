@@ -4,28 +4,6 @@
 
 Settings globalSettings;
 
-void Settings_init(void) {
-  // first, check if we have any saved settings
-  int current_settings_version = persist_exists(SETTINGS_VERSION_KEY) ? persist_read_int(SETTINGS_VERSION_KEY) : -1;
-  APP_LOG(APP_LOG_LEVEL_DEBUG,"current_settings_version: %d", current_settings_version);
-  if( current_settings_version <= 6 ) {
-  //int settingsVersion = persist_read_int(SETTINGS_VERSION_KEY);
-    Settings_loadDefaultsSettings();
-  } else {
-    // load all settings
-    Settings_loadFromStorage();
-  }
-  Settings_updateDynamicSettings();
-}
-
-void Settings_deinit(void) {
-  // ensure that the weather disabled setting is accurate before saving it
-  Settings_updateDynamicSettings();
-
-  // write all settings to storage
-  Settings_saveToStorage();
-}
-
 /*
  * Load defaults settings
  */
@@ -94,9 +72,9 @@ void Settings_loadFromStorage(void) {
     globalSettings.sidebarColor = storedSettings.sidebarColor;
     globalSettings.sidebarTextColor = storedSettings.sidebarTextColor;
     globalSettings.languageId = storedSettings.languageId;
-  memcpy(globalSettings.languageDayNames, storedSettings.languageDayNames, sizeof(globalSettings.languageDayNames));
-  memcpy(globalSettings.languageMonthNames, storedSettings.languageMonthNames, sizeof(globalSettings.languageMonthNames));
-  memcpy(globalSettings.languageWordForWeek, storedSettings.languageWordForWeek, sizeof(globalSettings.languageWordForWeek));
+    memcpy(globalSettings.languageDayNames, storedSettings.languageDayNames, sizeof(globalSettings.languageDayNames));
+    memcpy(globalSettings.languageMonthNames, storedSettings.languageMonthNames, sizeof(globalSettings.languageMonthNames));
+    memcpy(globalSettings.languageWordForWeek, storedSettings.languageWordForWeek, sizeof(globalSettings.languageWordForWeek));
     globalSettings.showLeadingZero = storedSettings.showLeadingZero;
     globalSettings.clockFontId = storedSettings.clockFontId;
     globalSettings.btVibe = storedSettings.btVibe;
@@ -113,7 +91,7 @@ void Settings_loadFromStorage(void) {
     memcpy(globalSettings.altclockName, storedSettings.altclockName, 8);
     globalSettings.altclockOffset = storedSettings.altclockOffset;
     globalSettings.activateDisconnectIcon = storedSettings.activateDisconnectIcon;
-  globalSettings.centerTime = storedSettings.centerTime;
+    globalSettings.centerTime = storedSettings.centerTime;
 }
 
 void Settings_saveToStorage(void) {
@@ -188,4 +166,23 @@ void Settings_updateDynamicSettings(void) {
     globalSettings.iconFillColor = GColorWhite;
     globalSettings.iconStrokeColor = GColorBlack;
   }
+}
+
+void Settings_init(void) {
+  // first, check if we have any saved settings
+  int current_settings_version = persist_exists(SETTINGS_VERSION_KEY) ? persist_read_int(SETTINGS_VERSION_KEY) : -1;
+  APP_LOG(APP_LOG_LEVEL_DEBUG,"current_settings_version: %d", current_settings_version);
+  if( current_settings_version < CURRENT_SETTINGS_VERSION ) {
+    //int settingsVersion = persist_read_int(SETTINGS_VERSION_KEY);
+    Settings_loadDefaultsSettings();
+  } else {
+    // load all settings
+    Settings_loadFromStorage();
+  }
+  Settings_updateDynamicSettings();
+}
+
+void Settings_deinit(void) {
+  // write all settings to storage
+  Settings_saveToStorage();
 }
