@@ -98,8 +98,6 @@ void fctx_begin_fill(FContext* fctx) {
     fctx->extent_min.x = INT_TO_FIXED(bounds.origin.x + bounds.size.w);
     fctx->extent_min.y = INT_TO_FIXED(bounds.origin.y + bounds.size.h);
 
-    fctx->path_init_point.x = 0;
-    fctx->path_init_point.y = 0;
     fctx->path_cur_point.x = 0;
     fctx->path_cur_point.y = 0;
 }
@@ -550,7 +548,6 @@ static void bezier(FContext* fctx,
 }
 
 void fctx_move_to_func(FContext* fctx, FPoint* params) {
-    fctx->path_init_point = params[0];
     fctx->path_cur_point = params[0];
 }
 

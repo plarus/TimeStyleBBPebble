@@ -31,18 +31,16 @@ typedef struct FPoint {
 #define FPointOne FPoint(1, 1)
 
 typedef struct FContext {
-	GContext* gctx;
-	GBitmap* flag_buffer;
+    GContext* gctx;
+    GBitmap* flag_buffer;
     GRect flag_bounds;
-	FPoint extent_min;
-	FPoint extent_max;
-    FPoint path_init_point;
+    FPoint extent_min;
+    FPoint extent_max;
     FPoint path_cur_point;
     FPoint transform_offset;
     FPoint transform_scale_from;
-	FPoint transform_scale_to;
-	fixed_t subpixel_adjust;
-
+    FPoint transform_scale_to;
+    fixed_t subpixel_adjust;
     GColor fill_color;
 } FContext;
 
