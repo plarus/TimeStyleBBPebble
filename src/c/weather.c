@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include "weather.h"
+#include "settings.h"
 
 WeatherInfo Weather_weatherInfo;
 WeatherForecastInfo Weather_weatherForecast;
@@ -74,7 +75,7 @@ void Weather_setForecastCondition(int conditionCode) {
 
 void Weather_init(void) {
   // if possible, load weather data from persistent storage
-  if (persist_exists(WEATHERINFO_PERSIST_KEY)) {
+  if (persist_exists(WEATHERINFO_PERSIST_KEY) && !globalSettings.disableWeather) {
     // printf("current key exists!");
     WeatherInfo w;
     persist_read_data(WEATHERINFO_PERSIST_KEY, &w, sizeof(WeatherInfo));
@@ -91,7 +92,7 @@ void Weather_init(void) {
     Weather_weatherInfo.currentTemp = INT32_MIN;
   }
 
-  if (persist_exists(WEATHERFORECAST_PERSIST_KEY)) {
+  if (persist_exists(WEATHERFORECAST_PERSIST_KEY) && !globalSettings.disableWeather) {
     // printf("forecast key exists!");
     WeatherForecastInfo w;
     persist_read_data(WEATHERFORECAST_PERSIST_KEY, &w, sizeof(WeatherForecastInfo));
@@ -116,8 +117,10 @@ void Weather_saveData(void) {
 }
 
 void Weather_deinit(void) {
-  // save weather data to persistent storage
-  Weather_saveData();
+  if (!globalSettings.disableWeather) {
+    // save weather data to persistent storage
+    Weather_saveData();
+  }
 
   // free memory
   gdraw_command_image_destroy(Weather_currentWeatherIcon);
