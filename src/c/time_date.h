@@ -2,14 +2,13 @@
 #include <pebble.h>
 
 // the date and time strings
-extern char time_date_currentDayName[8];
-extern char time_date_currentDayNum[5];
-extern char time_date_currentMonth[8];
-extern char time_date_currentWeekNum[5];
-extern char time_date_currentSecondsNum[5];
-extern char time_date_altClock[8];
+extern char time_date_currentDayNum[3];
+extern char time_date_currentWeekNum[3];
+extern char time_date_currentSecondsNum[4];
+extern char time_date_altClock[4];
 extern char time_date_hours[3];
 extern char time_date_minutes[3];
-extern char time_date_currentDate[21];
+extern uint8_t time_date_currentDayName;
+extern uint8_t time_date_currentMonth;
 
 void time_date_update(struct tm* time_info);

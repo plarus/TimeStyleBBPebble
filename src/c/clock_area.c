@@ -126,6 +126,14 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
     fctx_end_fill(fctx);
   }
 
+  char time_date_currentDate[21];
+
+  strncpy(time_date_currentDate, globalSettings.languageDayNames[time_date_currentDayName], sizeof(globalSettings.languageDayNames[time_date_currentDayName]));
+  strncat(time_date_currentDate, " " , 2);
+  strncat(time_date_currentDate, time_date_currentDayNum, sizeof(time_date_currentDayNum));
+  strncat(time_date_currentDate, " " , 2);
+  strncat(time_date_currentDate, globalSettings.languageMonthNames[time_date_currentMonth], sizeof(globalSettings.languageMonthNames[time_date_currentMonth]));
+
   // draw date
   graphics_context_set_text_color(ctx, globalSettings.timeColor);
   graphics_draw_text(ctx,
