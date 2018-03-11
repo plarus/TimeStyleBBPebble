@@ -19,7 +19,6 @@ static GDrawCommandImage* batteryChargeImage;
 
 // fonts
 static GFont smSidebarFont;
-static GFont mdSidebarFont;
 static GFont lgSidebarFont;
 static GFont currentSidebarFont;
 static GFont currentSidebarSmallFont;
@@ -65,7 +64,6 @@ static void AltTime_draw(GContext* ctx, int xPosition, int yPosition);
 void SidebarWidgets_init(void) {
   // load fonts
   smSidebarFont = fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD);
-  mdSidebarFont = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
   lgSidebarFont = fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD);
 
   // load the sidebar graphics
@@ -116,6 +114,9 @@ void SidebarWidgets_deinit(void) {
 }
 
 void SidebarWidgets_updateFonts(void) {
+  // load font
+  GFont mdSidebarFont = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
+
   if(globalSettings.useLargeFonts) {
     currentSidebarFont = lgSidebarFont;
     currentSidebarSmallFont = mdSidebarFont;
