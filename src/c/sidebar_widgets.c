@@ -340,7 +340,7 @@ static void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
 
   // first draw the day name
   graphics_draw_text(ctx,
-                     time_date_currentDayName,
+                     globalSettings.languageDayNames[time_date_currentDayName],
                      currentSidebarFont,
                      GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition, 40, 20),
                      GTextOverflowModeFill,
@@ -384,7 +384,7 @@ static void DateWidget_draw(GContext* ctx, int xPosition, int yPosition) {
     yOffset = globalSettings.useLargeFonts ? 48 : 47;
 
     graphics_draw_text(ctx,
-                       time_date_currentMonth,
+                       globalSettings.languageMonthNames[time_date_currentMonth],
                        currentSidebarFont,
                        GRect(xPosition - 5 + SidebarWidgets_xOffset, yPosition + yOffset, 40, 20),
                        GTextOverflowModeFill,

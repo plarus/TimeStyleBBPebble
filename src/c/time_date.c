@@ -4,17 +4,16 @@
 #include "time_date.h"
 
 // the date and time strings
-char time_date_currentDayName[8];
-char time_date_currentDayNum[5];
-char time_date_currentMonth[8];
-char time_date_currentWeekNum[5];
-char time_date_currentSecondsNum[5];
-char time_date_altClock[8];
+char time_date_currentDayNum[3];
+char time_date_currentWeekNum[3];
+char time_date_currentSecondsNum[4];
+char time_date_altClock[4];
 char time_date_currentBeats[5];
 char time_date_hours[3];
 char time_date_minutes[3];
+uint8_t time_date_currentDayName;
+uint8_t time_date_currentMonth;
 #ifndef PBL_ROUND
-char time_date_currentDate[21];
 bool time_date_isAmHour;
 #endif
 
@@ -67,20 +66,11 @@ void time_date_update(struct tm* time_info) {
   // set the seconds string
   strftime(time_date_currentSecondsNum, 4, ":%S", time_info);
 
-  strncpy(time_date_currentDayName, globalSettings.languageDayNames[time_info->tm_wday], sizeof(time_date_currentDayName));
-  strncpy(time_date_currentMonth, globalSettings.languageMonthNames[time_info->tm_mon], sizeof(time_date_currentMonth));
+  time_date_currentDayName = time_info->tm_wday;
+  time_date_currentMonth = time_info->tm_mon;
 
 #ifndef PBL_ROUND
-  // full time
-  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-    strncpy(time_date_currentDate, time_date_currentDayName, sizeof(time_date_currentDayName));
-    strncat(time_date_currentDate, " " , 2);
-    strncat(time_date_currentDate, time_date_currentDayNum, sizeof(time_date_currentDayNum));
-    strncat(time_date_currentDate, " " , 2);
-    strncat(time_date_currentDate, time_date_currentMonth, sizeof(time_date_currentMonth));
-
-    time_date_isAmHour = time_info->tm_hour < 12;
-  }
+  time_date_isAmHour = time_info->tm_hour < 12;
 #endif // PBL_ROUND
 
   if(globalSettings.enableAltTimeZone) {
