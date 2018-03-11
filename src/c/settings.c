@@ -4,28 +4,6 @@
 
 Settings globalSettings;
 
-void Settings_init(void) {
-  // first, check if we have any saved settings
-  int current_settings_version = persist_exists(SETTINGS_VERSION_KEY) ? persist_read_int(SETTINGS_VERSION_KEY) : -1;
-  APP_LOG(APP_LOG_LEVEL_DEBUG,"current_settings_version: %d", current_settings_version);
-  if( current_settings_version <= 6 ) {
-    // load all settings
-    Settings_loadDefaultsSettings();
-  } else {
-    // load all settings
-    Settings_loadFromStorage();
-  }
-  Settings_updateDynamicSettings();
-}
-
-void Settings_deinit(void) {
-  // ensure that the weather disabled setting is accurate before saving it
-  Settings_updateDynamicSettings();
-
-  // write all settings to storage
-  Settings_saveToStorage();
-}
-
 /*
  * Load defaults settings
  */
@@ -210,3 +188,23 @@ void Settings_updateDynamicSettings(void) {
     globalSettings.iconStrokeColor = GColorBlack;
   }
 }
+
+void Settings_init(void) {
+  // first, check if we have any saved settings
+  int current_settings_version = persist_exists(SETTINGS_VERSION_KEY) ? persist_read_int(SETTINGS_VERSION_KEY) : -1;
+  APP_LOG(APP_LOG_LEVEL_DEBUG,"current_settings_version: %d", current_settings_version);
+  if( current_settings_version < CURRENT_SETTINGS_VERSION ) {
+    // load all settings
+    Settings_loadDefaultsSettings();
+  } else {
+    // load all settings
+    Settings_loadFromStorage();
+  }
+  Settings_updateDynamicSettings();
+}
+
+void Settings_deinit(void) {
+  // write all settings to storage
+  Settings_saveToStorage();
+}
+
