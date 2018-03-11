@@ -63,7 +63,7 @@ void ClockDigit_draw_string(FContext* fctx, const char* text, uint8_t fontId, in
 
   char_Count = 0;
   for (p = text; *p; ++p) {
-    char_Count++;
     ffont_destroy(font[char_Count]);
+    char_Count++;
   }
 }
