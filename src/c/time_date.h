@@ -15,4 +15,4 @@ extern uint8_t time_date_currentMonth;
 extern bool time_date_isAmHour;
 #endif // PBL_ROUND
 
-void time_date_update(struct tm* time_info);
+void time_date_update(void);

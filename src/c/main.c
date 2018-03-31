@@ -23,14 +23,18 @@ static bool updatingEverySecond;
 // try to randomize when watches call the weather API
 static uint8_t weatherRefreshMinute;
 
-static void update_clock(void) {
-  time_t rawTime;
-  struct tm* timeInfo;
+static void update_screen(void) {
+  time_date_update();
+  Health_update();
 
-  time(&rawTime);
-  timeInfo = localtime(&rawTime);
+  // update the sidebar
+  if(globalSettings.sidebarLocation != NONE) {
+    Sidebar_redraw();
+  }
 
-  time_date_update(timeInfo);
+  ClockArea_redraw();
+
+  //APP_LOG(APP_LOG_LEVEL_DEBUG,"Avail RAM: %d", heap_bytes_free());
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -56,14 +60,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     }
   }
 
-  update_clock();
-  Health_update();
-
-  // redraw all screen
-  if(globalSettings.sidebarLocation != NONE) {
-    Sidebar_redraw();
-  }
-  ClockArea_redraw();
+  update_screen();
 }
 
 #ifndef PBL_ROUND
@@ -117,25 +114,17 @@ static void redrawScreen() {
 
   window_set_background_color(mainWindow, globalSettings.timeBgColor);
 
-  // Make sure display is refreshed from the start
-  update_clock();
-  Health_update();
-
   // maybe sidebar changed!
   Sidebar_set_layer();
-
-  // update the sidebar
-  Sidebar_redraw();
 
   // check if the fonts need to be switched
   ClockArea_update_fonts();
 
-  ClockArea_redraw();
+  // Make sure display is refreshed from the start
+  update_screen();
 }
 
 static void main_window_load(Window *window) {
-  window_set_background_color(window, globalSettings.timeBgColor);
-
   // create the sidebar
   Sidebar_init(window);
 
