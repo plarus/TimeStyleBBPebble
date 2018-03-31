@@ -5,9 +5,35 @@ var languages = require('./languages');
 // Require the keys' numeric values.
 var keys = require('message_keys');
 
-var CONFIG_VERSION = 11;
-// var BASE_CONFIG_URL = 'http://localhost:4000/';
-var BASE_CONFIG_URL = 'http://plarus.github.io/TimeStyleBBPebble/';
+const CONFIG_VERSION = 11;
+// const BASE_CONFIG_URL = 'http://localhost:4000/';
+const BASE_CONFIG_URL = 'http://plarus.github.io/TimeStyleBBPebble/';
+
+const BarPosition = {
+  NONE     : 0,
+  LEFT     : 1,
+  RIGHT    : 2,
+  BOTTOM   : 3,
+  TOP      : 4
+}
+
+const WidgetType = {
+  EMPTY                     : 0,
+  BLUETOOTH_DISCONNECT      : 1,
+  BATTERY_METER             : 2,
+  ALT_TIME_ZONE             : 3,
+  DATE                      : 4,
+  SECONDS                   : 5,
+  WEEK_NUMBER               : 6,
+  WEATHER_CURRENT           : 7,
+  WEATHER_FORECAST_TODAY    : 8,
+  TIME_UNUSED               : 9,
+  HEALTH                    : 10,
+  BEATS                     : 11,
+  HEARTRATE                 : 12,
+  SLEEP                     : 13,
+  STEP                      : 14
+}
 
 // Listen for when the watchface is opened
 Pebble.addEventListener('ready',
@@ -41,12 +67,12 @@ Pebble.addEventListener('appmessage',
 );
 
 Pebble.addEventListener('showConfiguration', function(e) {
-  var bwConfigURL    = BASE_CONFIG_URL + 'config_bw.html';
-  var colorConfigURL = BASE_CONFIG_URL + 'config_color.html';
-  var roundConfigURL = BASE_CONFIG_URL + 'config_color_round.html';
-  var dioriteConfigURL = BASE_CONFIG_URL + 'config_diorite.html';
+  const bwConfigURL      = BASE_CONFIG_URL + 'config_bw.html';
+  const colorConfigURL   = BASE_CONFIG_URL + 'config_color.html';
+  const roundConfigURL   = BASE_CONFIG_URL + 'config_color_round.html';
+  const dioriteConfigURL = BASE_CONFIG_URL + 'config_diorite.html';
 
-  var versionString = '?appversion=' + CONFIG_VERSION;
+  const versionString = '?appversion=' + CONFIG_VERSION;
 
   if(Pebble.getActiveWatchInfo) {
     try {
@@ -136,22 +162,33 @@ Pebble.addEventListener('webviewclosed', function(e) {
       }
     }
 
-    // bluetooth settings
-    if(configData.disconnect_icon_setting) {
-      if(configData.disconnect_icon_setting == 'yes') {
-        dict.SettingDisconnectIcon = 1;
-      } else {
-        dict.SettingDisconnectIcon = 0;
+    // sidebar settings
+    dict.SettingWidget0ID = configData.widget_0_id;
+    dict.SettingWidget1ID = configData.widget_1_id;
+    dict.SettingWidget2ID = configData.widget_2_id;
+    dict.SettingWidget3ID = configData.widget_3_id;
+
+    if(configData.sidebar_position) {
+      if(configData.sidebar_position == 'left') {
+        dict.SettingSidebarPosition = BarPosition.LEFT;
+        dict.SettingWidget3ID = WidgetType.EMPTY;
+      } else if(configData.sidebar_position == 'right') {
+        dict.SettingSidebarPosition = BarPosition.RIGHT;
+        dict.SettingWidget3ID = WidgetType.EMPTY;
+      } else if(configData.sidebar_position == 'bottom') {
+        dict.SettingSidebarPosition = BarPosition.BOTTOM;
+      } else if(configData.sidebar_position == 'top') {
+        dict.SettingSidebarPosition = BarPosition.TOP;
+      } else { // 'none'
+        dict.SettingSidebarPosition = BarPosition.NONE;
+        dict.SettingWidget0ID = WidgetType.EMPTY;
+        dict.SettingWidget1ID = WidgetType.EMPTY;
+        dict.SettingWidget2ID = WidgetType.EMPTY;
+        dict.SettingWidget3ID = WidgetType.EMPTY;
       }
     }
 
-    if(configData.bluetooth_vibe_setting) {
-      if(configData.bluetooth_vibe_setting == 'yes') {
-        dict.SettingBluetoothVibe = 1;
-      } else {
-        dict.SettingBluetoothVibe = 0;
-      }
-    }
+    var widgetIDs = [dict.SettingWidget0ID, dict.SettingWidget1ID, dict.SettingWidget2ID, dict.SettingWidget3ID];
 
     // notification settings
     if(configData.hourly_vibe_setting) {
@@ -164,104 +201,113 @@ Pebble.addEventListener('webviewclosed', function(e) {
       }
     }
 
-    // sidebar settings
-    dict.SettingWidget0ID = configData.widget_0_id;
-    dict.SettingWidget1ID = configData.widget_1_id;
-    dict.SettingWidget2ID = configData.widget_2_id;
-    dict.SettingWidget3ID = configData.widget_3_id;
-
-    if(configData.sidebar_position) {
-      if(configData.sidebar_position == 'left') {
-        dict.SettingSidebarPosition = 1;
-      } else if(configData.sidebar_position == 'right') {
-        dict.SettingSidebarPosition = 2;
-      } else if(configData.sidebar_position == 'bottom') {
-        dict.SettingSidebarPosition = 3;
-      } else if(configData.sidebar_position == 'top') {
-        dict.SettingSidebarPosition = 4;
-      } else { // 'none'
-        dict.SettingSidebarPosition = 0;
-      }
-    }
-
-    if(configData.use_large_sidebar_font_setting) {
-      if(configData.use_large_sidebar_font_setting == 'yes') {
-        dict.SettingUseLargeFonts = 1;
+    // bluetooth vibe
+    if(configData.bluetooth_vibe_setting) {
+      if(configData.bluetooth_vibe_setting == 'yes') {
+        dict.SettingBluetoothVibe = 1;
       } else {
-        dict.SettingUseLargeFonts = 0;
+        dict.SettingBluetoothVibe = 0;
       }
     }
 
-    // weather widget settings
-    if(configData.units) {
-      if(configData.units == 'c') {
-        dict.SettingUseMetric = 1;
-      } else {
-        dict.SettingUseMetric = 0;
-      }
-    }
-
-    // weather location/source configs are not the watch's concern
-
-    if(configData.weather_loc !== undefined) {
-      window.localStorage.setItem('weather_loc', configData.weather_loc);
-      window.localStorage.setItem('weather_loc_lat', configData.weather_loc_lat);
-      window.localStorage.setItem('weather_loc_lng', configData.weather_loc_lng);
-    }
-
-    if(configData.weather_datasource) {
-      window.localStorage.setItem('weather_datasource', configData.weather_datasource);
-      window.localStorage.setItem('weather_api_key', configData.weather_api_key);
-    }
-
-    // battery widget settings
-    if(configData.battery_meter_setting) {
-      if(configData.battery_meter_setting == 'icon-and-percent') {
-        dict.SettingShowBatteryPct = 1;
-      } else if(configData.battery_meter_setting == 'icon-only') {
-        dict.SettingShowBatteryPct = 0;
-      }
-    }
-
-    if(configData.autobattery_setting) {
-      if(configData.autobattery_setting == 'on') {
-        dict.SettingDisableAutobattery = 0;
-      } else if(configData.autobattery_setting == 'off') {
-        dict.SettingDisableAutobattery = 1;
-      }
-    }
-
-    if(configData.altclock_name) {
-      dict.SettingAltClockName = configData.altclock_name;
-    }
-
-    if(configData.altclock_offset !== null) {
-      dict.SettingAltClockOffset = parseInt(configData.altclock_offset, 10);
-    }
-
-    if(watch.platform != "aplite"){
-      if(configData.decimal_separator) {
-        dict.SettingDecimalSep = configData.decimal_separator;
-      }
-
-      if(configData.health_activity_display) {
-        if(configData.health_activity_display == 'distance') {
-          dict.SettingHealthActivityDisplay = 1;
-        } else if(configData.health_activity_display == 'duration') {
-          dict.SettingHealthActivityDisplay = 2;
-        } else if(configData.health_activity_display == 'calories') {
-          dict.SettingHealthActivityDisplay = 3;
-        } else { // steps
-          dict.SettingHealthActivityDisplay = 0;
+    // sidebar options
+    if(dict.SettingSidebarPosition != BarPosition.NONE) {
+      // bluetooth disconnetion widget
+      if(configData.disconnect_icon_setting) {
+        if(configData.disconnect_icon_setting == 'yes') {
+          dict.SettingDisconnectIcon = 1;
+        } else {
+          dict.SettingDisconnectIcon = 0;
         }
       }
 
-      // heath settings
-      if(configData.health_use_restful_sleep) {
-        if(configData.health_use_restful_sleep == 'yes') {
-          dict.SettingHealthUseRestfulSleep = 1;
+      // large font for all widgets
+      if(configData.use_large_sidebar_font_setting) {
+        if(configData.use_large_sidebar_font_setting == 'yes') {
+          dict.SettingUseLargeFonts = 1;
         } else {
-          dict.SettingHealthUseRestfulSleep = 0;
+          dict.SettingUseLargeFonts = 0;
+        }
+      }
+
+      // week number widget
+      if(configData.language_id !== undefined && widgetIDs.indexOf(WidgetType.WEEK_NUMBER) != -1) {
+        dict.SettingLanguageWordForWeek = languages.wordForWeek[configData.language_id];
+      }
+
+      // weather widget settings
+      if(widgetIDs.indexOf(WidgetType.WEATHER_CURRENT) != -1 || widgetIDs.indexOf(WidgetType.WEATHER_FORECAST_TODAY) != -1) {
+        if(configData.units) {
+          if(configData.units == 'c') {
+            dict.SettingUseMetric = 1;
+          } else {
+            dict.SettingUseMetric = 0;
+          }
+        }
+
+        // weather location/source configs are not the watch's concern
+        if(configData.weather_loc !== undefined) {
+          window.localStorage.setItem('weather_loc', configData.weather_loc);
+          window.localStorage.setItem('weather_loc_lat', configData.weather_loc_lat);
+          window.localStorage.setItem('weather_loc_lng', configData.weather_loc_lng);
+        }
+
+        if(configData.weather_datasource) {
+          window.localStorage.setItem('weather_datasource', configData.weather_datasource);
+          window.localStorage.setItem('weather_api_key', configData.weather_api_key);
+        }
+      }
+
+      // battery widget settings
+      if(configData.battery_meter_setting) {
+        if(configData.battery_meter_setting == 'icon-and-percent') {
+          dict.SettingShowBatteryPct = 1;
+        } else if(configData.battery_meter_setting == 'icon-only') {
+          dict.SettingShowBatteryPct = 0;
+        }
+      }
+
+      if(configData.autobattery_setting) {
+        // Autobattey widget can be displayed only when battery widget is not displayed
+        if(configData.autobattery_setting == 'on' && widgetIDs.indexOf(WidgetType.BATTERY_METER) == -1) {
+          dict.SettingDisableAutobattery = 0;
+        } else {
+          dict.SettingDisableAutobattery = 1;
+        }
+      }
+
+      if(configData.altclock_name && widgetIDs.indexOf(WidgetType.ALT_TIME_ZONE) != -1) {
+        dict.SettingAltClockName = configData.altclock_name;
+      }
+
+      if(configData.altclock_offset !== null && widgetIDs.indexOf(WidgetType.ALT_TIME_ZONE) != -1) {
+        dict.SettingAltClockOffset = parseInt(configData.altclock_offset, 10);
+      }
+
+      if(watch.platform != "aplite"){
+        if(configData.decimal_separator && (widgetIDs.indexOf(WidgetType.HEALTH) != -1 || widgetIDs.indexOf(WidgetType.STEP) != -1)) {
+          dict.SettingDecimalSep = configData.decimal_separator;
+        }
+
+        // heath settings
+        if(configData.health_activity_display && (widgetIDs.indexOf(WidgetType.HEALTH) != -1 || widgetIDs.indexOf(WidgetType.STEP) != -1)) {
+          if(configData.health_activity_display == 'distance') {
+            dict.SettingHealthActivityDisplay = 1;
+          } else if(configData.health_activity_display == 'duration') {
+            dict.SettingHealthActivityDisplay = 2;
+          } else if(configData.health_activity_display == 'calories') {
+            dict.SettingHealthActivityDisplay = 3;
+          } else { // steps
+            dict.SettingHealthActivityDisplay = 0;
+          }
+        }
+
+        if(configData.health_use_restful_sleep && (widgetIDs.indexOf(WidgetType.HEALTH) != -1 || widgetIDs.indexOf(WidgetType.SLEEP) != -1)) {
+          if(configData.health_use_restful_sleep == 'yes') {
+            dict.SettingHealthUseRestfulSleep = 1;
+          } else {
+            dict.SettingHealthUseRestfulSleep = 0;
+          }
         }
       }
     }
@@ -269,10 +315,8 @@ Pebble.addEventListener('webviewclosed', function(e) {
     // determine whether or not the weather checking should be enabled
     var disableWeather;
 
-    var widgetIDs = [configData.widget_0_id, configData.widget_1_id, configData.widget_2_id, configData.widget_3_id];
-
     // if there is either a current conditions or a today's forecast widget, enable the weather
-    if(widgetIDs.indexOf(7) != -1 || widgetIDs.indexOf(8) != -1) {
+    if(widgetIDs.indexOf(WidgetType.WEATHER_CURRENT) != -1 || widgetIDs.indexOf(WidgetType.WEATHER_FORECAST_TODAY) != -1) {
         disableWeather = 'no';
     } else {
         disableWeather = 'yes';
@@ -282,8 +326,10 @@ Pebble.addEventListener('webviewclosed', function(e) {
 
     var enableForecast;
 
-    if(widgetIDs.indexOf(8) != -1) {
+    if(widgetIDs.indexOf(WidgetType.WEATHER_FORECAST_TODAY) != -1) {
       enableForecast = 'yes';
+    } else {
+      enableForecast = 'no';
     }
 
     window.localStorage.setItem('enable_forecast', enableForecast);
@@ -293,7 +339,7 @@ Pebble.addEventListener('webviewclosed', function(e) {
     // Send settings to Pebble watchapp
     Pebble.sendAppMessage(dict, function(){
       // Second part of data (send datas in 2 part in order to reduce buffer size on Pebble watch)
-      if(configData.language_id !== undefined) {
+      if(configData.language_id !== undefined && (dict.SettingSidebarPosition > 2 || widgetIDs.indexOf(WidgetType.DATE) != -1)) {
         // reset the structure
         dict = {};
 
@@ -303,7 +349,6 @@ Pebble.addEventListener('webviewclosed', function(e) {
         for (i = 0; i < 12; i++) {
           dict[keys.SettingLanguageMonthNames + i] = languages.monthNames[configData.language_id][i];
         }
-        dict.SettingLanguageWordForWeek = languages.wordForWeek[configData.language_id];
 
         console.log('Preparing language message: ', JSON.stringify(dict));
 
