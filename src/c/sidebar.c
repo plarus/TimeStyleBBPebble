@@ -8,8 +8,8 @@
 
 #define V_PADDING_DEFAULT 8
 #define V_PADDING_COMPACT 4
-#define COMPACT_MODE_THRESHOLD 142
 #define SCREEN_HEIGHT 168
+#define COMPACT_MODE_THRESHOLD (SCREEN_HEIGHT - V_PADDING_DEFAULT * 2 - 3)
 
 #define H_PADDING_DEFAULT 4
 #define HORIZONTAL_BAR_HEIGHT FIXED_WIDGET_HEIGHT
@@ -168,17 +168,9 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     SidebarWidgets_useCompactMode = (totalHeight > COMPACT_MODE_THRESHOLD);
 
     // now that they have been compacted, check if they fit a second time,
-    // if they still don't fit, our only choice is MURDER (of the middle widget)
+    // if they still don't fit, we can reduce padding
     totalHeight = displayWidgets[0].getHeight() + displayWidgets[1].getHeight() + displayWidgets[2].getHeight();
-    bool hide_middle_widget = (totalHeight > COMPACT_MODE_THRESHOLD);
 
-    // do not use compact mode if middle widget is hidden (biggest widget height is smaller than 168/2)
-    if(hide_middle_widget) {
-      SidebarWidgets_useCompactMode = false;
-    }
-
-    // still doesn't fit? try compacting the vertical padding
-    totalHeight = displayWidgets[0].getHeight() + displayWidgets[2].getHeight();
     if(totalHeight > COMPACT_MODE_THRESHOLD) {
       v_padding = V_PADDING_COMPACT;
     }
@@ -186,11 +178,11 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     // draw the widgets
     int lowerWidgetPos = SCREEN_HEIGHT - v_padding - displayWidgets[2].getHeight();
     displayWidgets[0].draw(ctx, 0, v_padding);
-    if(!hide_middle_widget) {
-      // vertically center the middle widget using MATH
-      middleWidgetPos = ((lowerWidgetPos - displayWidgets[1].getHeight()) + (v_padding + displayWidgets[0].getHeight())) / 2;
-      displayWidgets[1].draw(ctx, 0, middleWidgetPos);
-    }
+
+    // vertically center the middle widget using MATH
+    middleWidgetPos = ((lowerWidgetPos - displayWidgets[1].getHeight()) + (v_padding + displayWidgets[0].getHeight())) / 2;
+    displayWidgets[1].draw(ctx, 0, middleWidgetPos);
+
     displayWidgets[2].draw(ctx, 0, lowerWidgetPos);
   }
 }
