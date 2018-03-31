@@ -68,12 +68,7 @@ void SidebarWidgets_init(void) {
 
   // load the sidebar graphics
   dateImage = gdraw_command_image_create_with_resource(RESOURCE_ID_DATE_BG);
-  if(globalSettings.activateDisconnectIcon) {
-    disconnectImage = gdraw_command_image_create_with_resource(RESOURCE_ID_DISCONNECTED);
-  }else{
-    disconnectImage = NULL;
-  }
-
+  disconnectImage = NULL;
   batteryImage = gdraw_command_image_create_with_resource(RESOURCE_ID_BATTERY_BG);
   batteryChargeImage = gdraw_command_image_create_with_resource(RESOURCE_ID_BATTERY_CHARGE);
 
@@ -114,6 +109,10 @@ void SidebarWidgets_deinit(void) {
 }
 
 void SidebarWidgets_updateFonts(void) {
+  if(globalSettings.activateDisconnectIcon) {
+    disconnectImage = gdraw_command_image_create_with_resource(RESOURCE_ID_DISCONNECTED);
+  }
+
   // load font
   GFont mdSidebarFont = fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD);
 
@@ -462,6 +461,9 @@ static int WeatherForecast_getHeight(void) {
 }
 
 static void WeatherForecast_draw(GContext* ctx, int xPosition, int yPosition) {
+  //srand(time(NULL));
+  //Weather_setForecastCondition(rand() % 12);
+
   if(Weather_forecastWeatherIcon) {
     util_image_draw(ctx, Weather_forecastWeatherIcon, xPosition + 3 + SidebarWidgets_xOffset, yPosition + 1);
   }

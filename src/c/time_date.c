@@ -20,7 +20,12 @@ static int mod(int a, int b) {
     return r < 0 ? r + b : r;
 }
 
-void time_date_update(struct tm* time_info) {
+void time_date_update(void) {
+  time_t rawTime;
+  struct tm* time_info;
+
+  time(&rawTime);
+  time_info = localtime(&rawTime);
 
   if (clock_is_24h_style()) {
     strftime(time_date_hours, sizeof(time_date_hours), (globalSettings.showLeadingZero) ? "%H" : "%k", time_info);
@@ -80,3 +85,4 @@ void time_date_update(struct tm* time_info) {
     }
   }
 }
+

@@ -11,4 +11,4 @@ extern char time_date_minutes[3];
 extern uint8_t time_date_currentDayName;
 extern uint8_t time_date_currentMonth;
 
-void time_date_update(struct tm* time_info);
+void time_date_update(void);
