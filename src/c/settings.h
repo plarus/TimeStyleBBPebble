@@ -115,7 +115,6 @@ typedef struct {
   // dynamic settings (calculated based the currently-selected widgets)
   bool disableWeather;
   bool updateScreenEverySecond;
-  bool enableAutoBatteryWidget;
   bool enableBeats;
   bool enableAltTimeZone;
 
