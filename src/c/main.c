@@ -25,7 +25,10 @@ static uint8_t weatherRefreshMinute;
 
 static void update_screen(void) {
   time_date_update();
+
+#ifdef PBL_HEALTH
   Health_update();
+#endif
 
   // update the sidebar
   if(globalSettings.sidebarLocation != NONE) {
@@ -96,7 +99,6 @@ static void redrawScreen() {
       tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
       updatingEverySecond = false;
     }
-
   }
 
 #ifndef PBL_ROUND
@@ -249,3 +251,4 @@ int main(void) {
   app_event_loop();
   deinit();
 }
+
