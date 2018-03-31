@@ -135,7 +135,11 @@ static void update_clock_and_date_area_layer(Layer *l, GContext* ctx, FContext* 
   strncat(time_date_currentDate, globalSettings.languageMonthNames[time_date_currentMonth], sizeof(globalSettings.languageMonthNames[time_date_currentMonth]));
 
   // draw date
-  graphics_context_set_text_color(ctx, globalSettings.timeColor);
+  if(globalSettings.timeColor.argb == GColorLightGrayARGB8 && globalSettings.timeBgColor.argb == GColorWhiteARGB8) {
+    graphics_context_set_text_color(ctx, GColorBlack);
+  } else {
+    graphics_context_set_text_color(ctx, globalSettings.timeColor);
+  }
   graphics_draw_text(ctx,
                      time_date_currentDate,
                      date_font,
