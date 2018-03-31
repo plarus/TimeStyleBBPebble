@@ -21,10 +21,8 @@ static bool isAutoBatteryShown(void) {
   if(!globalSettings.disableAutobattery) {
     BatteryChargeState chargeState = battery_state_service_peek();
 
-    if(globalSettings.enableAutoBatteryWidget) {
-      if(chargeState.charge_percent <= 10 || chargeState.is_charging) {
-        return true;
-      }
+    if(chargeState.charge_percent <= 10 || chargeState.is_charging) {
+      return true;
     }
   }
   return false;

@@ -132,7 +132,6 @@ void Settings_saveToStorage(void) {
 void Settings_updateDynamicSettings(void) {
   globalSettings.disableWeather = true;
   globalSettings.updateScreenEverySecond = false;
-  globalSettings.enableAutoBatteryWidget = true;
   globalSettings.enableAltTimeZone = false;
 
   for(int i = 0; i < 4; i++) {
@@ -145,11 +144,6 @@ void Settings_updateDynamicSettings(void) {
     // if any widget is "seconds", we'll need to update the sidebar every second
     if(globalSettings.widgets[i] == SECONDS) {
       globalSettings.updateScreenEverySecond = true;
-    }
-
-    // if any widget is "battery", disable the automatic battery indication
-    if(globalSettings.widgets[i] == BATTERY_METER) {
-      globalSettings.enableAutoBatteryWidget = false;
     }
 
     // if any widget is "alt_time_zone", enable the alternative time calculation
