@@ -1,7 +1,6 @@
 #ifdef PBL_HEALTH
 #include <pebble.h>
 #include "health.h"
-#include "debug.h"
 
 #define SECONDS_AFTER_WAKE_UP 1800 // Half hour
 
@@ -39,11 +38,7 @@ void Health_update(void) {
 
     if(s_sleeping) {
         s_endSleepTime = time(NULL);
-/* Debug */ //Debug_healthSleepCall++;
     }
-/* Debug */   //  if(s_restfulSleeping) {
-/* Debug */   //      Debug_restfulSleeping++;
-/* Debug */   //  }
 
     // Steps
     s_distance_walked = get_health_value_sum_today(HealthMetricWalkedDistanceMeters);

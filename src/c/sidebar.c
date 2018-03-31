@@ -5,7 +5,6 @@
 #include "sidebar.h"
 #include "sidebar_widgets.h"
 #include "util.h"
-#include "debug.h"
 
 #define V_PADDING_DEFAULT 8
 #define V_PADDING_COMPACT 4
@@ -358,7 +357,6 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     }
     displayWidgets[2].draw(ctx, 0, lowerWidgetPos);
   }
-  /* Debug */ //Debug_sidebarUpdate++;
 }
 #endif
 

@@ -4,7 +4,6 @@
 #include "clock_area.h"
 #include "settings.h"
 #include "time_date.h"
-#include "debug.h"
 
 #define ROUND_VERTICAL_PADDING 15
 
@@ -308,8 +307,6 @@ static void update_clock_area_layer(Layer *l, GContext* ctx) {
   }
 
   fctx_deinit_context(&fctx);
-
-  /* Debug */ //Debug_clockAreaUpdate++;
 }
 
 void ClockArea_init(Window* window) {

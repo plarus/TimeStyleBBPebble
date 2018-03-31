@@ -9,7 +9,6 @@
 #include "health.h"
 #endif
 #include "time_date.h"
-#include "debug.h"
 
 // windows and layers
 static Window* mainWindow;
@@ -65,8 +64,6 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     Sidebar_redraw();
   }
   ClockArea_redraw();
-
-  /* Debug */ //Debug_display();
 }
 
 #ifndef PBL_ROUND
@@ -85,7 +82,6 @@ static void unobstructed_area_did_change_handler(void *context) {
   if (obstruction_height == 0 && globalSettings.sidebarLocation == TOP) {
     Sidebar_set_hidden(false);
   }
-  /* Debug */ //Debug_unobstructedAreaChange++;
 }
 #endif
 
@@ -135,8 +131,6 @@ static void redrawScreen() {
   ClockArea_update_fonts();
 
   ClockArea_redraw();
-
-  /* Debug */ //Debug_RedrawFunction++;
 }
 
 static void main_window_load(Window *window) {
@@ -178,7 +172,6 @@ static void bluetoothStateChanged(bool newConnectionState) {
   if(globalSettings.sidebarLocation != NONE) {
     Sidebar_redraw();
   }
-  /* Debug */ //Debug_bluetoothStateChange++;
 }
 
 // fixes for disappearing elements after notifications
@@ -186,7 +179,6 @@ static void bluetoothStateChanged(bool newConnectionState) {
 static void app_focus_changing(bool focusing) {
   if (focusing) {
      layer_set_hidden(windowLayer, true);
-     /* Debug */ //Debug_focusChange++;
   }
 }
 
@@ -194,7 +186,6 @@ static void app_focus_changed(bool focused) {
   if (focused) {
      layer_set_hidden(windowLayer, false);
      layer_mark_dirty(windowLayer);
-     /* Debug */ //Debug_focusChange++;
   }
 }
 
@@ -262,8 +253,6 @@ static void deinit(void) {
   unobstructed_area_service_unsubscribe();
 #endif
   app_focus_service_unsubscribe();
-
-  /* Debug */ Debug_display();
 }
 
 int main(void) {
@@ -271,4 +260,3 @@ int main(void) {
   app_event_loop();
   deinit();
 }
-
