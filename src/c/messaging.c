@@ -205,7 +205,7 @@ void messaging_init(MessageProcessedCallback processed_callback) {
   app_message_register_inbox_received(inbox_received_callback);
 
   // Open AppMessage
-  app_message_open(305, 8);
+  app_message_open(286, 8);
 
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "Watch messaging is started!");
 }
