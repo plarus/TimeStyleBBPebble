@@ -1,6 +1,6 @@
 ﻿#include <pebble.h>
-#include "fctx.h"
-#include "ffont.h"
+#include <pebble-fctx/fctx.h>
+#include <pebble-fctx/ffont.h>
 #include "clock_area.h"
 #include "settings.h"
 #include "time_date.h"
