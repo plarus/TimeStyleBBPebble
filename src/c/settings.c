@@ -40,13 +40,13 @@ void Settings_loadDefaultsSettings(void) {
   globalSettings.clockFontId      = FONT_SETTING_DEFAULT;
   globalSettings.btVibe           = false;
   globalSettings.hourlyVibe       = NO_VIBE;
-  globalSettings.sidebarLocation  = BOTTOM;
+  globalSettings.sidebarLocation  = RIGHT;
 
   // set the default widgets
   globalSettings.widgets[0] = BATTERY_METER;
-  globalSettings.widgets[1] = WEATHER_CURRENT;
-  globalSettings.widgets[2] = PBL_IF_HEALTH_ELSE(HEALTH, BLUETOOTH_DISCONNECT);
-  globalSettings.widgets[3] = WEEK_NUMBER;
+  globalSettings.widgets[1] = EMPTY;
+  globalSettings.widgets[2] = DATE;
+  globalSettings.widgets[3] = EMPTY;
 
   globalSettings.useLargeFonts          = false;
   globalSettings.useMetric              = true;
@@ -180,3 +180,4 @@ void Settings_deinit(void) {
   // write all settings to storage
   Settings_saveToStorage();
 }
+

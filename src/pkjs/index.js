@@ -7,7 +7,7 @@ var keys = require('message_keys');
 
 const CONFIG_VERSION = 11;
 // const BASE_CONFIG_URL = 'http://localhost:4000/';
-const BASE_CONFIG_URL = 'http://plarus.github.io/TimeStyleBBPebble/';
+const BASE_CONFIG_URL = 'http://freakified.github.io/TimeStylePebble/';
 
 const BarPosition = {
   NONE     : 0,
