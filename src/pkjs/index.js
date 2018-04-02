@@ -230,6 +230,42 @@ Pebble.addEventListener('webviewclosed', function(e) {
         }
       }
 
+      // replacable widget
+      if(watch.platform == "chalk") {
+        if(widgetIDs[0] == WidgetType.EMPTY) {
+          dict.ReplacableWidget = 0;
+        } else if(widgetIDs[2] == WidgetType.EMPTY) {
+          dict.ReplacableWidget = 2;
+        } else if(widgetIDs.indexOf(WidgetType.WEATHER_CURRENT) != -1) {
+          dict.ReplacableWidget = widgetIDs.indexOf(WidgetType.WEATHER_CURRENT);
+        } else if(widgetIDs.indexOf(WidgetType.WEATHER_FORECAST_TODAY) != -1) {
+          dict.ReplacableWidget = widgetIDs.indexOf(WidgetType.WEATHER_FORECAST_TODAY);
+        } else { // if we don't have any of those things, just replace the left widget
+          dict.ReplacableWidget = 0;
+        }
+      } else {
+        dict.ReplacableWidget = -1;
+        for (i = 0; i < 3; i++) {
+          if(widgetIDs[i] == WidgetType.EMPTY) {
+            dict.ReplacableWidget = i;
+          }
+        }
+
+        if(dict.ReplacableWidget == -1) {
+          if(widgetIDs[3] == WidgetType.EMPTY && (dict.SettingSidebarPosition == BarPosition.BOTTOM || dict.SettingSidebarPosition == BarPosition.TOP)) {
+            dict.ReplacableWidget = 3;
+        
+          // are there any bluetooth-enabled widgets? if so, they're the second-best candidates
+          } else if(widgetIDs.indexOf(WidgetType.WEATHER_CURRENT) != -1) {
+            dict.ReplacableWidget = widgetIDs.indexOf(WidgetType.WEATHER_CURRENT);
+          } else if(widgetIDs.indexOf(WidgetType.WEATHER_FORECAST_TODAY) != -1) {
+            dict.ReplacableWidget = widgetIDs.indexOf(WidgetType.WEATHER_FORECAST_TODAY);    
+          } else { // if we don't have any of those things, just replace the middle widget
+            dict.ReplacableWidget = 1;
+          }
+        }
+      }
+
       // week number widget
       if(configData.language_id !== undefined && widgetIDs.indexOf(WidgetType.WEEK_NUMBER) != -1) {
         dict.SettingLanguageWordForWeek = languages.wordForWeek[configData.language_id];

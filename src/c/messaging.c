@@ -50,6 +50,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *clockFont_tuple = dict_find(iterator, MESSAGE_KEY_SettingClockFontId);
   Tuple *hourlyVibe_tuple = dict_find(iterator, MESSAGE_KEY_SettingHourlyVibe);
   Tuple *useLargeFonts_tuple = dict_find(iterator, MESSAGE_KEY_SettingUseLargeFonts);
+  Tuple *replacableWidget_tuple = dict_find(iterator, MESSAGE_KEY_SettingReplacableWidget);
 
   Tuple *widget0Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget0ID);
   Tuple *widget1Id_tuple = dict_find(iterator, MESSAGE_KEY_SettingWidget1ID);
@@ -123,6 +124,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
   if(useLargeFonts_tuple != NULL) {
     globalSettings.useLargeFonts = (bool)useLargeFonts_tuple->value->int8;
+  }
+
+  if(replacableWidget_tuple != NULL) {
+    globalSettings.replacableWidget = replacableWidget_tuple->value->int8;
   }
 
   if(hourlyVibe_tuple != NULL) {
@@ -221,7 +226,7 @@ void messaging_init(MessageProcessedCallback processed_callback) {
   app_message_register_inbox_received(inbox_received_callback);
 
   // Open AppMessage
-  app_message_open(305, 8);
+  app_message_open(286, 8);
 
   // APP_LOG(APP_LOG_LEVEL_DEBUG, "Watch messaging is started!");
 }

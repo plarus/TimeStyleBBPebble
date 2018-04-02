@@ -32,62 +32,13 @@ static bool isAutoBatteryShown(void) {
 }
 
 #ifdef PBL_ROUND
-// returns the best candidate widget for replacement by the auto battery
-// or the disconnection icon
-static int getReplacableWidget(void) {
-  if(globalSettings.widgets[0] == EMPTY) {
-    return 0;
-  } else if(globalSettings.widgets[2] == EMPTY) {
-    return 2;
-  }
-
-  if(globalSettings.widgets[0] == WEATHER_CURRENT || globalSettings.widgets[0] == WEATHER_FORECAST_TODAY) {
-    return 0;
-  } else if(globalSettings.widgets[2] == WEATHER_CURRENT || globalSettings.widgets[2] == WEATHER_FORECAST_TODAY) {
-    return 2;
-  }
-
-  // if we don't have any of those things, just replace the left widget
-  return 0;
-}
-#else
-// returns the best candidate widget for replacement by the auto battery
-// or the disconnection icon
-static int getReplacableWidget(void) {
-  // if any widgets are empty, it's an obvious choice
-  for(int i = 0; i < 3; i++) {
-    if(globalSettings.widgets[i] == EMPTY) {
-      return i;
-    }
-  }
-
-  // use widget 4 only if bottom or top widget is used
-  if(globalSettings.widgets[3] == EMPTY &&
-     (globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP)) {
-    return 3;
-  }
-
-  // are there any bluetooth-enabled widgets? if so, they're the second-best
-  // candidates
-  for(int i = 0; i < 4; i++) {
-    if(globalSettings.widgets[i] == WEATHER_CURRENT || globalSettings.widgets[i] == WEATHER_FORECAST_TODAY) {
-      return i;
-    }
-  }
-
-  // if we don't have any of those things, just replace the middle widget
-  return 1;
-}
-#endif
-
-#ifdef PBL_ROUND
 static SidebarWidget getRoundSidebarWidget(int widgetNumber) {
   bool showDisconnectIcon = !bluetooth_connection_service_peek();
   bool showAutoBattery = isAutoBatteryShown();
 
   SidebarWidgetType displayWidget = globalSettings.widgets[widgetNumber];
 
-  if((showAutoBattery || showDisconnectIcon) && getReplacableWidget() == widgetNumber) {
+  if((showAutoBattery || showDisconnectIcon) && globalSettings.replacableWidget == widgetNumber) {
     if(showAutoBattery) {
       displayWidget = BATTERY_METER;
     } else if(showDisconnectIcon) {
@@ -238,7 +189,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
   // if the pebble is disconnected, show the disconnect icon
   bool showDisconnectIcon = false;
   bool showAutoBattery = isAutoBatteryShown();
-  int widget_to_replace = -1;
+  int8_t widget_to_replace = -1;
 
   // if the pebble is disconnected and activated, show the disconnect icon
   if(globalSettings.activateDisconnectIcon) {
@@ -257,7 +208,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
   // do we need to replace a widget?
   // if so, determine which widget should be replaced
   if(showAutoBattery || showDisconnectIcon) {
-    widget_to_replace = getReplacableWidget();
+    widget_to_replace = globalSettings.replacableWidget;
 
     if(showAutoBattery) {
       displayWidgets[widget_to_replace] = getSidebarWidgetByType(BATTERY_METER);

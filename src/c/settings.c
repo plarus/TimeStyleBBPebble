@@ -46,6 +46,7 @@ void Settings_loadDefaultsSettings(void) {
   globalSettings.btVibe           = false;
   globalSettings.hourlyVibe       = NO_VIBE;
   globalSettings.sidebarLocation  = RIGHT;
+  globalSettings.replacableWidget = 1;
 
   // set the default widgets
   globalSettings.widgets[0] = PBL_IF_HEALTH_ELSE(HEALTH, BATTERY_METER);
@@ -88,6 +89,7 @@ void Settings_loadFromStorage(void) {
   globalSettings.btVibe = storedSettings.btVibe;
   globalSettings.hourlyVibe = storedSettings.hourlyVibe;
   globalSettings.sidebarLocation = storedSettings.sidebarLocation;
+  globalSettings.replacableWidget = storedSettings.replacableWidget;
   globalSettings.widgets[0] = storedSettings.widgets[0];
   globalSettings.widgets[1] = storedSettings.widgets[1];
   globalSettings.widgets[2] = storedSettings.widgets[2];
@@ -136,6 +138,7 @@ void Settings_saveToStorage(void) {
   memcpy(storedSettings.altclockName, globalSettings.altclockName, 8);
   storedSettings.altclockOffset = globalSettings.altclockOffset;
   storedSettings.sidebarLocation = globalSettings.sidebarLocation;
+  storedSettings.replacableWidget = globalSettings.replacableWidget;
   storedSettings.activateDisconnectIcon = globalSettings.activateDisconnectIcon;
   storedSettings.centerTime = globalSettings.centerTime;
 

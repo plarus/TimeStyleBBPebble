@@ -94,6 +94,7 @@ typedef struct {
   SidebarWidgetType widgets[4];
   BarLocationType sidebarLocation;
   bool useLargeFonts;
+  uint8_t replacableWidget;
   bool activateDisconnectIcon;
 
   // metric or imperial unit
@@ -167,7 +168,8 @@ typedef struct {
   // bluetooth disconnection icon
   int8_t activateDisconnectIcon:1;
 
-  int8_t centerTime:1;
+  uint8_t centerTime:1;
+  uint8_t replacableWidget:3;
 
   char languageDayNames[7][8];
   char languageMonthNames[12][8];
