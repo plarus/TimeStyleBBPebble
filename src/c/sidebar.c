@@ -201,9 +201,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
   displayWidgets[0] = getSidebarWidgetByType(globalSettings.widgets[0]);
   displayWidgets[1] = getSidebarWidgetByType(globalSettings.widgets[1]);
   displayWidgets[2] = getSidebarWidgetByType(globalSettings.widgets[2]);
-  if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-    displayWidgets[3] = getSidebarWidgetByType(globalSettings.widgets[3]);
-  }
+  displayWidgets[3] = getSidebarWidgetByType(globalSettings.widgets[3]);
 
   // do we need to replace a widget?
   // if so, determine which widget should be replaced
@@ -221,8 +219,7 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
   int middleWidgetPos;
 
   if(globalSettings.sidebarLocation == BOTTOM || globalSettings.sidebarLocation == TOP) {
-    // calculate the three horizontal widget positions
-    middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
+    // calculate the right widget position
     int rightWidgetPos = bounds.size.w - H_PADDING_DEFAULT - ACTION_BAR_WIDTH;
 
     // use compact mode and fixed height for bottom and top widget
@@ -233,24 +230,14 @@ static void updateRectSidebar(Layer *l, GContext* ctx) {
     v_padding= (HORIZONTAL_BAR_HEIGHT - displayWidgets[0].getHeight()) / 2;
     displayWidgets[0].draw(ctx, H_PADDING_DEFAULT, v_padding);
 
+    // only 3 widgets
     if(globalSettings.widgets[3] == EMPTY && widget_to_replace != 3) {
+      middleWidgetPos = (bounds.size.w - ACTION_BAR_WIDTH) / 2;
       v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
       displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
 
       v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
       displayWidgets[2].draw(ctx, rightWidgetPos, v_padding);
-    }else if(globalSettings.widgets[2] == EMPTY) {
-      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[1].getHeight()) / 2;
-      displayWidgets[1].draw(ctx, middleWidgetPos, v_padding);
-
-      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
-      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
-    }else if(globalSettings.widgets[1] == EMPTY) {
-      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[2].getHeight()) / 2;
-      displayWidgets[2].draw(ctx, middleWidgetPos, v_padding);
-
-      v_padding = (HORIZONTAL_BAR_HEIGHT - displayWidgets[3].getHeight()) / 2;
-      displayWidgets[3].draw(ctx, rightWidgetPos, v_padding);
     } else { // we have 4 widgets
 
       // middle position 1

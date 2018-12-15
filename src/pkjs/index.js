@@ -7,7 +7,7 @@ var keys = require('message_keys');
 
 const CONFIG_VERSION = 11;
 // const BASE_CONFIG_URL = 'http://localhost:4000/';
-const BASE_CONFIG_URL = 'http://plarus.github.io/TimeStyleBBPebble/';
+const BASE_CONFIG_URL = 'http://freakified.github.io/TimeStylePebble/';
 
 const BarPosition = {
   NONE     : 0,
@@ -184,6 +184,24 @@ Pebble.addEventListener('webviewclosed', function(e) {
         dict.SettingWidget0ID = WidgetType.EMPTY;
         dict.SettingWidget1ID = WidgetType.EMPTY;
         dict.SettingWidget2ID = WidgetType.EMPTY;
+        dict.SettingWidget3ID = WidgetType.EMPTY;
+      }
+    }
+
+    // 2 bar only for pebble round
+    if(watch.platform == "chalk") {
+      dict.SettingWidget1ID = WidgetType.EMPTY;
+      dict.SettingWidget3ID = WidgetType.EMPTY;
+    }
+
+    // normalize widgets positions
+    if(dict.SettingSidebarPosition == BarPosition.BOTTOM || dict.SettingSidebarPosition == BarPosition.TOP) {
+      if(dict.SettingWidget1ID == WidgetType.EMPTY) {
+        dict.SettingWidget1ID = dict.SettingWidget2ID;
+        dict.SettingWidget2ID = WidgetType.EMPTY;
+      }
+      if(dict.SettingWidget2ID == WidgetType.EMPTY) {
+        dict.SettingWidget2ID = dict.SettingWidget3ID;
         dict.SettingWidget3ID = WidgetType.EMPTY;
       }
     }
